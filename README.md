@@ -1,13 +1,13 @@
-Genesis-3DÊÇËÑºü³©ÓÎ¹«Ë¾ÍÆ³öµÄÊ×¿îÉÌÒµ¿ªÔ´µÄ3DÓÎÏ·ÒıÇæÆ½Ì¨¡£ 
-ÎÒÃÇÊ¼ÖÕ¼á³Ö¿ªÔ´¡¢¹²ÏíµÄÀíÄî£¬Ï£Íû¿ÉÒÔÍ¨¹ı·ÖÏíÎÒÃÇµÄ³É¹û£¬
-´Ù½øÒıÇæĞĞÒµµÄÑ§Ï°ºÍ½»Á÷£¬ÒÔ´ËÍÆ¶¯ÓÎÏ·ÒıÇæĞĞÒµµÄ·¢Õ¹¡£ 
+ï»¿Genesis-3Dæ˜¯æœç‹ç•…æ¸¸å…¬å¸æ¨å‡ºçš„é¦–æ¬¾å•†ä¸šå¼€æºçš„3Dæ¸¸æˆå¼•æ“å¹³å°ã€‚ 
+æˆ‘ä»¬å§‹ç»ˆåšæŒå¼€æºã€å…±äº«çš„ç†å¿µï¼Œå¸Œæœ›å¯ä»¥é€šè¿‡åˆ†äº«æˆ‘ä»¬çš„æˆæœï¼Œ
+ä¿ƒè¿›å¼•æ“è¡Œä¸šçš„å­¦ä¹ å’Œäº¤æµï¼Œä»¥æ­¤æ¨åŠ¨æ¸¸æˆå¼•æ“è¡Œä¸šçš„å‘å±•ã€‚ 
 
-Genesis-3D¹ÙÍø£ºhttp://www.genesis-3d.com.cn/
-Genesis-3DÉçÇø£ºhttp://genesis-3d.9tech.cn/
-Genesis-3DÎ¢²©£ºhttp://weibo.com/genesis3d
+Genesis-3Då®˜ç½‘ï¼šhttp://www.genesis-3d.com.cn/
+Genesis-3Dç¤¾åŒºï¼šhttp://genesis-3d.9tech.cn/
+Genesis-3Då¾®åšï¼šhttp://weibo.com/genesis3d
 
-Genesis-3DÍĞ¹ÜÔ´Âë£¨CSDN£©£ºhttps://code.csdn.net/Genesis-3D/genesis-3d_engine
-Genesis-3DÔ´ÂëÖ÷Ò³£ºhttp://www.genesis-3d.com.cn/open_source.html
-Genesis-3DµÚÈı·½ÒÀÀµ¿â£¨¹Ù·½ÏÂÔØ£©£ºhttp://www.genesis-3d.com.cn/open_source.html
-Genesis-3DµÚÈı·½ÒÀÀµ¿â£¨·ÖÁ÷ÍøÅÌ£©£ºhttp://pan.baidu.com/s/1i3uVStJ
-Genesis-3DÅäÌ×±à¼­Æ÷£ºhttp://www.genesis-3d.com.cn/download.html
+Genesis-3Dæ‰˜ç®¡æºç ï¼ˆCSDNï¼‰ï¼šhttps://code.csdn.net/Genesis-3D/genesis-3d_engine
+Genesis-3Dæºç ä¸»é¡µï¼šhttp://www.genesis-3d.com.cn/open_source.html
+Genesis-3Dç¬¬ä¸‰æ–¹ä¾èµ–åº“ï¼ˆå®˜æ–¹ä¸‹è½½ï¼‰ï¼šhttp://www.genesis-3d.com.cn/open_source.html
+Genesis-3Dç¬¬ä¸‰æ–¹ä¾èµ–åº“ï¼ˆåˆ†æµç½‘ç›˜ï¼‰ï¼šhttp://pan.baidu.com/s/1i3uVStJ
+Genesis-3Dé…å¥—ç¼–è¾‘å™¨ï¼šhttp://www.genesis-3d.com.cn/download.html
