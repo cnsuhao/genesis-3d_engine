@@ -25,7 +25,7 @@ THE SOFTWARE.
 
 #include "stdneb.h"
 #include "util/localstringatomtable.h"
-#include "threading/threadruntimeinfo.h"
+#include "threading/ThreadRuntimeInfo.h"
 namespace Util
 {
 	// 静态变量初始化顺序的原因。自行设定标识符号。

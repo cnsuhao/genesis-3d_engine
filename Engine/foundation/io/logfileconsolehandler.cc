@@ -72,10 +72,14 @@ LogFileConsoleHandler::Open()
     fileName.Format("home:logfiles/%s_%s.txt", Core::CoreServer::Instance()->GetAppName().Value(), calString.AsCharPtr());
 
     // open file stream
-    this->stream = ioServer->CreateFileStream(URI(fileName));
+	this->stream = IO::IoServer::Instance()->CreateFileStream(URI(fileName));
     this->textWriter = TextWriter::Create();
     this->textWriter->SetStream(this->stream);
     this->textWriter->Open();
+
+	this->textWriter->WriteChar(0xef);
+	this->textWriter->WriteChar(0xbb);
+	this->textWriter->WriteChar(0xbf);
 }
 
 //------------------------------------------------------------------------------

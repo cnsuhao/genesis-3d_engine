@@ -27,6 +27,7 @@ THE SOFTWARE.
 #include "meshrendercomponent.h"
 #include "graphicsystem/Camera/Camera.h"
 
+
 namespace App
 {
 	class SimpleSkyComponent : public App::MeshRenderComponent
@@ -94,6 +95,10 @@ public:
 public:
 	void SetSkyTexByNum( int num, Util::String& tex );
 	const Util::String GetSkyTexByNum( int num );
+	float GetSkyFogLowest();
+	float GetSkyFogHighest();
+	void SetSkyFogLowest(IndexT iSubMesh, const ShaderParamString& paramName,float low);
+	void SetSkyFogHighest(IndexT iSubMesh, const ShaderParamString& paramName,float high);
 protected:
     Util::String m_skyTex0;
 	Util::String m_skyTex1;
@@ -101,6 +106,8 @@ protected:
 	Util::String m_skyTex3;
 	Util::String m_skyTex4;
 	Util::String m_skyTex5;
+	float m_skyFogLowest;
+	float m_skyFogHighest;
 };
 
 }

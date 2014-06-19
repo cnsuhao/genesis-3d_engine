@@ -24,7 +24,7 @@
 
 
 @rem 根据本机cmake的安装路径，修改cmakeExe变量
-set cmakeExe="D:\Program Files\cmake-2.8.8-win32-x86\bin\cmake.exe"
+set cmakeExe="D:\Program Files\CMake 2.8\bin\cmake.exe"
 
 set curPath=%cd%
 

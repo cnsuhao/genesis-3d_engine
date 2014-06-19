@@ -25,8 +25,8 @@ THE SOFTWARE.
 #ifndef __PACKAGETOOL__
 #define __PACKAGETOOL__
 
-#include "packageTool/PackDef.h"
-#include "packageTool/Package.h"
+#include "packagetool/PackDef.h"
+#include "packagetool/Package.h"
 #include <string>
 
 namespace Pack

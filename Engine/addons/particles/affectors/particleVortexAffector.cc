@@ -38,6 +38,7 @@ namespace Particles
 	//-----------------------------------------------------------------------
 	VortexAffector::VortexAffector(void) : ParticleAffector()
 	{
+		mAffectType = AT_Vortex;
 		mName = "VortexAffector";
 	}
 	//------------------------------------------------------------------------
@@ -49,7 +50,7 @@ namespace Particles
 	{
 		if(!GetEnable())
 			return;
-		float percent = (particle->mTotalTimeToLive - particle->mTimeToLive)/particle->mTotalTimeToLive;
+		float percent = particle->mTimeFraction;
 		Math::vector normal(mMinMaxNormalX.Calculate(percent,particle->mRandom0),
 			mMinMaxNormalY.Calculate(percent,particle->mRandom1),
 			mMinMaxNormalZ.Calculate(percent,particle->mRandom2) );

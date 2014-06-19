@@ -86,7 +86,10 @@ namespace Resources
 
 		bool ret = LoadPhysXMaterialResByVersion(pRes,pReader,version);
 
-
+		if(pRes->GetMat())
+		{
+			pRes->SetMat(NULL);
+		}
 		//pReader->EndFileSerialize();
 		return ret;
 	}

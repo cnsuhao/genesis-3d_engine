@@ -103,8 +103,12 @@ namespace MyGUI
 		updateView();
 	}
 
-	void ScrollView::notifyScrollChangePosition(ScrollBar* _sender, size_t _position)
+	void ScrollView::notifyScrollChangePosition(ScrollBar* _sender, int _position)// expand by genesis-3d
 	{
+		if (_position < 0)// expand by genesis-3d
+		{
+			_position = 0;
+		}
 		if (mRealClient == nullptr)
 			return;
 

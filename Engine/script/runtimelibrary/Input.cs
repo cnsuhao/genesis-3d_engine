@@ -309,7 +309,7 @@ namespace ScriptRuntime
             for (int i = 0; i < count; ++i)
             {
                 MouseEvent _event = new MouseEvent();
-                ICall_Input_GetCurrentMouseButtonEvent(i, out _event.button, out _event.eventType);
+                ICall_Input_GetCurrentMouseButtonEvent(i, out _event.button, out _event.eventType, out _event.absolutePos, out _event.relativePos);
                 events.Add(_event);
             }
             return events.ToArray();
@@ -326,7 +326,7 @@ namespace ScriptRuntime
             for (int i = 0; i < count; ++i)
             {
                 TouchEvent _event = new TouchEvent();
-                ICall_Input_GetCurrentTouchEvent(i, out _event.id, out _event.eventType);
+                ICall_Input_GetCurrentTouchEvent(i, out _event.id, out _event.eventType, out _event.absolutePos, out _event.relativePos);
                 events.Add(_event);
             }
             return events.ToArray();
@@ -397,12 +397,12 @@ namespace ScriptRuntime
         extern private static int ICall_Input_GetCurrentMouseButtonEventCount();
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        extern private static void ICall_Input_GetCurrentMouseButtonEvent(int index, out MouseCode code, out InputEventType _event);
+        extern private static void ICall_Input_GetCurrentMouseButtonEvent(int index, out MouseCode code, out InputEventType _event, out Vector2 absolutePos, out Vector2 relativePos);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         extern private static int ICall_Input_GetCurrentTouchEventCount();
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        extern private static void ICall_Input_GetCurrentTouchEvent(int index, out int id, out InputEventType _event);
+        extern private static void ICall_Input_GetCurrentTouchEvent(int index, out int id, out InputEventType _event, out Vector2 absolutePos, out Vector2 relativePos);
     }
 }

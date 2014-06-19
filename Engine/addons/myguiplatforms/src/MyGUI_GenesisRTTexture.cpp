@@ -28,6 +28,9 @@ THE SOFTWARE.
 ****************************************************************************/
 #include "stdneb.h"
 #include <cstring>
+
+#include "graphicsystem/GraphicSystem.h"
+
 #include "MyGUI_GenesisRTTexture.h"
 #include "MyGUI_GenesisRenderManager.h"
 

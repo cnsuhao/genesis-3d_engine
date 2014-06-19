@@ -10,7 +10,6 @@
 #define GenesisEngineLib_Genesis_h
 #include <vector>
 
-
 namespace EngineShell
 {
     enum InputAciton
@@ -34,6 +33,8 @@ namespace EngineShell
     void TouchPoint( const TouchDataVector& touchDatas, const InputAciton& action );
     void OnResumed();
     void OnStopped();
+    void UIInsertText(const char* wstr);
+    void UIDeleteBackward();
 
 }
 #endif

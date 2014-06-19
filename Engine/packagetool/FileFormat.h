@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 #ifndef __FILE_FORMAT_H__
 #define __FILE_FORMAT_H__
-#include "packageTool/PackDef.h"
+#include "packagetool/PackDef.h"
 namespace Pack
 {
 	struct FileBlock 

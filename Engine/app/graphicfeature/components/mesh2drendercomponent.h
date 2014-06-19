@@ -264,6 +264,10 @@ namespace App
 		//************************************
 		static void SetActorTransform(GPtr<Actor>& actor, const Math::float2& pos, const Math::float3& scales, const Math::float4& axis, float angle);
 
+#ifdef __GENESIS_EDITOR__
+		virtual void SetEditorVisible(bool bVis);
+#endif
+
 	protected:
 
 		/// @Component::OnActivate  called from Actor::ActivateComponents()

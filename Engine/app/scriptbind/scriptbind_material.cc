@@ -97,20 +97,6 @@ namespace App
 		self->SetConstantParam(param_name, value);
 	}
 
-
-	static void ICall_Material_SetGlobalMatrix(int index, const Math::matrix44& value)
-	{
-		Graphic::GlobalMaterialParam* pGMP = Graphic::Material::GetGlobalMaterialParams();
-		pGMP->SetMatrixParam(TypeConvert<Graphic::GlobalMatrixParamIndex>::Conver(index), value);
-
-	}
-
-	static void ICall_Material_SetGlobalVector(int index, const Math::float4& value)
-	{
-		Graphic::GlobalMaterialParam* pGMP = Graphic::Material::GetGlobalMaterialParams();
-		pGMP->SetVectorParam(TypeConvert<Graphic::GlobalVectorParamIndex>::Conver(index), value);
-
-	}
     //------------------------------------------------------------------------
     void ICallReg_ScriptRuntime_Material( void )
     {
@@ -122,8 +108,6 @@ namespace App
 			{ "ScriptRuntime.MaterialInstance::ICall_Material_SetValueFloat",					(void*)&ICall_Material_SetValueFloat },
 			{ "ScriptRuntime.MaterialInstance::ICall_Material_SetValueVector4",					(void*)&ICall_Material_SetValueVector4 },
 			{ "ScriptRuntime.MaterialInstance::ICall_Material_SetValueMatrix44",				(void*)&ICall_Material_SetValueMatrix44 },
-			{ "ScriptRuntime.MaterialInstance::ICall_Material_SetGlobalMatrix",					(void*)&ICall_Material_SetGlobalMatrix },
-			{ "ScriptRuntime.MaterialInstance::ICall_Material_SetGlobalVector",					(void*)&ICall_Material_SetGlobalVector },
         };
 
         int size = sizeof(s_cScriptBindInternalCallDetail)/sizeof(InternalCallDetail);

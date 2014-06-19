@@ -29,6 +29,9 @@ namespace App
 	class ScriptGui
 	{
 	public:
+		static MyGUI::Widget* s_pCurFocusEditBox;
+        static void SetFocusedEditboxCaption(const MyGUI::UString& data);
+        
 		static MyGUI::Widget* loadLayout(MyGUI::Widget* parent, const std::string& file_name);
 		static void destroyWidget(MyGUI::Widget* widget);
 		static MyGUI::Widget* findWidget(MyGUI::Widget* parent, const std::string& widget_name);
@@ -39,6 +42,12 @@ namespace App
 		static const MyGUI::IntSize& getResolution();
 		static bool autoResolutionWidth();
 		static bool autoResolutionHeight();
+		static void recursiveGetEditBoxWidget(MyGUI::VectorWidgetPtr& outVec,MyGUI::Widget*pWidget);
+	private:
+		static void _InternalRegisterEditBoxGetLostFocus(MyGUI::Widget*pWidget);
+		static void _OnKeySetFocus(MyGUI::Widget* _sender, MyGUI::Widget* _old);
+		static void _OnKeyLostFocus(MyGUI::Widget* _sender, MyGUI::Widget* _old);
+		static void _ShowKeyboard(bool bShow);
 	};
 }
 

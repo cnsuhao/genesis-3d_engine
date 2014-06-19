@@ -28,6 +28,7 @@ THE SOFTWARE.
 #include "graphicfeature/graphicsfeature.h"
 #include "graphicfeature/graphicsfeatureprotocol.h"
 #include "resource/resourceserver.h"
+#include "serialization/serializeserver.h"
 
 namespace App
 {
@@ -121,6 +122,90 @@ namespace App
 
 	}
 
+#ifdef __GENESIS_EDITOR__
+	bool IsModelContainSkelInfo(const GPtr<Actor>& rootActor, const Resources::ResourceId& skelId)
+	{
+		Util::String modelName = rootActor->GetModelName();
+
+		if(modelName == "")
+			return true;
+
+		GPtr<IO::Stream> pStream = IO::MemoryStream::Create();
+		n_assert( pStream );
+
+		GPtr<IO::ReadStream> readStreamMsg = IO::ReadStream::Create();
+		n_assert( readStreamMsg );
+
+		IO::AssignRegistry* pAssignRegistry = IO::AssignRegistry::Instance();
+
+		IO::URI resolvedPath = pAssignRegistry->ResolveAssigns(modelName);
+		if(!resolvedPath.IsValid())
+			return true;
+
+		Util::String resPath = resolvedPath.LocalPath();
+
+		Serialization::SerializationServer* serialize = Serialization::SerializationServer::Instance();
+		GPtr<Serialization::SerializeReader> pReader = serialize->OpenReadFile( resPath,Serialization::FT_DEFAULT );
+		if ( pReader )
+		{
+			try
+			{
+				GPtr<Actor> actor;
+				actor = pReader->SerializeObject<Actor>();
+
+				if (!actor.isvalid())
+				{
+					serialize->CloseReadFile(pReader);
+					return false;
+				}
+
+				bool result = false;
+				// 临时代码：model文件里只有一个actor关节一个子actor
+				if (actor->GetChildCount() != 0)
+				{
+					for(int i=0; i<actor->GetChildCount(); i++)
+					{
+						GPtr<Actor> targetActor = NULL;
+						targetActor = actor->GetChild(i);
+						if (!targetActor.isvalid())
+						{
+							continue;
+						}
+						GPtr<Component> com = targetActor->FindComponent(SkeletonComponent::RTTI);
+						if (!com.isvalid())
+						{
+							continue;
+						}
+						
+						GPtr<SkeletonComponent> skelCom = com.downcast<SkeletonComponent>();
+						
+						const Resources::ResourceId& skelResId = skelCom->GetSkeletonID();
+						
+						if(skelCom->GetSkeletonID() == skelId)
+						{
+							result = true;
+							break;
+						}
+					}
+				}
+				
+				actor->Deactive(true);
+				actor->Destory(true);
+				actor = NULL;
+
+				serialize->CloseReadFile(pReader);
+				return result;
+			}
+			catch(...)
+			{
+				serialize->CloseReadFile(pReader);
+			}
+		}
+
+		return false;
+	}
+#endif
+
 	void SkeletonComponent::SetAnimSkelTree()
 	{
 		//Find animation data
@@ -138,6 +223,15 @@ namespace App
 			const GPtr<SkeletonRes>& skeletonRes = GetSkeleton();
 			if (skeletonRes.isvalid() && !skeletonRes->IsSkelTreeEmpty())
 			{
+
+#ifdef __GENESIS_EDITOR__
+				if(!IsModelContainSkelInfo(actorParent, GetSkeletonID()))
+				{
+					m_bSkeletonDirty = false;
+					return;
+				}
+#endif
+
 				pAnimationCom->SetSkelTree(skeletonRes->GetSkelTree());
 				pAnimationCom->SetSkelTree(skeletonRes->GetSkelTreeArray());
 

@@ -205,7 +205,8 @@ namespace Particles
 		void SetUpdateUnVis(bool _update);
 		const bool GetUpdateUnVis() const;
 		void _NeedUpdate();
-		void SetupGPUParticles(SimpleGPUParticleVertex* particleVertex,int quato);
+		void SetupSpriteGPUParticles(SpriteGPUParticleVertex* particleVertex,int quato);
+		void SetupBoardGPUParticles(BoardGPUParticleVertex* particleVertex,ushort* indicies,int quato);
 		bool _NeedUpdateBox();
 		void ParticleSystemDataChanged();
 		void SetShaderParam();
@@ -229,6 +230,7 @@ namespace Particles
 		void _repeatUpdate(float);
 		void _techUpdate(Timing::Time frameTime,IndexT frameIndex );
 		void _fpsControl();
+		const Math::float3 _getEndPos(const Math::float3& pos,const Math::float3 speed,float time);
 	protected:
 		bool					mIsActive;
 		bool					mPlayOnAwake;

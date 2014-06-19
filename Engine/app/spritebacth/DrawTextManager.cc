@@ -263,7 +263,7 @@ namespace App
 		// set font info
 		SetFontSize(12);
 		SetFontColor(Math::float4(1.f,1.f,1.f,1.f));
-		//mFpsIndex	 = AppendDrawText(FPSPOSX,FPSPOSY,"Fps:");
+		//mFpsIndex	 = AppendDrawText(FPSPOSX,FPSPOSY,"FPS:");
 		//mSecondIndex = AppendDrawText(TriVertPOSX,TriVertPOSY,"Triangles:");
 		//mThirdIndex  = AppendDrawText(RTDrawPOSX,RTDrawPOSY,"RenderTargets:");
 

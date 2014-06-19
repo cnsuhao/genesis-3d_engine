@@ -393,7 +393,7 @@ void CameraComponent::SetUseSkyBox(bool useSkyBox)
 	{
 		if (m_camera.isvalid())
 		{
-			return m_camera->HasDepthMap();
+			return m_camera->IsRenderDepthMap();
 		}
 		return false;
 	}

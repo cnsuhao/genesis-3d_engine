@@ -38,7 +38,7 @@ namespace Particles
 	//-----------------------------------------------------------------------
 	GravityAffector::GravityAffector() : ParticleAffector()
 	{
-
+		mAffectType = AT_Gravity;
 		mName = "GravityAffector";
 	}
 	//-----------------------------------------------------------------------
@@ -46,7 +46,7 @@ namespace Particles
 	{		
 		if(!GetEnable())
 			return;
-		float percent = (particle->mTotalTimeToLive - particle->mTimeToLive)/particle->mTotalTimeToLive;
+		float percent = particle->mTimeFraction;
 
 		Math::float3	gravityDir(mMinMaxPosX.Calculate(percent,particle->mRandom0)
 			, mMinMaxPosY.Calculate(percent,particle->mRandom1)
@@ -59,7 +59,7 @@ namespace Particles
 		float  gravity = mMinMaxGravity.Calculate(percent,particle->mRandom3);
 
 		Math::scalar _curTime = (Math::scalar)mParentSystem->GetCurrentFrameTime();
-		particle->mDirection += gravity  * gravityDir * _curTime * _calculateAffectSpecialisationFactor(particle);
+		particle->mDirection += gravity  * gravityDir * _curTime;
 
 	}
 	//-------------------------------------------------------------------------------

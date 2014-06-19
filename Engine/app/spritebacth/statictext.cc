@@ -151,9 +151,9 @@ namespace App
 
 		m_charInfoTable.Add(key, info);
 
-		SizeT dest_addr  = (SizeT)m_buffer + (m_nextU + m_nextV * m_width);//(info.rect_int.left + info.rect_int.top * m_width);
-		SizeT src_addr = (SizeT)data;
-		SizeT end = src_addr + glyph->bitmap.width * glyph->bitmap.rows;
+		intptr_t dest_addr  = (intptr_t)m_buffer + (m_nextU + m_nextV * m_width);//(info.rect_int.left + info.rect_int.top * m_width);
+		intptr_t src_addr = (intptr_t)data;
+		intptr_t end = src_addr + glyph->bitmap.width * glyph->bitmap.rows;
 		while(src_addr < end)
 		{
 			Memory::Copy((void*)src_addr, (void*)dest_addr, glyph->bitmap.width);

@@ -259,7 +259,7 @@ namespace MyGUI
 		void onMouseWheel(int _rel);
 		void onKeyButtonPressed(KeyCode _key, Char _char);
 
-		void notifyScrollChangePosition(ScrollBar* _sender, size_t _rel);
+		void notifyScrollChangePosition(ScrollBar* _sender, int _rel);// expand by genesis-3d
 		void notifyMousePressed(Widget* _sender, int _left, int _top, MouseButton _id);
 		void notifyMouseDoubleClick(Widget* _sender);
 		void notifyMouseWheel(Widget* _sender, int _rel);

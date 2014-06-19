@@ -31,6 +31,16 @@
 
 namespace MyGUI
 {
+	static const float gDragBias = 3.0f;
+	static const float gCriticalForceOverflow = 0.1f;
+	static const float gSpeedTime = 0.1f;
+	static const float gSpeedDown = 0.25f;
+	static const float gOverflowTime = 0.2f;
+	static const float gDefualSpeedWeight = 0.5f;
+	static const float gTinyTime = 0.001f;
+	static const float gCriticalSpeed = 2.0f;
+	static const float gSpeedLerpWeight = 0.8f;
+
 
 	ItemBox::ItemBox() :
 		mCountItemInLine(0),
@@ -43,7 +53,12 @@ namespace MyGUI
 		mIndexRefuse(ITEM_NONE),
 		mIsFocus(false),
 		mItemDrag(nullptr),
-		mAlignVert(true)
+		mAlignVert(true),
+		mPreCoord(0.0f),
+		mTimeCounter(0.0f),
+		mScrollSpeed(0.0f),
+		mMoveCounter(0.0f),
+		mScrollState(ScrollStop)
 	{
 		mChangeContentByResize = true;
 	}
@@ -83,23 +98,40 @@ namespace MyGUI
 
 		// подписываем клиент для драгэндропа
 		if (mClient != nullptr)
+		{
 			mClient->_setContainer(this);
+		}
 
 		requestItemSize();
-
 		updateScrollSize();
 		updateScrollPosition();
+
+		// expand by genesis-3d
+		Gui::getInstancePtr()->eventFrameStart += newDelegate(this, &ItemBox::notifyTick);
+		bindDrag();
+		if (mHScroll != nullptr)
+		{
+			mHScroll->setLimitRange(true);
+			mHScroll->eventMouseButtonPressed += newDelegate(this, & ItemBox::notifyScrollBarPress);
+		}
+
+		if (mVScroll != nullptr)
+		{
+			mVScroll->setLimitRange(true);
+			mVScroll->eventMouseButtonPressed += newDelegate(this, & ItemBox::notifyScrollBarPress);
+		}
+
 	}
 
 	void ItemBox::shutdownOverride()
 	{
+		Gui::getInstancePtr()->eventFrameStart -= newDelegate(this, &ItemBox::notifyTick);// expand by genesis-3d
 		mVScroll = nullptr;
 		mHScroll = nullptr;
 		mClient = nullptr;
 
 		Base::shutdownOverride();
 	}
-
 	void ItemBox::setPosition(const IntPoint& _point)
 	{
 		Base::setPosition(_point);
@@ -151,24 +183,41 @@ namespace MyGUI
 			count_visible = (_getClientWidget()->getWidth() / mSizeItem.width) + 2;
 		}
 
-		size_t start = (mFirstVisibleIndex * mCountItemInLine);
-		size_t count = (count_visible * mCountItemInLine) + start;
+		int start = getStartIndex();
+		int count = (count_visible * mCountItemInLine) + (mFirstVisibleIndex * mCountItemInLine);//start;
 
-		size_t index = 0;
-		for (size_t pos = start; pos < count; ++pos, ++index)
+		int bias = 0;// expand by genesis-3d
+		if (mFirstVisibleIndex < 0)// expand by genesis-3d
+		{
+			if (mAlignVert)
+			{
+				bias = -mFirstVisibleIndex * mSizeItem.height;
+			}
+			else
+			{
+				bias = -mFirstVisibleIndex * mSizeItem.width;
+			}
+			start = 0;
+		}
+
+		int index = 0;
+		for (int pos = start; pos < count; ++pos, ++index)
 		{
 			// дальше нет айтемов
-			if (pos >= mItemsInfo.size()) break;
+			if (pos >= (int)mItemsInfo.size()) 
+			{
+				break;
+			}
 
 			Widget* item = getItemWidget(index);
 			if (mAlignVert)
 			{
 				item->setPosition(((int)index % mCountItemInLine) * mSizeItem.width - mContentPosition.left,
-					(((int)index / mCountItemInLine) * mSizeItem.height)  - mFirstOffsetIndex);
+					(((int)index / mCountItemInLine) * mSizeItem.height)  - mFirstOffsetIndex + bias);
 			}
 			else
 			{
-				item->setPosition((((int)index / mCountItemInLine) * mSizeItem.width)  - mFirstOffsetIndex,
+				item->setPosition((((int)index / mCountItemInLine) * mSizeItem.width)  - mFirstOffsetIndex + bias,
 					((int)index % mCountItemInLine) * mSizeItem.height - mContentPosition.top);
 			}
 
@@ -184,7 +233,7 @@ namespace MyGUI
 		}
 
 		// все виджеты еще есть, то их надо бы скрыть
-		while (index < mVectorItems.size())
+		while (index < (int)mVectorItems.size())
 		{
 			mVectorItems[index]->setVisible(false);
 			index ++;
@@ -251,7 +300,7 @@ namespace MyGUI
 		// сбрасываем старую подсветку
 		if (mIndexActive != ITEM_NONE)
 		{
-			size_t start = (size_t)(mFirstVisibleIndex * mCountItemInLine);
+			size_t start = (size_t)getStartIndex();
 			size_t index = mIndexActive;
 			mIndexActive = ITEM_NONE;
 
@@ -319,7 +368,7 @@ namespace MyGUI
 		mIndexAccept = (_set && _accept ) ? _index : ITEM_NONE;
 		mIndexRefuse = (_set && !_accept) ? _index : ITEM_NONE;
 
-		size_t start = (size_t)(mFirstVisibleIndex * mCountItemInLine);
+		size_t start = (size_t)getStartIndex();
 		if ((_index >= start) && (_index < (start + mVectorItems.size())))
 		{
 			IBDrawItemInfo data(_index, mIndexSelect, mIndexActive, mIndexAccept, mIndexRefuse, false, false);
@@ -332,7 +381,7 @@ namespace MyGUI
 		MYGUI_ASSERT_RANGE(_index, mItemsInfo.size(), "ItemBox::setItemData");
 		mItemsInfo[_index].data = _data;
 
-		size_t start = (size_t)(mFirstVisibleIndex * mCountItemInLine);
+		size_t start = (size_t)getStartIndex();
 		if ((_index >= start) && (_index < (start + mVectorItems.size())))
 		{
 			IBDrawItemInfo data(_index, mIndexSelect, mIndexActive, mIndexAccept, mIndexRefuse, true, false);
@@ -421,7 +470,7 @@ namespace MyGUI
 	{
 		MYGUI_ASSERT_RANGE(_index, mItemsInfo.size(), "ItemBox::redrawItemAt");
 
-		size_t start = (size_t)(mFirstVisibleIndex * mCountItemInLine);
+		size_t start = (size_t)getStartIndex();
 		if ((_index >= start) && (_index < (start + mVectorItems.size())))
 		{
 			IBDrawItemInfo data(_index, mIndexSelect, mIndexActive, mIndexAccept, mIndexRefuse, true, false);
@@ -434,7 +483,7 @@ namespace MyGUI
 		MYGUI_ASSERT_RANGE_AND_NONE(_index, mItemsInfo.size(), "ItemBox::setIndexSelected");
 		if (_index == mIndexSelect) return;
 
-		size_t start = (size_t)(mFirstVisibleIndex * mCountItemInLine);
+		size_t start = (size_t)getStartIndex();
 
 		// сбрасываем старое выделение
 		if (mIndexSelect != ITEM_NONE)
@@ -604,14 +653,25 @@ namespace MyGUI
 
 	void ItemBox::notifyMouseDrag(Widget* _sender, int _left, int _top, MouseButton _id)
 	{
-		mouseDrag(_id);
+		// expand by genesis-3d 
+		if(mouseDrag(_id))
+		{
+		}
+		else if (dragClent(_left, _top, _id))
+		{
+		}
+		else
+		{
+			InputManager::getInstance().resetMouseCaptureWidget();
+		}
+
 	}
 
 	void ItemBox::notifyMouseButtonPressed(Widget* _sender, int _left, int _top, MouseButton _id)
 	{
-		mouseButtonPressed(_id);
-
-		if ( MouseButton::Left == _id)
+		DDContainer::mouseButtonPressed(_id);
+		scrollStop();
+		if ( MouseButton::Left == _id) 
 		{
 			size_t old = mIndexSelect;
 
@@ -645,6 +705,11 @@ namespace MyGUI
 	{
 		bool needEvent = !mStartDrop;
 		mouseButtonReleased(_id);
+		if (!isDraging())
+		{
+			preDrag();
+			checkScrollState();
+		}
 
 		if (needEvent)
 			eventNotifyItem(this, IBNotifyItemData(getIndexByWidget(_sender), IBNotifyItemData::MouseReleased, _left, _top, _id));
@@ -652,6 +717,11 @@ namespace MyGUI
 
 	void ItemBox::notifyRootMouseChangeFocus(Widget* _sender, bool _focus)
 	{
+		if (isDraging())
+		{
+			return;
+		}
+
 		size_t index = calcIndexByWidget(_sender);
 		if (_focus)
 		{
@@ -660,10 +730,15 @@ namespace MyGUI
 			// сбрасываем старый
 			if (mIndexActive != ITEM_NONE)
 			{
-				size_t old_index = mIndexActive;
+				int old_index = (int)mIndexActive;
 				mIndexActive = ITEM_NONE;
 				IBDrawItemInfo data(old_index, mIndexSelect, mIndexActive, mIndexAccept, mIndexRefuse, false, false);
-				requestDrawItem(this, mVectorItems[old_index - (mFirstVisibleIndex * mCountItemInLine)], data);
+				int index = old_index - getStartIndex();// expand by genesis-3d
+				if (0 <= index && index < (int)mVectorItems.size())
+				{
+					requestDrawItem(this, mVectorItems[old_index - getStartIndex()], data);
+				}
+
 			}
 
 			mIndexActive = index;
@@ -714,7 +789,7 @@ namespace MyGUI
 		}
 	}
 
-	void ItemBox::notifyScrollChangePosition(ScrollBar* _sender, size_t _index)
+	void ItemBox::notifyScrollChangePosition(ScrollBar* _sender, int _index)
 	{
 		if (_sender == mVScroll)
 		{
@@ -730,6 +805,15 @@ namespace MyGUI
 
 	void ItemBox::notifyMouseWheel(Widget* _sender, int _rel)
 	{
+		if (mDraging)// expand by genesis-3d
+		{
+			return;
+		}
+		if (ScrollStop != mScrollState)// expand by genesis-3d
+		{
+			scrollStop();
+		}
+
 		if (mAlignVert)
 		{
 			if (mContentSize.height <= 0) return;
@@ -787,7 +871,455 @@ namespace MyGUI
 		if (nullptr != mHScroll) mHScroll->setScrollPosition(mContentPosition.left);
 	}
 
-	void ItemBox::setContentPosition(const IntPoint& _point)
+	//------------------------------------------------------------------------------//
+	// expand by genesis-3d
+
+	void ItemBox::setVScrollVisible(bool _value)
+	{
+		mVisibleVScroll = _value;	
+		updateScrollSize();
+		updateScrollPosition();
+	}
+
+	int ItemBox::getStartIndex() const
+	{
+		if (mFirstVisibleIndex > 0)
+		{
+			return mFirstVisibleIndex * mCountItemInLine;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+
+	void ItemBox::setHScrollVisible(bool _value)
+	{
+		mVisibleHScroll = _value;		
+		updateScrollSize();
+		updateScrollPosition();
+	}
+
+	bool ItemBox::isVScrollVisible() const
+	{
+		return mVisibleVScroll;
+	}
+
+	bool ItemBox::isHScrollVisible() const
+	{
+		return mVisibleHScroll;
+	}
+	inline float __lerp(float x, float y, float scale)
+	{
+		return x + (y - x) * scale;
+	}
+
+	inline float __abs(float x)
+	{
+		if (x < 0)
+		{
+			return -x;
+		}
+		return x;
+	}
+
+	inline float __dragLerp(float overflow, float length, float preCoord, float currentCoord)
+	{
+		float scale = overflow / (float)length;
+		if (scale >= 1.0f)
+		{
+			return preCoord;
+		}
+		return __lerp(currentCoord, preCoord, scale);
+	}
+
+	float ItemBox::defualtSpeed() const
+	{
+		float len = mAlignVert ? (float)mSizeItem.height : (float)mSizeItem.width;
+		return len * gDefualSpeedWeight;
+	}
+
+	bool ItemBox::headEmpty() const
+	{
+		return (mPreCoord < 0.0f);
+	}
+
+	bool ItemBox::tailEmpty() const
+	{
+		float sizeItem = mAlignVert ? (float)mSizeItem.height : (float)mSizeItem.width;
+		float clientSize = mAlignVert ? (float)mClient->getHeight() : (float)mClient->getWidth();
+		float button = clientSize - (sizeItem * mCountLines - mPreCoord);
+		return (button > 0.0f); //button empty.
+	}
+
+	int ItemBox::dragOperator(int _current, int _length, int _sizeItem)
+	{
+		float bias = (float)(_current - mPreMouse); // mouse move.
+		if (bias > gDragBias || gDragBias < -bias)
+		{
+			resetCurrentActiveItem();
+		}
+
+		float out = mPreCoord - bias; // new content pos.
+		if (out < 0.0f)// headEmpty.
+		{
+			if (bias > 0.0f)
+			{
+				out = __dragLerp(-out, (float)_length, mPreCoord, out);
+			}
+		}
+		else
+		{
+			float button = _length - (_sizeItem * mCountLines - out);
+			if (button > 0.0f) //tailEmpty.
+			{
+				if (bias < 0.0f)
+				{
+					out = __dragLerp(button, (float)_length, mPreCoord, out);
+				}
+			}
+		}
+
+		dragMove(out - mPreCoord);
+
+		mPreCoord = out;
+		mPreMouse = _current;
+		return (int)out;
+
+	}
+
+	void ItemBox::onClientDragBegin(Widget* _sender, int _left, int _top, MouseButton _id)
+	{
+		preDrag();
+		ScrollViewBase::onClientDragBegin(_sender, _left, _top, _id);
+	}
+
+	void ItemBox::onClientDragEnd(Widget* _sender)
+	{
+		checkScrollState();
+		ScrollViewBase::onClientDragEnd(_sender);
+	}
+
+	void ItemBox::onClientDrag(Widget* _sender, int _left, int _top, MouseButton _id)
+	{
+		if (MouseButton::Left == _id)
+		{				
+			if (mAlignVert)
+			{
+				mContentPosition.top = dragOperator(_top, mClient->getHeight(), mSizeItem.height);
+			}
+			else
+			{
+				mContentPosition.left = dragOperator(_left, mClient->getWidth(), mSizeItem.width);
+			}
+			updateContentPosition(mContentPosition);
+
+			if (nullptr != mVScroll) mVScroll->setScrollPosition(mContentPosition.top, true);
+			if (nullptr != mHScroll) mHScroll->setScrollPosition(mContentPosition.left, true);
+		}
+	}
+
+	void ItemBox::notifyScrollBarPress(Widget* _sender, int _left, int _top, MouseButton _id)
+	{
+		if (ScrollInertia == mScrollState && _id == MouseButton::Left)
+		{
+			scrollStop();
+		}
+	}
+
+	void ItemBox::pushContentPosition()
+	{
+		if (mAlignVert)
+		{
+			mContentPosition.top = (int)mPreCoord;
+		}
+		else
+		{
+			mContentPosition.left = (int)mPreCoord;
+		}
+
+		updateContentPosition(mContentPosition);
+
+		if (nullptr != mVScroll) mVScroll->setScrollPosition(mContentPosition.top, true);
+		if (nullptr != mHScroll) mHScroll->setScrollPosition(mContentPosition.left, true);
+	}
+
+	void ItemBox::finalSpeed()
+	{
+		if (mTimeCounter > gSpeedTime)
+		{
+			testSpeed();
+		}
+		else if (mTimeCounter > gTinyTime)
+		{
+			float speed = mMoveCounter / gSpeedTime;
+			float mini = speed * gSpeedLerpWeight;
+			mScrollSpeed = __lerp(mScrollSpeed, speed, gSpeedLerpWeight * (mTimeCounter / gSpeedTime));
+			if (__abs(mScrollSpeed) < __abs(mini))
+			{
+				mScrollSpeed = mini;
+			}
+		}
+		else
+		{
+			resetCounter();
+		}
+	}
+
+	void ItemBox::resetCounter()
+	{
+		mTimeCounter = 0.0f;
+		mMoveCounter = 0.0f;
+	}
+
+	void ItemBox::testSpeed()
+	{
+		float speed = mMoveCounter / gSpeedTime;
+		mScrollSpeed = __lerp(mScrollSpeed, speed, gSpeedLerpWeight);
+
+		resetCounter();
+	}
+
+	void ItemBox::dragMove(float move)
+	{
+		mMoveCounter += move;
+	}
+	void ItemBox::checkScrollState()
+	{
+		finalSpeed();
+		resetCounter();
+
+		if (headEmpty())
+		{
+			mScrollState = ScrollOverflow;
+		}
+		else
+		{
+			if (tailEmpty())
+			{
+				mScrollState = ScrollOverflow;
+			}
+			else
+			{
+				float defualt_speed = defualtSpeed();
+				if (-defualt_speed < mScrollSpeed && mScrollSpeed < defualt_speed)
+				{
+					mScrollState = ScrollStop;
+					mScrollSpeed = 0.0f;
+				}
+				else
+				{
+					mScrollState = ScrollInertia;
+				}
+
+			}
+		}
+	}
+
+	void ItemBox::preDrag()
+	{
+		const IntPoint& point = InputManager::getInstance().getLastPressedPosition(MouseButton::Left);
+		if (mAlignVert)
+		{
+			mPreCoord = (float)mContentPosition.top;
+			mPreMouse = point.top;
+		}
+		else
+		{
+			mPreCoord = (float)mContentPosition.left;
+			mPreMouse = point.left;
+		}
+		scrollStop();
+	}
+
+	void ItemBox::scrollStop()
+	{
+		resetCounter();
+		mScrollSpeed = 0.0f;
+		mScrollState = ScrollStop;
+	}
+
+	void ItemBox::scrollOverflow(float time)
+	{
+		mTimeCounter += time;
+		if (headEmpty())
+		{
+			if (mTimeCounter < gOverflowTime)
+			{
+				float coord = mPreCoord;
+				mPreCoord = __lerp(mPreCoord, 0, mTimeCounter / gOverflowTime);
+				pushContentPosition();
+				mPreCoord = coord;
+			}
+			else
+			{
+				mPreCoord = 0;
+				pushContentPosition();
+				scrollStop();
+			}
+		}
+		else
+		{
+			float sizeItem = mAlignVert ? (float)mSizeItem.height : (float)mSizeItem.width;
+			float clientSize = mAlignVert ? (float)mClient->getHeight() : (float)mClient->getWidth();
+			float head = (sizeItem * mCountLines) - clientSize;
+			if (head < 0.0f)
+			{
+				head = 0.0f;
+			}
+
+			if (mTimeCounter < gOverflowTime)
+			{
+				float coord = mPreCoord;
+				mPreCoord = __lerp(mPreCoord, head, mTimeCounter / gOverflowTime);
+				pushContentPosition();
+				mPreCoord = coord;
+			}
+			else
+			{
+				mPreCoord = head;
+				pushContentPosition();
+				scrollStop();		
+
+			}
+		}
+
+	}
+
+	void ItemBox::scrollForceOverflow(float time)
+	{
+		mTimeCounter += time;
+		if (mTimeCounter > gOverflowTime)
+		{
+			time = gOverflowTime - (mTimeCounter - time);
+			mPreCoord += mScrollSpeed * time;
+			resetCounter();
+			mScrollState = ScrollOverflow;
+		}
+		else
+		{
+			mPreCoord += mScrollSpeed * time;
+			float clientSize = mAlignVert ? (float)mClient->getHeight() : (float)mClient->getWidth();
+			float limit = clientSize * gCriticalForceOverflow;
+			if (mPreCoord < -limit)
+			{
+				mPreCoord = -limit;
+				resetCounter();
+				mScrollState = ScrollOverflow;
+			}
+			else
+			{
+				float sizeItem = mAlignVert ? (float)mSizeItem.height : (float)mSizeItem.width;
+
+				float head = (sizeItem * mCountLines) - clientSize;
+				if (mPreCoord - head > limit)
+				{
+					mPreCoord = head + limit;
+				}
+			}
+
+		}
+		pushContentPosition();
+	}
+
+	void ItemBox::scrollInertia(float time)
+	{
+		float weight = 1.0f - mTimeCounter * gSpeedDown;
+		if (weight > 0.0f)
+		{
+			float speed = mScrollSpeed * weight;
+			if (-gCriticalSpeed < speed && speed < gCriticalSpeed)
+			{
+				scrollStop();
+			}
+			else
+			{
+				mTimeCounter += time;
+				mPreCoord += speed * time;
+
+				pushContentPosition();
+
+				if (headEmpty())
+				{
+					mScrollState = ScrollForceOverflow;
+					mScrollSpeed = speed;
+					resetCounter();
+				}
+				else if (tailEmpty())
+				{
+					mScrollState = ScrollForceOverflow;
+					mScrollSpeed = speed;
+					resetCounter();
+				}
+			}
+
+		}
+
+	}
+
+	void ItemBox::notifyTick(float time)
+	{
+		if (isDraging())
+		{
+			mTimeCounter += time;
+			if (mTimeCounter > gSpeedTime)
+			{
+				testSpeed();
+			}
+		}
+		else
+		{
+			switch(mScrollState)
+			{
+			case ScrollInertia:
+				{
+					scrollInertia(time);
+					break;
+				}
+			case ScrollForceOverflow:
+				{
+					scrollForceOverflow(time);
+					break;
+				}
+			case ScrollOverflow:
+				{
+					scrollOverflow(time);
+					break;
+				}
+			default:
+				break;
+			}
+		}
+
+	}
+
+	inline int _offset_check(int a, int b)
+	{
+		if (a < 0)
+		{
+			int t = (-a) % b;
+			return b - t;
+		}
+		else
+		{
+			return a % b;
+		}
+	}
+
+	inline int _index_check(int a, int b)
+	{
+		if (a < 0)
+		{
+			return (int)(a / (float)b) - 1;
+		}
+		else
+		{
+			return a / b;
+		}
+	}
+	//------------------------------------------------------------------------------//
+
+	void ItemBox::updateContentPosition(const IntPoint& _point)
 	{
 		mContentPosition = _point;
 
@@ -795,17 +1327,22 @@ namespace MyGUI
 
 		if (mAlignVert)
 		{
-			mFirstVisibleIndex = mContentPosition.top / mSizeItem.height;
-			mFirstOffsetIndex = mContentPosition.top % mSizeItem.height;
+			mFirstVisibleIndex = _index_check(mContentPosition.top , mSizeItem.height);	// expand by genesis-3d
+			mFirstOffsetIndex = _offset_check(mContentPosition.top , mSizeItem.height);	// expand by genesis-3d
 		}
 		else
 		{
-			mFirstVisibleIndex = mContentPosition.left / mSizeItem.width;
-			mFirstOffsetIndex = mContentPosition.left % mSizeItem.width;
+			mFirstVisibleIndex = _index_check(mContentPosition.left , mSizeItem.width);	// expand by genesis-3d
+			mFirstOffsetIndex = _offset_check(mContentPosition.left , mSizeItem.width);	// expand by genesis-3d
 		}
 
 		_updateAllVisible(old != mFirstVisibleIndex);
 		_resetContainer(true);
+	}
+
+	void ItemBox::setContentPosition(const IntPoint& _point)
+	{
+		updateContentPosition(_point);
 	}
 
 	void ItemBox::redrawAllItems()
@@ -820,7 +1357,7 @@ namespace MyGUI
 
 	size_t ItemBox::calcIndexByWidget(Widget* _widget)
 	{
-		return *_widget->_getInternalData<size_t>() + (mFirstVisibleIndex * mCountItemInLine);
+		return *_widget->_getInternalData<size_t>() + getStartIndex();
 	}
 
 	IntSize ItemBox::getContentSize()
@@ -922,6 +1459,14 @@ namespace MyGUI
 	{
 		if (_key == "VerticalAlignment")
 			setVerticalAlignment(utility::parseValue<bool>(_value));
+		else if (_key == "HScrollVisible")
+		{
+			setHScrollVisible(utility::parseValue<bool>(_value));
+		}
+		else if (_key == "VScrollVisible")
+		{
+			setVScrollVisible(utility::parseValue<bool>(_value));
+		}
 		else
 		{
 			Base::setPropertyOverride(_key, _value);

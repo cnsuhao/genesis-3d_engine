@@ -28,10 +28,10 @@ THE SOFTWARE.
 
 #if __WIN32__
 
-#include "input/win32/win32inputwindowsource.h"
+#include "input/win32/win32inputwebwindowsource.h"
 namespace Input
 {
-	class InputWindowSource : public Win32Input::Win32InputWindowSource
+	class InputWindowSource : public Win32Input::Win32InputWebWindowSource
 	{
 		__DeclareClass(InputWindowSource);
 	};

@@ -254,6 +254,7 @@ SET ( SCRIPTFEATURE_HEADER_FILES
 	scriptfeature/script_root_instance.h
 	scriptfeature/script_IAP_instance.h
 	scriptfeature/script_render_buffer_filter.h
+	scriptfeature/script_app.h
 )
 
 
@@ -273,6 +274,7 @@ SET ( SCRIPTFEATURE_SOURCE_FILES
 	scriptfeature/script_root_instance.cc
 	scriptfeature/script_IAP_instance.cc
 	scriptfeature/script_render_buffer_filter.cc
+	scriptfeature/script_app.cc
 )
 
 #scriptfeature inc folder
@@ -393,8 +395,13 @@ SET ( GUIFEATURE_FILES
 	guifeature/guievent.cc
 	guifeature/FontFeature.h
 	guifeature/FontFeature.cc
-	
-	
+
+)
+SET ( JNI_FILES 
+	Jni/imejni.h
+	Jni/imejni.cc	
+	Jni/jnihelper.h
+	Jni/jnihelper.cc	
 )
 SET ( GUIBIND_FILES 
 	guibind/scriptbind_gui.cc
@@ -670,6 +677,11 @@ SOURCE_GROUP(
 	${GUIFEATURE_FILES}
 )
 SOURCE_GROUP(
+	"Jni"
+	FILES
+	${JNI_FILES}
+)
+SOURCE_GROUP(
 	"GuiBind"
 	FILES
 	${GUIBIND_FILES}
@@ -815,6 +827,7 @@ ADD_LIBRARY(
 	${SPRITEBACTH_FILES}
 	${GUIFEATURE_FILES}
 	${GUIBIND_FILES}
+	${JNI_FILES}
  )
 
 #Organize projects into folders

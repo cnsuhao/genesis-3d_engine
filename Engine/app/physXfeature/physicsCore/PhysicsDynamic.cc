@@ -536,13 +536,14 @@ namespace App
 		{
 			return 0.01f;
 		}
+
 		bool _needUpdate = false;
+		SizeT _invalidShapeCount = 0;
 		for ( int i=0; i<m_arrPhysicsShapePtr.Size(); ++i )
 		{
-			if ( !m_arrPhysicsShapePtr[i]->IsValid() )
+			if ( !m_arrPhysicsShapePtr[i]->IsValid())
 			{
-				//m_pPxActor->setMass(0.01f);
-				//return 0.01f;
+				_invalidShapeCount++;
 				continue;
 			}
 			if ( m_arrPhysicsShapePtr[i]->IsMassUpdate() )
@@ -554,6 +555,11 @@ namespace App
 		if ( _needUpdate )
 		{
 			UpdateEntityMass();
+		}
+
+		if (_invalidShapeCount == m_arrPhysicsShapePtr.Size())
+		{
+			m_pPxActor->setMass(0.01f);
 		}
 		return m_pPxActor->getMass();
 	}

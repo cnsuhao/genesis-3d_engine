@@ -79,6 +79,12 @@ namespace Graphic
 		// !!!!!!internal call!!!!!  for vis manage. 
 		const GPtr<Vis::VisEntity>& _GetVisEnt(void) const;
 
+#ifdef __GENESIS_EDITOR__
+		void SetEditorVisible(bool bVis);
+
+		bool IsEditorVisible() const;
+#endif
+
 	protected:
 		RenderObject();
 	private:
@@ -89,6 +95,10 @@ namespace Graphic
 		bool m_Projected;
 		bool mbReceiveShadow;
 		bool mbCastShadow;
+#ifdef __GENESIS_EDITOR__
+		bool m_bEditorVis;
+#endif
+
 	};
 
 	inline void RenderObject::SetLayerID(LayerID rl)
@@ -168,6 +178,18 @@ namespace Graphic
 	{
 		return m_VisEnt;
 	}
+
+#ifdef __GENESIS_EDITOR__
+	inline void RenderObject::SetEditorVisible(bool bVis)
+	{
+		m_bEditorVis = bVis;
+	}
+
+	inline bool RenderObject::IsEditorVisible() const
+	{
+		return m_bEditorVis;
+	}
+#endif
 }
 
 #endif //_RENDEROBJECT_H_

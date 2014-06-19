@@ -43,27 +43,39 @@ namespace Graphic
 		virtual ~MaterialParam();
 		void SetStringValue(const Util::String& valStr);
 		const Util::String& GetStringValue() const;
+
 		void SetName(const Util::String& name);
 		const Util::String& GetName() const;
+
 		void SetDesc(const Util::String& desc);
 		const Util::String& GetDesc() const;
+
+		void SetHiddenInEditor(bool hiddenInEditor);
+		const bool GetHiddenInEditor() const;
+
+		void SetUseForColor(bool usedForColor);
+		const bool GetUseForColor() const;
+
 		const MaterialParameterType& GetType() const;
 		const bool IsConstType() const;
 		const bool IsTexType() const;
 
-	protected:		
+	protected:
 		MaterialParam();
 		Util::String	m_name;
 		Util::String    m_desc;
 		Util::String	m_valueStr;
 		MaterialParameterType m_type;
+		bool m_hiddenInEditor;
+		bool m_bUsedForColor;
 	};
 
 	typedef Util::Array<MaterialParam*> MaterialParamList;
 
 	inline MaterialParam::MaterialParam()
 	{
-		//empty
+		m_hiddenInEditor = false;
+		m_bUsedForColor = false;
 	};
 
 	inline MaterialParam::~MaterialParam()
@@ -91,10 +103,31 @@ namespace Graphic
 		return m_desc;
 	}
 
+	inline void MaterialParam::SetHiddenInEditor(bool hiddenInEditor)
+	{
+		m_hiddenInEditor = hiddenInEditor;
+	}
+
+	inline const bool MaterialParam::GetHiddenInEditor() const
+	{
+		return m_hiddenInEditor;
+	}
+
+	inline void MaterialParam::SetUseForColor(bool usedForColor)
+	{
+		m_bUsedForColor = usedForColor;
+	}
+
+	inline const bool MaterialParam::GetUseForColor() const
+	{
+		return m_bUsedForColor;
+	}
+
 	inline const MaterialParameterType& MaterialParam::GetType() const
 	{
 		return m_type;
 	}
+
 	inline const bool MaterialParam::IsConstType() const
 	{
 		return m_type >= eMaterialParamMatrix && m_type <= eMaterialParamFloat;
@@ -107,7 +140,21 @@ namespace Graphic
 
 	inline void MaterialParam::SetStringValue(const Util::String& valStr)
 	{
-		m_valueStr = valStr;
+		if (m_bUsedForColor)
+		{
+			Math::float4 val = valStr.AsFloat4();
+			
+			val.x() = Math::n_clamp(val.x(), 0.0f, 1.0f);
+			val.y() = Math::n_clamp(val.y(), 0.0f, 1.0f);
+			val.z() = Math::n_clamp(val.z(), 0.0f, 1.0f);
+			val.w() = Math::n_clamp(val.w(), 0.0f, 1.0f);
+			m_valueStr.SetFloat4(val);
+		}
+		else
+		{
+			m_valueStr = valStr;
+		}
+		
 	}
 
 	inline const Util::String& MaterialParam::GetStringValue() const
@@ -149,7 +196,19 @@ namespace Graphic
 
 	inline void MaterialParamVector::SetValue(const Math::float4& val)
 	{
-		m_value = val;
+		if (m_bUsedForColor)
+		{
+			m_value.x() = Math::n_clamp(val.x(), 0.0f, 1.0f);
+			m_value.y() = Math::n_clamp(val.y(), 0.0f, 1.0f);
+			m_value.z() = Math::n_clamp(val.z(), 0.0f, 1.0f);
+			m_value.w() = Math::n_clamp(val.w(), 0.0f, 1.0f);
+		}
+		else
+		{
+			m_value = val;
+		}
+
+		m_valueStr.SetFloat4(m_value);
 	}
 
 	inline const Math::float4& MaterialParamVector::GetValue() const

@@ -30,7 +30,31 @@ THE SOFTWARE.
 namespace App
 {
 	//using namespace MyGUI;
-	void ICallReg_ScriptGUI_ItemBox( void );
+	void ICall_ICallReg_ScriptGUI_ItemBox( void );
+
+	static void ICall_setVisibleVScroll(gconstpointer itembox_ptr, bool _value)
+	{
+		MyGUI::ItemBox* itembox = static_cast<MyGUI::ItemBox*>(itembox_ptr);
+		itembox->setVScrollVisible(_value);
+	}
+
+	static bool ICall_isVisibleVScroll(gconstpointer itembox_ptr)
+	{
+		MyGUI::ItemBox* itembox = static_cast<MyGUI::ItemBox*>(itembox_ptr);
+		return itembox->isVScrollVisible();
+	}
+
+	static void ICall_setVisibleHScroll(gconstpointer itembox_ptr, bool _value)
+	{
+		MyGUI::ItemBox* itembox = static_cast<MyGUI::ItemBox*>(itembox_ptr);
+		itembox->setHScrollVisible(_value);
+	}
+
+	static bool ICall_isVisibleHScroll(gconstpointer itembox_ptr)
+	{
+		MyGUI::ItemBox* itembox = static_cast<MyGUI::ItemBox*>(itembox_ptr);
+		return itembox->isHScrollVisible();
+	}
 
 	static void ICall_addItem(gconstpointer itembox_ptr, MonoObject* item_ptr_cs)
 	{
@@ -44,56 +68,47 @@ namespace App
 		itembox->removeAllItems();
 	}
 
-	
 	static uint ICall_getItemCount(gconstpointer itembox_ptr)
 	{
 		MyGUI::ItemBox* itembox = static_cast<MyGUI::ItemBox*>(itembox_ptr);
 		return itembox->getItemCount();
 	}
 
-	
 	static void ICall_insertItemAt(gconstpointer itembox_ptr, uint index, MonoObject* item)
 	{
 		MyGUI::ItemBox* itembox = static_cast<MyGUI::ItemBox*>(itembox_ptr);
 		itembox->insertItemAt(index, item);
 	}
 
-	
 	static void ICall_removeItemAt(gconstpointer itembox_ptr, uint index)
 	{
 		MyGUI::ItemBox* itembox = static_cast<MyGUI::ItemBox*>(itembox_ptr);
 		itembox->removeItemAt(index);
 	}
 
-	
 	static void ICall_redrawItemAt(gconstpointer itembox_ptr, uint index)
 	{
 		MyGUI::ItemBox* itembox = static_cast<MyGUI::ItemBox*>(itembox_ptr);
 		itembox->redrawItemAt(index);
 	}
 
-	
 	static void ICall_redrawAllItems(gconstpointer itembox_ptr)
 	{
 		MyGUI::ItemBox* itembox = static_cast<MyGUI::ItemBox*>(itembox_ptr);
 		itembox->redrawAllItems();
 	}
 
-
-	
 	static uint ICall_getIndexSelected(gconstpointer itembox_ptr)
 	{
 		MyGUI::ItemBox* itembox = static_cast<MyGUI::ItemBox*>(itembox_ptr);
 		return itembox->getIndexSelected();
 	}
 
-	
 	static void ICall_setIndexSelected(gconstpointer itembox_ptr, uint index)
 	{
 		MyGUI::ItemBox* itembox = static_cast<MyGUI::ItemBox*>(itembox_ptr);
 		itembox->setIndexSelected(index);
 	}
-
 	
 	static void ICall_clearIndexSelected(gconstpointer itembox_ptr)
 	{
@@ -101,20 +116,17 @@ namespace App
 		itembox->clearIndexSelected();
 	}
 
-	
 	static void ICall_setItemDataAt(gconstpointer itembox_ptr, uint index, MonoObject* data)
 	{
 		MyGUI::ItemBox* itembox = static_cast<MyGUI::ItemBox*>(itembox_ptr);
 		itembox->setItemDataAt(index, data);
 	}
-
 	
 	static void ICall_clearItemDataAt(gconstpointer itembox_ptr, uint index)
 	{
 		MyGUI::ItemBox* itembox = static_cast<MyGUI::ItemBox*>(itembox_ptr);
 		itembox->clearItemDataAt(index);
 	}
-
 	
 	static void ICall_setVerticalAlignment(gconstpointer itembox_ptr, mono_bool value)
 	{
@@ -163,11 +175,16 @@ namespace App
         ,{ "ScriptGUI.ItemBox::ICall_removeAllItems",               (void*)&ICall_removeAllItems}
 		,{ "ScriptGUI.ItemBox::ICall_redrawItemAt",                 (void*)&ICall_redrawItemAt}
 		,{ "ScriptGUI.ItemBox::ICall_redrawAllItems",               (void*)&ICall_redrawAllItems}
-		,{ "ScriptGUI.ItemBox::ICall_getIndexSelected",            (void*)&ICall_getIndexSelected}
+		,{ "ScriptGUI.ItemBox::ICall_getIndexSelected",				(void*)&ICall_getIndexSelected}
 		,{ "ScriptGUI.ItemBox::ICall_setIndexSelected",             (void*)&ICall_setIndexSelected}
 		,{ "ScriptGUI.ItemBox::ICall_clearIndexSelected",           (void*)&ICall_clearIndexSelected}
 		,{ "ScriptGUI.ItemBox::ICall_setItemDataAt",                (void*)&ICall_setItemDataAt}
 		,{ "ScriptGUI.ItemBox::ICall_clearItemDataAt",              (void*)&ICall_clearItemDataAt}
+
+		,{ "ScriptGUI.ItemBox::ICall_setVisibleVScroll",            (void*)&ICall_setVisibleVScroll}
+		,{ "ScriptGUI.ItemBox::ICall_isVisibleVScroll",             (void*)&ICall_isVisibleVScroll}
+		,{ "ScriptGUI.ItemBox::ICall_setVisibleHScroll",            (void*)&ICall_setVisibleHScroll}
+		,{ "ScriptGUI.ItemBox::ICall_isVisibleHScroll",             (void*)&ICall_isVisibleHScroll}
 
 		,{ "ScriptGUI.ItemBox::ICall_setVerticalAlignment",			(void*)&ICall_setVerticalAlignment}
 		,{ "ScriptGUI.ItemBox::ICall_getVerticalAlignment",			(void*)&ICall_getVerticalAlignment}

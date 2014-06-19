@@ -43,6 +43,18 @@ namespace ScriptRuntime
         extern private static void ICall_PhysicsBodyComponent_GetAngularVelocity(PhysicsBodyComponent self, out Vector3 velocity);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        extern private static void ICall_PhysicsBodyComponent_GetConstLineVelocity(PhysicsBodyComponent self, out Vector3 force);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        extern private static void ICall_PhysicsBodyComponent_SetConstLineVelocity(PhysicsBodyComponent self, ref Vector3 force);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        extern private static void ICall_PhysicsBodyComponent_SetConstAngularVelocity(PhysicsBodyComponent self, ref Vector3 torque);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        extern private static void ICall_PhysicsBodyComponent_GetConstAngularVelocity(PhysicsBodyComponent self, out Vector3 torque);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         extern private static void ICall_PhysicsBodyComponent_SetLinearDamping(PhysicsBodyComponent self, float scalar);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -79,22 +91,22 @@ namespace ScriptRuntime
         extern private static bool ICall_PhysicsBodyComponent_GetCollision(PhysicsBodyComponent self);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        extern private static void ICall_PhysicsBodyComponent_SetConstForce(PhysicsBodyComponent self, ref Vector4 force);
+        extern private static void ICall_PhysicsBodyComponent_SetConstForce(PhysicsBodyComponent self, ref Vector3 force);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        extern private static void ICall_PhysicsBodyComponent_GetConstForce(PhysicsBodyComponent self, out Vector4 force);
+        extern private static void ICall_PhysicsBodyComponent_GetConstForce(PhysicsBodyComponent self, out Vector3 force);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        extern private static void ICall_PhysicsBodyComponent_SetConstTorque(PhysicsBodyComponent self, ref Vector4 torque);
+        extern private static void ICall_PhysicsBodyComponent_SetConstTorque(PhysicsBodyComponent self, ref Vector3 torque);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        extern private static void ICall_PhysicsBodyComponent_GetConstTorque(PhysicsBodyComponent self, out Vector4 torque);
+        extern private static void ICall_PhysicsBodyComponent_GetConstTorque(PhysicsBodyComponent self, out Vector3 torque);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        extern private static void ICall_PhysicsBodyComponent_SetGravityCenter(PhysicsBodyComponent self, ref Vector4 pos);
+        extern private static void ICall_PhysicsBodyComponent_SetGravityCenter(PhysicsBodyComponent self, ref Vector3 pos);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        extern private static void ICall_PhysicsBodyComponent_GetGravityCenter(PhysicsBodyComponent self, out Vector4 pos);
+        extern private static void ICall_PhysicsBodyComponent_GetGravityCenter(PhysicsBodyComponent self, out Vector3 pos);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         extern private static void ICall_PhysicsBodyComponent_MovePostion(PhysicsBodyComponent self, ref Vector3 pos);
@@ -110,18 +122,6 @@ namespace ScriptRuntime
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         extern private static void ICall_PhysicsBodyComponent_AddForce(PhysicsBodyComponent self,ref Vector3 force, ForceType forcetype, bool bWakeUp);
-
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        extern private static void ICall_PhysicsBodyComponent_AddForceAtPos(PhysicsBodyComponent self, ref Vector3 force, ref Vector3 pos, ForceType forcetype, bool bWakeUp);
-
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        extern private static void ICall_PhysicsBodyComponent_AddLocalForceAtPos(PhysicsBodyComponent self, ref Vector3 force, ref Vector3 pos, ForceType forcetype, bool bWakeUp);
-
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        extern private static void ICall_PhysicsBodyComponent_AddForceAtLocalPos(PhysicsBodyComponent self, ref Vector3 force, ref Vector3 pos, ForceType forcetype, bool bWakeUp);
-
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        extern private static void ICall_PhysicsBodyComponent_AddLocalForceAtLocalPos(PhysicsBodyComponent self, ref Vector3 force, ref Vector3 pos, ForceType forcetype, bool bWakeUp);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         extern private static PhysicsShape ICall_PhysicsEntity_GetShapeAt(PhysicsBodyComponent self, int index);

@@ -38,6 +38,11 @@ THE SOFTWARE.
 #include "core/singleton.h"
 #include "util/array.h"
 
+namespace Resources
+{
+	class TextureResInfo;
+}
+
 namespace MyGUI
 {
 
@@ -96,25 +101,18 @@ namespace MyGUI
 		size_t mNumElemBytes;
 		ITextureInvalidateListener* mListener;
 
-
 		typedef unsigned char Byte;	
 		size_t m_width;
 		size_t m_height;
 		TextureBuffer m_texStream;
-		RenderBase::TextureHandle m_texHandle;
-		static Util::String s_resourcePath;
+		GPtr<Resources::TextureResInfo> m_texRes;
 		bool m_bManualCreate;
-
+		static Util::String s_resourcePath;
 	};
 
 	inline GenesisTexture::TextureBuffer& GenesisTexture::GetBuffer()
 	{
 		return m_texStream;
-	}
-
-	inline RenderBase::TextureHandle GenesisTexture::GetTextureHandle() const
-	{
-		return m_texHandle;
 	}
 
 

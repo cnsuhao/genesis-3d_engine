@@ -51,8 +51,20 @@ namespace Particles
 		mTexStart(0),
 		mTexEnd(1)
 	{
+		mAffectType = AT_Texture;
 		mName = "TextureAnimatorAffector";
 		mMinMaxTexAnimation.SetCurveState(Math::MinMaxCurve::Curve);
+		Util::Array<Math::float2> _list;
+		Util::Array<bool> _type;
+		_list.Append(Math::float2(0,0));
+		_type.Append(true);
+		_type.Append(true);
+		_list.Append(Math::float2(0.5,0.5));
+		_list.Append(Math::float2(0.5,0.5));
+		_list.Append(Math::float2(1,1));
+		_type.Append(true);
+		_type.Append(true);
+		mMinMaxTexAnimation.SetCurveFromArray(_list,_type);
 	}
 	//--------------------------------------------------------------------------------
 	void TextureAnimatorAffector::_onActivate(void)
@@ -125,7 +137,7 @@ namespace Particles
 		if(!mEnable)
 			return;
 
-		float percent = (particle->mTotalTimeToLive - particle->mTimeToLive)/particle->mTotalTimeToLive;
+		float percent = particle->mTimeFraction;
 
 		float time = mCycles * percent;
 		float texCoordIndex = 0;

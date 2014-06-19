@@ -36,7 +36,7 @@ namespace App
 	RootActor::RootActor()
 		:mScene(NULL)
 	{
-		mName.Format("__scene_name_%d",(int)this);
+		mName.Format("__scene_name_%d",(intptr_t)this);
 		SetTagID(0xffffffff);
 	}
 
@@ -103,7 +103,8 @@ namespace App
 		if(apply)
 		{
 			PhysicsServer::Instance()->SetGravity(mEnvironment.graivty);
-			PhysicsServer::Instance()->SetSleepThreshold(mEnvironment.sleepVel);
+			//屏蔽睡眠动量
+			//PhysicsServer::Instance()->SetSleepThreshold(mEnvironment.sleepVel);
 			PhysicsServer::Instance()->SetMaxAngularVelocity(mEnvironment.maxAngular);
 			PhysicsServer::Instance()->SetDefaultMaterial(mEnvironment.defaultMat);
 			if(mEnvironment.layerIDArray.Size() == 32)
@@ -173,13 +174,17 @@ namespace App
 	void 
 	Scene::AddActor( GPtr<Actor>& pActor )
 	{
-		//当导入角色动画等原本就有层级结构的Actor时，就不能把他们挂在最顶层的mRoot上
-		if (pActor->GetParent())
+		if (pActor.isvalid())
 		{
-			return;
+			//当导入角色动画等原本就有层级结构的Actor时，就不能把他们挂在最顶层的mRoot上
+			if (pActor->GetParent())
+			{
+				return;
+			}
+			n_assert( mRoot.isvalid() );
+			mRoot->AddChild( pActor );
 		}
-		n_assert( mRoot.isvalid() );
-		mRoot->AddChild( pActor );
+
 	}
 	//------------------------------------------------------------------------
 	void 
@@ -208,6 +213,7 @@ namespace App
 		}
 
 		mRoot = RootActor::Create();
+		mRoot->SetLayerID(App::eSL_Assist);
 		mRoot->SetScene(this);
 		mRoot->Active(false);
 	}

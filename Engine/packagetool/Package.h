@@ -27,9 +27,9 @@ THE SOFTWARE.
 
 #include "core/refcounted.h"
 #include "core/ptr.h"
-#include "packageTool/FileFormat.h"
-#include "packageTool/FileTable.h"
-#include "packageTool/PackDef.h"
+#include "packagetool/FileFormat.h"
+#include "packagetool/FileTable.h"
+#include "packagetool/PackDef.h"
 #include "io/zipfs/ziparchive.h"
 namespace IO
 {

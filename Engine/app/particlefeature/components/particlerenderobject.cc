@@ -83,9 +83,18 @@ namespace App
 			if(renderData->mPartType == ParticleTarget::GPU)
 			{
 				gModleMaterix = particleRC->GetActor()->GetWorldTransform();
-				Math::matrix44 vp = particleRC->_getCurrentCamera()->GetViewProjTransform();
+				Graphic::Camera* camera = particleRC->_getCurrentCamera();
+				const Math::float4& upVector4 = camera->GetTransform().get_yaxis();
+				const Math::float4& cameraPos4 = camera->GetTransform().get_position(); 
+				const Math::float4& derivedPos4 = particleRC->GetActor()->GetWorldPosition();
+				Math::float4 dirVec4 = cameraPos4 - derivedPos4;
+				Math::float4 rightVec4 = Math::float4::cross3(upVector4,dirVec4);
+
+				Math::matrix44 vp = camera->GetViewProjTransform();
 				gModleMaterix = Math::matrix44::multiply(vp,gModleMaterix);
 				particleRC->GetParticleSystem()->SetShaderParam();
+				pGMP->SetVectorParam(eGShaderParticleUpVec,Math::float4::normalize(upVector4));
+				pGMP->SetVectorParam(eGShaderParticleRightVec,Math::float4::normalize(rightVec4));
 			}
 			if (renderData->mPartType == ParticleTarget::Mesh
 				|| renderData->mPartType == ParticleTarget::Decal)

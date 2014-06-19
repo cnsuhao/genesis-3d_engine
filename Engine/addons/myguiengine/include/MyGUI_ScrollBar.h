@@ -28,7 +28,8 @@
 namespace MyGUI
 {
 
-	typedef delegates::CMultiDelegate2<ScrollBar*, size_t> EventHandle_ScrollBarPtrSizeT;
+	//typedef delegates::CMultiDelegate2<ScrollBar*, size_t> EventHandle_ScrollBarPtrSizeT; old code
+	typedef delegates::CMultiDelegate2<ScrollBar*, int> EventHandle_ScrollBarPtrSizeT;// expand by genesis-3d
 
 	class MYGUI_EXPORT ScrollBar :
 		public Widget,
@@ -49,10 +50,10 @@ namespace MyGUI
 		/** Get scroll range */
 		size_t getScrollRange() const;
 
-		/** Set scroll position (value from 0 to range - 1) */
-		void setScrollPosition(size_t _value);
-		/** Get scroll position (value from 0 to range - 1) */
-		size_t getScrollPosition() const;
+
+		void setScrollPosition(int _value, bool _force = false);// expand by genesis-3d
+
+		int getScrollPosition() const;
 
 		/** Set scroll page
 			@param _value Tracker step when buttons pressed
@@ -105,6 +106,12 @@ namespace MyGUI
 		/** @copydoc Widget::setCoord(int _left, int _top, int _width, int _height) */
 		void setCoord(int _left, int _top, int _width, int _height);
 
+		// expand by genesis-3d -------------------------------------------
+		void setLimitRange(bool _value);
+		bool getLimitRange() const;
+		// ----------------------------------------------------------------
+
+
 		/*events:*/
 		/** Event : scroll tracker position changed.\n
 			signature : void method(MyGUI::ScrollBar* _sender, size_t _position)\n
@@ -118,8 +125,9 @@ namespace MyGUI
 		virtual void initialiseOverride();
 		virtual void shutdownOverride();
 
+		void updatePreActionOffset();// expand by genesis-3d
 		void updateTrack();
-		void TrackMove(int _left, int _top);
+		void TrackMove(int _left, int _top);// expand by genesis-3d
 
 		virtual void onMouseWheel(int _rel);
 
@@ -148,15 +156,19 @@ namespace MyGUI
 		size_t mSkinRangeStart;
 		size_t mSkinRangeEnd;
 
-		size_t mScrollRange;
-		size_t mScrollPosition;
-		size_t mScrollPage; // на сколько перещелкивать, при щелчке на кнопке
-		size_t mScrollViewPage; // на сколько перещелкивать, при щелчке по полосе
+		int mScrollRange;
+		//size_t mScrollPosition; old
+		int mScrollPosition;
+
+		int mScrollPage; // на сколько перещелкивать, при щелчке на кнопке
+		int mScrollViewPage; // на сколько перещелкивать, при щелчке по полосе
 
 		int mMinTrackSize;
 		bool mMoveToClick;
 
 		bool mVerticalAlignment;
+
+		bool mLimitRange;// expand by genesis-3d
 	};
 
 } // namespace MyGUI

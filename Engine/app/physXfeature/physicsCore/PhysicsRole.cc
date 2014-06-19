@@ -530,7 +530,7 @@ namespace App
 	{
 		if ( m_pController && m_pController->getActor() )
 		{
-			/*Math::vector f4Axis(0.f,0.f,1.f);
+			Math::vector f4Axis(0.f,0.f,1.f);
 			Math::scalar sRadian = (Math::scalar)(0.5f*PI);
 			Math::quaternion _tempRot = Math::quaternion::rotationaxis(f4Axis,sRadian);
 			_tempRot = Math::quaternion::multiply(quat,_tempRot);
@@ -538,12 +538,12 @@ namespace App
 			_pos.q.x = _tempRot.x();
 			_pos.q.y = _tempRot.y();
 			_pos.q.z = _tempRot.z();
-			_pos.q.w = _tempRot.w();*/
-			Math::vector dir = quat * Math::vector(0.0f,1.0f,0.0f);
-			PxVec3 pDir(dir.x(),dir.y(),dir.z());
-			pDir.normalize();
-			m_pController->setUpDirection(pDir);
-			//m_pController->getActor()->setGlobalPose(_pos);
+			_pos.q.w = _tempRot.w();
+			//Math::vector dir = quat * Math::vector(0.0f,1.0f,0.0f);
+			//PxVec3 pDir(dir.x(),dir.y(),dir.z());
+			//pDir.normalize();
+			//m_pController->setUpDirection(pDir);
+			m_pController->getActor()->setGlobalPose(_pos);
 		}
 	}
 

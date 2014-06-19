@@ -36,6 +36,7 @@ namespace Particles
 	//-----------------------------------------------------------------------
 	TextureRotatorAffector::TextureRotatorAffector(void) : ParticleAffector()
 	{
+		mAffectType = AT_Rotation;
 		mName = "TextureRotatorAffector";
 	}
 	//------------------------------------------------------------------------
@@ -49,7 +50,7 @@ namespace Particles
 
 		if(!GetEnable())
 			return;
-		float percent = (particle->mTotalTimeToLive - particle->mTimeToLive)/particle->mTotalTimeToLive;
+		float percent = particle->mTimeFraction;
 
 		float rotatorAngularVelocity = mMinMaxRotation.Calculate(percent,particle->mRandom0);
 

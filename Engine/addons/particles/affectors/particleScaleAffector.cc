@@ -37,7 +37,7 @@ namespace Particles
 	ScaleAffector::ScaleAffector(void) : ParticleAffector()
 		, mIsAxialScale(false)
 	{
-
+		mAffectType = AT_Scale;
 		mScaleX.SetScalar(1.0f);
 		mScaleY.SetScalar(1.0f);
 		mScaleZ.SetScalar(1.0f);
@@ -50,7 +50,7 @@ namespace Particles
 	{
 		if( !GetEnable())
 			return;
-		float percent = (particle->mTotalTimeToLive - particle->mTimeToLive)/particle->mTotalTimeToLive;
+		float percent = particle->mTimeFraction;
 
 		Math::float3 particleSize(mScaleX.Calculate(percent,particle->mRandom0),
 			mScaleY.Calculate(percent,particle->mRandom1),

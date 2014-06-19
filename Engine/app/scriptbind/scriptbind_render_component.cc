@@ -68,9 +68,7 @@ namespace App
 	static void ICall_RenderComponent_SetMaterialInstance( MonoObject* pMonoObj, int iSubMesh, MonoObject* pMonoInstance, mono_bool bCopy)
 	{
 		ScriptObjWrapper<RenderComponent> self( pMonoObj );
-
-		ScriptObjWrapper<Graphic::MaterialInstance> instance( pMonoInstance);
-		Graphic::MaterialInstance* materialInstance = instance.GetCppObjPtr();
+		Graphic::MaterialInstance* materialInstance = ScriptObjToCppPointer<Graphic::MaterialInstance>(pMonoInstance);
 		bool b = Utility_MonoBool(bCopy);
 
 		self->SetMaterialID( iSubMesh, materialInstance->GetMaterialID(), b);
@@ -126,8 +124,7 @@ namespace App
 		ScriptObjWrapper<RenderComponent> self( pMonoObj );
 		Util::String sParamName;
 		Utility_MonoStringToCppString( pMonoStrParamName, sParamName );
-		ScriptObjWrapper<Graphic::RenderToTexture> rtt( pMonoRTT );
-
+		Graphic::RenderToTexture* rtt = ScriptObjToCppPointer<Graphic::RenderToTexture>(pMonoRTT);
 		self->SetTexture( iSubMesh, sParamName, rtt->GetTextureHandle());
 	}
 	//--------------------------------------------------------------------------------------------------
@@ -166,8 +163,8 @@ namespace App
 	static void  ICall_RenderComponent_StandaloneRender( MonoObject* pMonoObj, MonoObject* material )
 	{
 		ScriptObjWrapper<RenderComponent> self( pMonoObj );
-		ScriptObjWrapper<Graphic::Material> mat( material );
-		GPtr<Graphic::Material> pMat = mat.GetCppObjPtr();
+		Graphic::Material*  mat = ScriptObjToCppPointer<Graphic::Material>(material);
+		GPtr<Graphic::Material> pMat = mat;
 		self->StandaloneRender(pMat);
 	}
 	//--------------------------------------------------------------------------------------------------

@@ -63,16 +63,44 @@ namespace Particles
 			mPrimDirty = true;
 			return;
 		}
-		Graphic::VertexBufferData2 vbd2;
-		Graphic::DynamicBuffer dvb;
-		_initSimpleGPUVertexBuffer(vbd2, quato);
-		dvb.SetSize(quato*sizeof(SimpleGPUParticleVertex));
-		SimpleGPUParticleVertex* particleVertex = dvb.GetBufferPtr<SimpleGPUParticleVertex>();
-		mParentSystem->SetupGPUParticles(particleVertex,quato);
 		mParentSystem->InitShaderParam();
+
+		Graphic::VertexBufferData2 vbd2;
+		Graphic::IndexBufferData2 ibd2;
+		/*
+		_initSpriteGPUVertexBuffer(vbd2, quato);
+		dvb.SetSize(quato*sizeof(SpriteGPUParticleVertex));
+		SpriteGPUParticleVertex* particleVertex = dvb.GetBufferPtr<SpriteGPUParticleVertex>();
+		mParentSystem->SetupSpriteGPUParticles(particleVertex,quato);
 		mPrimitiveHandle = Graphic::GraphicSystem::Instance()->CreatePrimitiveHandle(&vbd2);
 		mActiveVertexCount = quato;
 		Graphic::GraphicSystem::Instance()->UpdatePrimitiveHandle(mPrimitiveHandle, &dvb);
+		mPrimDirty = true;
+		mNeedPrimitive = false;
+		*/
+
+		mActiveVertexCount = 4*quato;
+		mActiveIndexCount = 6*quato;
+
+		vbd2.Setup(mActiveVertexCount,sizeof(BoardGPUParticleVertex),
+			RenderBase::BufferData::Static,RenderBase::PrimitiveTopology::TriangleList,true);
+
+		ibd2.Setup(mActiveIndexCount, RenderBase::BufferData::Static, RenderBase::IndexBufferData::Int16, true);
+
+		BoardGPUParticleVertex* particleVertex = vbd2.GetBufferPtr<BoardGPUParticleVertex>();
+		ushort* indicies = ibd2.GetBufferPtr<ushort>();
+
+		mParentSystem->SetupBoardGPUParticles(particleVertex,indicies,quato);
+		
+		_initBoardGPUVertexBuffer(vbd2,mActiveVertexCount);
+
+		if(mPrimitiveHandle.IsValid())
+		{
+			Graphic::GraphicSystem::Instance()->RemovePrimitive(mPrimitiveHandle);
+		}
+		mPrimitiveHandle = Graphic::GraphicSystem::Instance()->CreatePrimitiveHandle(&vbd2,&ibd2);
+
+
 		mPrimDirty = true;
 		mNeedPrimitive = false;
 	}

@@ -141,18 +141,22 @@ namespace GenesisMaterialMaker
 #endif
 			for (SizeT i = 0; i < m_matParamList.Size(); ++i)
 			{
+				
 				if(m_matParamList[i]->GetType() == Graphic::eMaterialParamTexture2D)
 				{
 					static_cast<Graphic::MaterialParamTex2D*>(m_matParamList[i])->SetHandle(tex2DHandle);
+					static_cast<Graphic::MaterialParamTex2D*>(m_matParamList[i])->SetStringValue("sys:white.jpg");
 				}
 #if __WIN32__ && RENDERDEVICE_D3D9
 				else if (m_matParamList[i]->GetType() == Graphic::eMaterialParamTexture3D)
 				{
 					static_cast<Graphic::MaterialParamTex3D*>(m_matParamList[i])->SetHandle(tex3DHandle);
+					static_cast<Graphic::MaterialParamTex3D*>(m_matParamList[i])->SetStringValue("sys:Random3D.dds");
 				}
 				else if(m_matParamList[i]->GetType() == Graphic::eMaterialParamTextureCUBE)
 				{
 					static_cast<Graphic::MaterialParamTexCube*>(m_matParamList[i])->SetHandle(texCubeHandle);
+					static_cast<Graphic::MaterialParamTex3D*>(m_matParamList[i])->SetStringValue("sys:whitecube.dds");
 				}
 #endif
 			}

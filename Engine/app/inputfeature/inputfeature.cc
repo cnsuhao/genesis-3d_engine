@@ -153,5 +153,14 @@ InputFeature::OnEndFrame()
 	// clear the input of this frame
 	m_inputServer->EndFrame();
 }
-
+//------------------------------------------------------------------------------
+/**
+*/
+void
+InputFeature::OnResetEvent()
+{
+	InputEvent inputEvent;
+	inputEvent.SetType(InputEvent::Reset);
+	m_inputServer->PutEvent( inputEvent );
+}
 } // namespace Game

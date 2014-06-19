@@ -24,7 +24,7 @@ THE SOFTWARE.
 ****************************************************************************/
 #include "stdneb.h"
 #include "osxthread.h"
-#include "threading/threadruntimeinfo.h"
+#include "threading/ThreadRuntimeInfo.h"
 namespace OSX
 {
 __ImplementClass(OSX::OSXThread, 'THRD', Core::RefCounted);

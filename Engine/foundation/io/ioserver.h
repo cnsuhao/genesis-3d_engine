@@ -48,8 +48,8 @@ THE SOFTWARE.
 #include "io/assignregistry.h"
 #include "io/schemeregistry.h"
 #include "io/iointerfaceprotocol.h"
-#include "fileservice/fileservicesystem.h"
-#include "packageTool/PackageSystem.h"
+#include "FileService/fileservicesystem.h"
+#include "packagetool/PackageSystem.h"
 //------------------------------------------------------------------------------
 namespace IO
 {

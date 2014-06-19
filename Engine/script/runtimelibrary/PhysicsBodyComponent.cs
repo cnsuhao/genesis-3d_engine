@@ -67,6 +67,41 @@ namespace ScriptRuntime
                 ICall_PhysicsBodyComponent_SetLinearVelocity(this, ref value);
             }
         }
+
+        /// <summary>
+        /// 读写属性：物理体常速度
+        /// </summary>
+        public Vector3 ConstLineVelocity
+        {
+            get
+            {
+                Vector3 temp;
+                ICall_PhysicsBodyComponent_GetConstLineVelocity(this, out temp);
+                return temp;
+            }
+            set
+            {
+                ICall_PhysicsBodyComponent_SetConstLineVelocity(this, ref value);
+            }
+        }
+
+        /// <summary>
+        /// 读写属性：物理体常角速度
+        /// </summary>
+        public Vector3 ConstAngularVelocity
+        {
+            get
+            {
+                Vector3 temp;
+                ICall_PhysicsBodyComponent_GetConstAngularVelocity(this, out temp);
+                return temp;
+            }
+            set
+            {
+                ICall_PhysicsBodyComponent_SetConstAngularVelocity(this, ref value);
+            }
+        }
+
         /// <summary>
         /// 读写属性：物理体瞬时角速度
         /// </summary>
@@ -150,7 +185,7 @@ namespace ScriptRuntime
             }
         }
         /// <summary>
-        /// 读写属性：是否发生碰撞检测
+        /// 读写属性：是否启用物理模拟
         /// </summary>
         public bool Collision
         {
@@ -166,11 +201,11 @@ namespace ScriptRuntime
         /// <summary>
         /// 读写属性：给物理体添加恒力
         /// </summary>
-        public Vector4 ConstForce
+        public Vector3 ConstForce
         {
             get
             {
-                Vector4 temp;
+                Vector3 temp;
                 ICall_PhysicsBodyComponent_GetConstForce(this, out temp);
                 return temp;
             }
@@ -182,11 +217,11 @@ namespace ScriptRuntime
         /// <summary>
         /// 读写属性：给物理体添加恒定转矩
         /// </summary>
-        public Vector4 ConstTorque
+        public Vector3 ConstTorque
         {
             get
             {
-                Vector4 temp;
+                Vector3 temp;
                 ICall_PhysicsBodyComponent_GetConstTorque(this, out temp);
                 return temp;
             }
@@ -212,7 +247,7 @@ namespace ScriptRuntime
             ICall_PhysicsBodyComponent_MoveToPostion(this, ref f3Pos);
         }
         /// <summary>
-        /// 按照给定的角度选择物理体
+        /// 按照给定的角度旋转物理体
         /// </summary>
         /// <param name="rot">旋转角</param>
         public void RotationRotation(ref Quaternion rot)
@@ -238,51 +273,7 @@ namespace ScriptRuntime
             ICall_PhysicsBodyComponent_AddForce(this, ref force, forcetype, bWakeUp);
         }
         /// <summary>
-        /// 在世界位置添加力
-        /// </summary>
-        /// <param name="force">力</param>
-        /// <param name="pos">力的施加位置</param>
-        /// <param name="forcetype">力的类型</param>
-        /// <param name="bWakeUp">是否唤醒Actor</param>
-        public void AddForceAtPos(Vector3 force, Vector3 pos, ForceType forcetype, bool bWakeUp)
-        {
-            ICall_PhysicsBodyComponent_AddForceAtPos(this, ref force, ref pos, forcetype, bWakeUp);
-        }
-        /// <summary>
-        /// 在世界位置添加本地力
-        /// </summary>
-        /// <param name="force">力</param>
-        /// <param name="pos">力的施加位置</param>
-        /// <param name="forcetype">力的类型</param>
-        /// <param name="bWakeUp">是否唤醒Actor</param>
-        public void AddLocalForceAtPos(Vector3 force, Vector3 pos, ForceType forcetype, bool bWakeUp)
-        {
-            ICall_PhysicsBodyComponent_AddLocalForceAtPos(this, ref force, ref pos, forcetype, bWakeUp);
-        }
-        /// <summary>
-        /// 在本地位置添加力
-        /// </summary>
-        /// <param name="force">力</param>
-        /// <param name="pos">力的施加位置</param>
-        /// <param name="forcetype">力的类型</param>
-        /// <param name="bWakeUp">是否唤醒Actor</param>
-        public void AddForceAtLocalPos(Vector3 force, Vector3 pos, ForceType forcetype, bool bWakeUp)
-        {
-            ICall_PhysicsBodyComponent_AddForceAtLocalPos(this, ref force, ref pos, forcetype, bWakeUp);
-        }
-        /// <summary>
-        /// 在本地位置添加本地力
-        /// </summary>
-        /// <param name="force">力</param>
-        /// <param name="pos">力的施加位置</param>
-        /// <param name="forcetype">力的类型</param>
-        /// <param name="bWakeUp">是否唤醒Actor</param>
-        public void AddLocalForceAtLocalPos(Vector3 force, Vector3 pos, ForceType forcetype, bool bWakeUp)
-        {
-            ICall_PhysicsBodyComponent_AddLocalForceAtLocalPos(this,ref force,ref pos, forcetype, bWakeUp);
-        }
-        /// <summary>
-        /// 获取指定位置物理形状
+        /// 获取指定索引的物理形状
         /// </summary>
         /// <param name="index">指定位置</param>
         /// <returns>物理形状指针</returns>
@@ -395,7 +386,7 @@ namespace ScriptRuntime
             }
         }
         /// <summary>
-        /// 读写属性：角色控制器胶囊体高度
+        /// 读写属性：角色控制器胶囊体的中心
         /// </summary>
         public Vector3 LocalCenter
         {

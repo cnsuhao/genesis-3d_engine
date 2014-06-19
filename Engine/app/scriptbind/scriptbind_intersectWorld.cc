@@ -42,11 +42,10 @@ namespace App
 
 	static mono_bool ICall_IntersectWorld_IntersectActor(MonoObject* monoact, const Math::Ray& ray, uint select_mark,Math::float3& outpos)
 	{
-		ScriptObjWrapper<Actor>  pActor(monoact);
-
+		Actor* pActor = ScriptObjToCppPointer<Actor>(monoact);
 		float dis=0.0f;
 		AppUtil::IntersectResultList rsList;
-		bool ret =	AppUtil::IntersectUtil::IntersectActor(ray,pActor.GetCppObjPtr(), select_mark, false, dis);
+		bool ret =	AppUtil::IntersectUtil::IntersectActor(ray,pActor, select_mark, false, dis);
 
 		outpos = ray.PointAt(dis);
 

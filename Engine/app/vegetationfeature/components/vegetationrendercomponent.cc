@@ -53,6 +53,10 @@ namespace App
 	//------------------------------------------------------------------------
 	VegetationRenderComponent::VegetationRenderComponent()
 		:mVisible(true)
+		,mAttached(false)
+#ifdef __GENESIS_EDITOR__
+		 ,m_bEditorVis(true)
+#endif
 	{
 
 	}
@@ -114,7 +118,8 @@ namespace App
 	//------------------------------------------------------------------------
 	void VegetationRenderComponent::OnActivate()
 	{
-		if(mVisible)
+
+		if(mVisible)		
 		{
 			BuildRenderData();
 			AttachRenderObjects();
@@ -125,7 +130,11 @@ namespace App
 	//------------------------------------------------------------------------
 	void VegetationRenderComponent::OnDeactivate()
 	{
+#if __GENESIS_EDITOR__
+		if(m_bEditorVis)
+#else
 		if(mVisible)
+#endif
 		{
 			DeattachRenderObjects();
 			DiscardRenderData();
@@ -139,8 +148,29 @@ namespace App
 		Super::OnDestroy();
 	}
 	//------------------------------------------------------------------------
+#if __GENESIS_EDITOR__
+	void VegetationRenderComponent::SetEditorVisible(bool bVis)
+	{
+		m_bEditorVis = bVis;
+
+		if (IsActive())
+		{
+
+			for (int nObj = 0; nObj < mRenderDates.Size(); ++nObj)
+			{
+				mRenderDates[nObj]->SetEditorVisible(bVis);
+			
+			}
+		}
+	}
+#endif
+	//------------------------------------------------------------------------
 	void VegetationRenderComponent::SetVisible(bool bVisible)
 	{
+		if ( bVisible == mVisible )
+		{
+			return;
+		}
 		mVisible = bVisible;
 		if (IsActive())
 		{
@@ -490,7 +520,7 @@ namespace App
 	//------------------------------------------------------------------------
 	void VegetationRenderComponent::AttachRenderObjects(void)
 	{
-
+		mAttached = true;
 		for (int nObj = 0; nObj < mRenderDates.Size(); ++nObj)
 		{
 			_AttachRenderObject(mRenderDates[nObj]);
@@ -521,7 +551,7 @@ namespace App
 	void VegetationRenderComponent::DeattachRenderObjects(void)
 	{
 		//TODO : foreach object
-
+		mAttached = false;
 		for (int nObj = 0; nObj < mRenderDates.Size(); ++nObj)
 		{
 			_DeattachRenderObject(mRenderDates[nObj]);

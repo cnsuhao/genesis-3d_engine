@@ -247,9 +247,10 @@ namespace App
 		{
 			_scale = m_ActorScale.z();
 		}
-		Math::scalar tempHeight = m_Height * _scale;
-		Math::scalar realRadius = _GetRealRadius();
-		return Math::n_max(tempHeight - 2 * realRadius, 0.01f);
+		return Math::n_max(Math::n_abs(m_Height * _scale), 0.01f);
+// 		Math::scalar tempHeight = m_Height * _scale;
+// 		Math::scalar realRadius = _GetRealRadius();
+// 		return Math::n_max(tempHeight - 2 * realRadius, 0.01f);
 	}
 
 	Math::scalar PhysicsCapsuleShape::_GetRealRadius()

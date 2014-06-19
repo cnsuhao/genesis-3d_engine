@@ -126,6 +126,8 @@ namespace App
 			}
 			if ( GetRigidActor() )
 			{
+				LayerID actorLayerId = m_pComponent->GetActor()->GetLayerID();
+				SetGroupID(actorLayerId);
 				_pShape->CreatePxShape(GetRigidActor(),m_eGroup);
 				UpdateEntityMass();
 			}

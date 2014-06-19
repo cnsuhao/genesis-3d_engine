@@ -235,7 +235,7 @@ namespace App
 		GPtr<Actor> pActor = CreateActor();
 		n_assert( pActor );
 
-		pActor->CopyFrom( pTemplate, true, false, false);
+		pActor->CopyFrom( pTemplate,ActorPropertySet::s_defaultVal, true, false, false);
 		/*因为pTemplate一定是非激活状态，所以在复制完成之后要根据字典中保存的状态信息对pActor进行设置*/
 		index = mTemplateActors.FindIndex( actorTemplateName );
 		if (mTemplateActors.ValueAtIndex(index).activeFlag)
@@ -277,7 +277,7 @@ namespace App
 			return false;
 		}
 
-		pDestActor->CopyFrom( pTemplate, includePrivateProperty );
+		pDestActor->CopyFrom( pTemplate,ActorPropertySet::s_defaultVal, includePrivateProperty );
 		/*因为pTemplate一定是非激活状态，所以在复制完成之后要根据字典中保存的状态信息对pActor进行设置*/
 		index = mTemplateActors.FindIndex( actorTemplateName );
 		if (mTemplateActors.ValueAtIndex(index).activeFlag)
@@ -297,30 +297,18 @@ namespace App
 	const Util::String g_SingleTemplateExt = ".template";
 	bool ActorManager::SaveSingleTemplate( const Util::String& actorTemplateName, GPtr<Actor>& pSource, int iFileType, bool updateSource)
 	{
-		if ( iFileType<0 || 
-			iFileType>=Serialization::FT_NUM )
+		if ( !CheckSaveTemplate(pSource,iFileType) )
 		{
 			return false;
 		}
 		//Util::String templateName = g_SingleTemplateURI + actorTemplateName.ExtractFileName();
 		Util::String templateName = actorTemplateName;
 
-		bool bHasInstance = Serialization::SerializationServer::HasInstance();
-		if ( !pSource ||
-			!bHasInstance )
-		{
-			return false;
-		}
-
 		GPtr<Actor> pTemplate = Actor::Create();
-		pTemplate->CopyFrom(pSource, true, false, false);
-#ifdef __GENESIS_EDITOR__
-		pTemplate->SetFrozen(false,false);
-		pTemplate->SetLocked(false,false);
-#endif
-		// template must deactive and link false
-		RecursionUnLinkTemplate(pTemplate);	// 递归断开连接。避免嵌套
-		pTemplate->SetTemplateName( templateName );
+		SetTemplateActorProperty(pTemplate,pSource,ActorPropertySet::s_defaultVal);
+		pTemplate->SetTemplateName( templateName );	
+
+
 		if (updateSource)
 		{
 			//update the template name of pSource
@@ -328,8 +316,37 @@ namespace App
 			pSource->SetTemplateName( templateName );
 		}
 
+		if (!WriteTemplateFile(templateName,pTemplate,iFileType))
+		{
+			return false;
+		}
+
+		UpdateTemplateCache(templateName,pTemplate,iFileType);
+
+		return true;
+	}
+	//------------------------------------------------------------------------
+	bool ActorManager::CheckSaveTemplate(GPtr<Actor>& pSource, int iFileType)
+	{
+		if ( iFileType<0 || 
+			iFileType>=Serialization::FT_NUM )
+		{
+			return false;
+		}
+
+		bool bHasInstance = Serialization::SerializationServer::HasInstance();
+		if ( !pSource ||
+			!bHasInstance )
+		{
+			return false;
+		}
+		return true;
+	}
+	//------------------------------------------------------------------------
+	bool ActorManager::WriteTemplateFile( const Util::String& actorTemplateName, GPtr<Actor>& pTemplate,int iFileType)
+	{
 		Serialization::SerializationServer* serialize = Serialization::SerializationServer::Instance();
-		
+
 		Util::String filePath = actorTemplateName;
 
 		Serialization::FileType eFileType = static_cast<Serialization::FileType>( iFileType );
@@ -344,9 +361,30 @@ namespace App
 			pTemplate->Deactive(true);
 			return false;
 		}
+		return true;
+	}
+	//------------------------------------------------------------------------
+	void ActorManager::SetTemplateActorProperty(GPtr<Actor>& pTemplate,GPtr<Actor>& pSource, const ActorPropertySet& actorPropertySet)
+	{
+		pTemplate->CopyFrom(pSource,actorPropertySet, true, false, false);
 
+#ifdef __GENESIS_EDITOR__
+		pTemplate->SetFrozen(false,false);
+#endif
+
+		// template must deactive and link false
+		RecursionUnLinkTemplate(pTemplate);	// 递归断开连接。避免嵌套
+		
+
+	}
+
+	//------------------------------------------------------------------------
+	void ActorManager::UpdateTemplateCache(const Util::String& templateName, GPtr<Actor>& pTemplate,int iFileType)
+	{
 		/*在将actor保存为模板时，即使ator之前并非由模板创建，在模板缓冲中也有可能存在同名的模板，
 		所以序列化完成之后要更新模板缓冲*/
+
+		Serialization::FileType eFileType = static_cast<Serialization::FileType>( iFileType );
 		IndexT index = mTemplateActors.FindIndex( templateName );
 		TemplateInfo templateInfo(pTemplate, eFileType);
 		/*使用pTemplate创建完templateInfo后，pTemplate的激活状态已经保存在templateInfo中，
@@ -360,11 +398,9 @@ namespace App
 		{
 			mTemplateActors.Add(templateName, templateInfo);
 		}
-
-		return true;
 	}
 	//------------------------------------------------------------------------
-	void ActorManager::UpdateTemplatedActors( GPtr<Actor>& pActor )
+	void ActorManager::UpdateTemplatedActors( GPtr<Actor>& pActor, const ActorPropertySet& actorPropertySet)
 	{
 		const GPtr<Actor> pRootActor(this->_GetMainSceneRootActor());
 		const Util::String templateName = pActor->GetTemplateName().AsString();
@@ -389,14 +425,74 @@ namespace App
 				LoadSingleTemplate( templateName ,iFileType);
 			}
 
-			SaveSingleTemplate(templateName, pActor, iFileType);
-			RecursionUpdateTemplate(pActor, pRootActor, templateName);
+			
+			//SaveSingleTemplate(templateName, pActor, iFileType);
+
+			
+			if ( CheckSaveTemplate(pActor,iFileType) )
+			{				
+
+				GPtr<Actor> pTemplate = Actor::Create();
+				SetTemplateActorProperty(pTemplate,pActor,actorPropertySet);
+				pTemplate->SetTemplateName( templateName );	
+
+				Util::String templateActorName = pActor->GetName();
+				if ( actorPropertySet.TestFlag(ActorPropertySet::logic_exclusive_RootActorName) )
+				{					
+					IndexT index = mTemplateActors.FindIndex( templateName );
+					if ( InvalidIndex != index )
+					{
+						templateActorName = mTemplateActors.ValueAtIndex( index ).m_ptr->GetName();
+					}
+				} 				
+				
+				pTemplate->SetName(templateActorName);
+
+				
+				
+
+				if (WriteTemplateFile(templateName,pTemplate,iFileType))
+				{
+					UpdateTemplateCache(templateName,pTemplate,iFileType);
+				}
+			}
+			
+			
+
+			
+
+			//update actors created by template
+			RecursionUpdateTemplate(pActor, pRootActor, templateName,actorPropertySet);
 		}
 	}
 
 	//------------------------------------------------------------------------
+	void ActorManager::CopyFrom_PositionRotation(const GPtr<Actor>& pDest,const GPtr<Actor>& pSource)
+	{
+		//// first copy child
+		//{
+		//	SizeT count = pSource->GetChildCount();
+
+		//	for ( IndexT i = 0; i < count; ++i)
+		//	{
+		//		const GPtr<Actor>& pSourceChild = pSource->GetChild(i);
+		//		n_assert( pSourceChild.isvalid() );
+
+		//	
+		//		if(pSourceChild->GetRtti() == pDest->GetChild(i)->GetRtti() )
+		//		{
+		//			CopyFrom_PositionRotation(pDest->GetChild(i),pSourceChild);
+		//		}
+		//		
+		//	}
+		//}
+		//// copy property
+		//pDest->SetTransform( pSource->GetPosition(), pSource->GetRotation(), pDest->GetScale() );
+	}
+
+	//------------------------------------------------------------------------
 	void ActorManager::RecursionUpdateTemplate(const GPtr<Actor>&  sourceActor,const GPtr<Actor>&  destActor, 
-		const Util::String& actorTemplateName)
+		const Util::String& actorTemplateName, const ActorPropertySet& actorPropertySet)
 	{
 		if ( sourceActor.isvalid() && destActor.isvalid() && sourceActor.get() != destActor.get())
 		{
@@ -404,7 +500,10 @@ namespace App
 			{
 				//因为在actor的CopyFrom函数中会将actor自己Deactive掉，所以要将active状态保存，拷贝完成后恢复
 				bool bIsActive = destActor->IsActive();
-				destActor->CopyFrom( sourceActor, false,false, false);
+				Util::String templateRootActorName = destActor->GetName();
+				destActor->CopyFrom( sourceActor,actorPropertySet, true,false, false);
+				destActor->SetName(templateRootActorName);
+
 				destActor->SetScale(sourceActor->GetScale());
 				if (bIsActive)
 				{
@@ -420,7 +519,7 @@ namespace App
 				SizeT count = destActor->GetChildCount();
 				for ( IndexT index = 0; index < count; ++index )
 				{
-					RecursionUpdateTemplate( sourceActor, destActor->GetChild(index), actorTemplateName);
+					RecursionUpdateTemplate( sourceActor, destActor->GetChild(index), actorTemplateName,actorPropertySet);
 				}
 			}
 		}
@@ -555,6 +654,20 @@ namespace App
 			}
 		}
 		return NULL;
+	}
+
+	//------------------------------------------------------------------------
+	const Util::Array< GPtr<App::Actor> > ActorManager::FindActiveActorByModelName(const Util::String& modelName) const
+	{
+		ActorArray array;
+		for (SizeT i = mActiveActors.Size()-1; i >=0; --i)
+		{
+			if(mActiveActors.ValueAtIndex(i)->GetModelName() == modelName)
+			{
+				array.Append(mActiveActors.ValueAtIndex(i));
+			}
+		}
+		return array;
 	}
 
 	IndexT ActorManager::FindActiveActorIndex(App::Actor::FastId fastID) const

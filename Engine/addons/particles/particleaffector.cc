@@ -36,7 +36,7 @@ namespace Particles
 		: mParentSystem(NULL)
 		, mIsActive(false)
 		, mName("Affector")
-		, mAffectType(ParticleAffector::AT_DEFAULT)
+		, mAffectType(ParticleAffector::UnKnown)
 		, mEnable(true)
 	{
 
@@ -99,40 +99,6 @@ namespace Particles
 		ParticleAffector::_affectPositon(Particle* particle)
 	{
 		particle->mPosition += (particle->mDirection * (Math::scalar)mParentSystem->GetCurrentFrameTime() );
-	}
-	//------------------------------------------------------------------------
-	Math::scalar ParticleAffector::_calculateAffectSpecialisationFactor (Particle* particle)
-	{
-		switch (mAffectType)
-		{
-		case AT_DEFAULT:
-			return 1.0f;
-			break;
-		case AT_INCREASE:
-			{
-				if(particle)
-					return particle->mTimeFraction;
-				else
-					return 1.0f;
-			}
-			break;
-		case AT_DECREASE:
-			{
-				if (particle)
-				{
-					return 1.0f - particle->mTimeFraction;
-				}
-				else
-				{
-					return 1.0f;
-				}
-			}
-			break;
-
-		default:
-			return 1.0f;
-			break;
-		}
 	}
 	//--------------------------------------------------------------------------------
 	Math::MinMaxCurve*  ParticleAffector::getMinMaxCurve(ParticleCurveType pct)

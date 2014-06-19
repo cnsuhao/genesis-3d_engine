@@ -104,6 +104,9 @@ namespace Graphic
 		,m_quadRenderable(NULL)
 		,m_antiAliasQuality(RenderBase::AntiAliasQuality::None)
 		,m_bUseCallBack(true)
+#if __GENESIS_EDITOR__
+		,m_CamTarget(GAME)
+#endif
 	{
 		const RenderBase::DisplayMode& dm = GraphicSystem::Instance()->GetMainViewPortWindow()->GetDisplayMode();
 		m_setting.SetupPerspectiveFovRH(Graphic::Camera::PerspNormalFov, float(dm.GetWidth())/float(dm.GetHeight()), 1.0f, S_Camera_Far);// 0.1f

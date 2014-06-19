@@ -48,12 +48,18 @@ namespace App
 			Load_3(pReader);
 			return;
 		}
+		if (ver == 4)
+		{
+			Load_4(pReader);
+			return;
+		}
 
 		  n_error(" SimpleSkyComponentSerialization::Load unknown version " );
 	   }
 
 	   void Load_2( AppReader* pReader );
 	   void Load_3( AppReader* pReader );
+	   void Load_4( AppReader* pReader );
 	   void Save( AppWriter* pWriter );
 
     protected:
@@ -66,6 +72,8 @@ namespace App
    const char* s_sky3 = "simpleSky3";
    const char* s_sky4 = "simpleSky4";
    const char* s_sky5 = "simpleSky5";
+   const char* s_foglow = "skyfoglow";
+   const char* s_foghigh = "skyfoghigh";
 
 	void SimpleSkyComponentSerialization::Load_2( AppReader* pReader )
 	{
@@ -105,24 +113,45 @@ namespace App
 		pReader->SerializeString( s_sky5,   skyTex );
 		pSky->SetSkyTexByNum(5,skyTex);
 	}
+	void SimpleSkyComponentSerialization::Load_4(AppReader* pReader)
+	{
+		n_assert( mObject );
+		SimpleSkyComponent* pSky = const_cast<SimpleSkyComponent*>(mObject);
+		n_assert(pSky);
+
+		Load_3(pReader);
+		float low,high;
+		pReader->SerializeFloat(s_foglow,low);
+		pReader->SerializeFloat(s_foghigh,high);
+		for (int i = 0; i < 6; ++i)
+		{
+			pSky->SetSkyFogLowest(i,"_skyFogLow",low);
+			pSky->SetSkyFogHighest(i,"_skyFogHigh",high);
+		}
+		
+	}
 	void SimpleSkyComponentSerialization::Save(App::AppWriter *pWriter)
 	{
 		n_assert(mObject);
 		n_assert(pWriter);
 		SimpleSkyComponent* pSky = const_cast<SimpleSkyComponent*>(mObject);
-		//add by wangyanqing,2013.9.26
+		//2013.9.26
 	    pWriter->SerializeString( s_sky0, pSky->GetSkyTexByNum(0) );
 	    pWriter->SerializeString( s_sky1, pSky->GetSkyTexByNum(1) );
 		pWriter->SerializeString( s_sky2, pSky->GetSkyTexByNum(2) );
 		pWriter->SerializeString( s_sky3, pSky->GetSkyTexByNum(3) );
 		pWriter->SerializeString( s_sky4, pSky->GetSkyTexByNum(4) );
 		pWriter->SerializeString( s_sky5, pSky->GetSkyTexByNum(5) );
+		//2014.5.8
+		pWriter->SerializeFloat( s_foglow, pSky->GetSkyFogLowest() );
+		pWriter->SerializeFloat( s_foghigh, pSky->GetSkyFogHighest() );
 	}
 
 	Version SimpleSkyComponent::GetVersion() const
 	{
 		//return 2;
-		return 3;//add by wangyanqing,2013.9.26
+		//return 3;
+		return 4;//2014.5.8
 	}
 
 	void SimpleSkyComponent::Load( Version ver, AppReader* pReader, const Serialization::SerializationArgs* args )

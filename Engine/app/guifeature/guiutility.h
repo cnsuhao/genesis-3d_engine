@@ -368,7 +368,7 @@ namespace App
 	private:
 		static MyGUI::Widget* getRootWidget(MyGUI::Widget* widget);
 
-		static void onScrollChangePosition(MyGUI::ScrollBar* scroll_bar, size_t position);
+		static void onScrollChangePosition(MyGUI::ScrollBar* scroll_bar, int position);
 
 		// --------------------------------------- widget event ------------------------------------------------
 		static void onMouseLostFocus(MyGUI::Widget* _sender, MyGUI::Widget* _new);

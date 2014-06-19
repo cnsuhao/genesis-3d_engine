@@ -190,6 +190,12 @@ namespace Vegetation
 		Util::FixedArray<uchar>& GetIndices();
 		void GetReferenceResourceId(Util::Array<Resources::ReferenceResource>& list) const;
 
+#ifdef __GENESIS_EDITOR__
+		void SetEditorVisible(bool bVis);
+
+		bool IsVisible() const;
+#endif
+
 	protected:
 		void _onActive(void);
 		void _onDeactive(void);
@@ -238,6 +244,9 @@ namespace Vegetation
 
 		friend class VegetationServer;
 
+#ifdef __GENESIS_EDITOR__
+		bool m_bEditorVis;
+#endif
 	};
 
 	//--------------------------------------------------------------------------------
@@ -353,6 +362,18 @@ namespace Vegetation
 	{
 		return m_indices;
 	}
+
+#ifdef __GENESIS_EDITOR__
+	inline void VegetationObject::SetEditorVisible(bool bVis)
+	{
+		m_bEditorVis = bVis;
+	}
+
+	inline bool VegetationObject::IsVisible() const
+	{
+		return m_bEditorVis;
+	}
+#endif
 }
 
 #endif //__VEGETATION_OBJECT_H__

@@ -50,11 +50,5 @@ namespace ScriptRuntime
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         extern private static void ICall_Material_SetTextureResource(MaterialInstance self, String paramName, String id, int priority);
-
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        extern private static void ICall_Material_SetGlobalMatrix(GlobalShaderMatrix index, ref Matrix44 value);
-
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        extern private static void ICall_Material_SetGlobalVector(GlobalShaderVector index, ref Vector4 value);
     }
 }

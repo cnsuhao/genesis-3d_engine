@@ -49,6 +49,7 @@ namespace MyGUI
 	GenesisVertexBuffer::~GenesisVertexBuffer()
 	{
 		destroyVertexBuffer();
+		GenesisVertexBufferMgr::Instance()->RemoveVertexBuffer(this);
 	}
 
 	bool _createVertexComponent(Util::Array<RenderBase::VertexComponent>& vertexComponents)

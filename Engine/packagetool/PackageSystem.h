@@ -26,7 +26,7 @@ THE SOFTWARE.
 #define __PACKAGESYSTEM__
 #include "core/refcounted.h"
 #include "core/ptr.h"
-#include "packageTool/PackDef.h"
+#include "packagetool/PackDef.h"
 #include "io/stream.h"
 namespace Pack
 {

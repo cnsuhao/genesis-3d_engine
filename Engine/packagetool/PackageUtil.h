@@ -25,7 +25,7 @@ THE SOFTWARE.
 #ifndef __PACKAGE_UTIL_H__
 #define __PACKAGE_UTIL_H__
 #include <cassert>
-#include "packageTool/PackDef.h"
+#include "packagetool/PackDef.h"
 namespace Pack
 {
 	typedef void (*WarningCallBack)(const char* msg);

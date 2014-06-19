@@ -62,29 +62,37 @@ namespace Input
 	struct TouchEvent : public EventBase
 	{
 		int id;
+		Math::float2 pixelPos;
+		Math::float2 screenPos;
 		inline TouchEvent()
 			:id(-1)
 		{
 
 		}
-		inline TouchEvent(int id, InputEvent::Type event)
+		inline TouchEvent(int id, InputEvent::Type event,Math::float2 pixelPos,Math::float2 screenPos)
 			:EventBase(event)
 		{
 			this->id = id;
+			this->pixelPos = pixelPos;
+			this->screenPos = screenPos;
 		}
 	};
 
 	struct MouseButtonEvent : public EventBase
 	{
 		InputMouseButton::Code button;
+		Math::float2 pixelPos;
+		Math::float2 screenPos;
 		inline MouseButtonEvent()
 			:button(InputMouseButton::InvalidMouseButton)
 		{
 		}
-		inline MouseButtonEvent(InputMouseButton::Code button, InputEvent::Type event)
+		inline MouseButtonEvent(InputMouseButton::Code button, InputEvent::Type event,Math::float2 pixelPos,Math::float2 screenPos)
 			:EventBase(event)
 		{
 			this->button = button;
+			this->pixelPos = pixelPos;
+			this->screenPos = screenPos;
 		}
 	};
 

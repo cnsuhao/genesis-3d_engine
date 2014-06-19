@@ -211,7 +211,7 @@ void ProjectorRenderComponent::_UpdateProjector()
 			GPtr<Graphic::RenderObject > renderObj = renderObjs[i];
 
 			// skip the subRenderObject such as axis_X etc
-			if ( renderObj->GetLayerID() == eSL_Debug )
+			if ( renderObj->GetLayerID() == eSL_Assist )
 				continue;
 
 			GPtr<MeshRenderObject> meshRenderObj = renderObj.downcast<MeshRenderObject>();

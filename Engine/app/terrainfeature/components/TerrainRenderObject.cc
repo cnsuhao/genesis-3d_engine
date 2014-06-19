@@ -57,6 +57,9 @@ namespace App
 		SetTransform(world);
 		SetBoundingBox( node->GetLocalBoundingBox() );
 		SetLayerID(mOwner->GetActor()->GetLayerID());
+#ifdef __GENESIS_EDITOR__
+		SetEditorVisible(mOwner->IsEditorVisible());
+#endif
 	}
 
 	void TerrainRenderObject::AddToCollection(Graphic::RenderDataCollection* collection, const Graphic::RenderConfig* renderConfig)

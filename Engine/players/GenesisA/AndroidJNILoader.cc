@@ -32,11 +32,16 @@ THE SOFTWARE.
 #include "input/inputwindowsource.h"
 #include "input/android/androidinputsource.h"
 #include "input/android/androidtouchevent.h"
+#include "input/mobilekeyboardevent.h"
 
 #include "rendersystem/gles/OpenGLES.h"
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
 #include "addons/shadercompiler/ShadercompilerConfig.h"
+
+#include "app/Jni/Jnihelper.h"
+#include "addons/myguiengine/include/MyGUI_UString.h"
+#include "app/guifeature/scriptgui.h"
 
 using namespace Genesis;
 
@@ -219,6 +224,9 @@ extern "C" {
 	JNIEXPORT void JNICALL Java_org_genesis_lib_GenesisRenderer_nativeTouchesEnd(JNIEnv * env, jobject obj, jint pIDs, jfloat pXs, jfloat pYs);
 	JNIEXPORT void JNICALL Java_org_genesis_lib_GenesisRenderer_nativeTouchesCancel(JNIEnv * env, jobject obj, jintArray pIDs, jfloatArray pXs, jfloatArray pYs);
 	JNIEXPORT void JNICALL Java_org_genesis_lib_GenesisRenderer_nativeKeyDown(JNIEnv * env, jobject obj, jint pKeyCode);
+	JNIEXPORT void JNICALL Java_org_genesis_lib_GenesisRenderer_nativeInsertText(JNIEnv* env, jobject obj, jstring text);
+	JNIEXPORT void JNICALL Java_org_genesis_lib_GenesisRenderer_nativeDeleteBackward(JNIEnv* env, jobject thiz);
+	JNIEXPORT jstring JNICALL Java_org_genesis_lib_GenesisRenderer_nativeGetContentText();
 };	
 
 JNIEXPORT void Java_org_genesis_lib_GenesisRenderer_nativeConfig(JNIEnv*  env, jobject thiz, jstring gamedir, jstring scenename,jboolean bShader)
@@ -347,4 +355,80 @@ JNIEXPORT void Java_org_genesis_lib_GenesisRenderer_nativeKeyDown(JNIEnv * env, 
 JNIEXPORT void Java_org_genesis_lib_GenesisRenderer_nativeOnStop(JNIEnv * env, jobject obj)
 {
 	LOGI("-----------------------------nativeOnStop-----------------------------");
+}
+JNIEXPORT void Java_org_genesis_lib_GenesisRenderer_nativeInsertText(JNIEnv* env, jobject obj, jstring text)
+{
+	const char* pszText = env->GetStringUTFChars(text, NULL);
+	n_warning("insert text:%s",pszText);
+	
+	//jni GetStringUTFChars get string is utf8
+	MyGUI::UString guiString(pszText);
+	std::wstring wstr = guiString.asWStr();
+	
+	MyGUI::UString uiStr(wstr);
+
+	App::ScriptGui::SetFocusedEditboxCaption(uiStr);
+	MyGUI::InputManager::getInstance().setKeyFocusWidget(nullptr);
+	//// first run,and then modify
+	//for ( IndexT i = 0; i < wstr.length(); i++ )
+	//{
+	//	Input::MobileKeyboardEvent keyboardEvent;
+	//	keyboardEvent.SetType(Input::MoibleInputEvent::INPUT_EVENT_TYPE_KEY);
+	//	keyboardEvent.SetMotionType(Input::MobileKeyboardEvent::MOTION_EVENT_CHAR);
+	//	Input::Char characterCode = (Input::Char)wstr.at(i);
+	//	keyboardEvent.SetChar(characterCode);
+
+	//	const GPtr<Input::InputSource>& pInputSource = g_pApp->GetInputSource();
+	//	if (pInputSource.isvalid())
+	//	{
+	//		pInputSource.downcast<AndroidInput::AndroidInputSource>()->OnAndroidProc(&keyboardEvent);
+	//	}
+	//}
+	env->ReleaseStringUTFChars(text, pszText);
+	
+
+}
+JNIEXPORT void Java_org_genesis_lib_GenesisRenderer_nativeDeleteBackward(JNIEnv* env, jobject thiz)
+{
+	
+	n_warning("delete backward text");
+	Input::MobileKeyboardEvent keyboardEvent;
+	keyboardEvent.SetType(Input::MoibleInputEvent::INPUT_EVENT_TYPE_KEY);
+	keyboardEvent.SetMotionType(Input::MobileKeyboardEvent::MOTION_EVENT_KEY_DOWN);
+	keyboardEvent.SetKeycode(Input::InputKey::Back);
+
+	const GPtr<Input::InputSource>& pInputSource = g_pApp->GetInputSource();
+	if (pInputSource.isvalid())
+	{
+		pInputSource.downcast<AndroidInput::AndroidInputSource>()->OnAndroidProc(&keyboardEvent);
+
+		//send keyrelease
+		keyboardEvent.SetMotionType(Input::MobileKeyboardEvent::MOTION_EVENT_KEY_UP);
+		pInputSource.downcast<AndroidInput::AndroidInputSource>()->OnAndroidProc(&keyboardEvent);
+
+	}
+}
+
+JNIEXPORT jstring Java_org_genesis_lib_GenesisRenderer_nativeGetContentText()
+{
+	n_warning("get content text");
+	JNIEnv * env = 0;
+	if ( !App::JniHelper::GetEnv(&env) )
+	{
+		return 0;
+	}
+	const char * pszText = "jiu shi ai ni";
+	MyGUI::UString ustr = "";
+	if ( App::ScriptGui::s_pCurFocusEditBox )
+	{
+		MyGUI::EditBox* pEditBox = dynamic_cast<MyGUI::EditBox*>(App::ScriptGui::s_pCurFocusEditBox);
+		
+		if ( pEditBox )
+		{
+			ustr = pEditBox->getCaption();
+		}		
+	}
+	const char*  strUtf8 = ustr.asUTF8_c_str();
+	return env->NewStringUTF(strUtf8);
+	
 }

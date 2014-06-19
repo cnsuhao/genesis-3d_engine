@@ -26,6 +26,7 @@ THE SOFTWARE.
 #include "guiserver.h"
 #include "graphicsystem/GraphicSystem.h"
 #include "addons/myguiplatforms/include/MyGUI_GenesisPlatform.h"
+#include "basegamefeature/managers/timesource.h"
 #include "guifeature/gui.h"
 #include "guiroot.h"
 
@@ -112,23 +113,18 @@ namespace App
 	void GUIServer::OnWindowResized()
 	{
 		n_assert(IsOpen());
-		if (m_targetWindow)
-		{
-			const RenderBase::DisplayMode& dm = m_targetWindow->GetDisplayMode();
-			m_platform->getRenderManagerPtr()->windowResized(dm.GetWidth(), dm.GetHeight());
+		MyGUI::IntSize size = GUIServer::GetScreenSize();
 
-		}
-		else
-		{
-			m_platform->getRenderManagerPtr()->windowResized();
-		}
+		m_platform->getRenderManagerPtr()->windowResized(size.width, size.height);
+		
 		m_guiRoot.WinSizeChange();
 	}
 
 	void GUIServer::OnDeviceReseted()
 	{
 		n_assert(IsOpen());
-		m_platform->getRenderManagerPtr()->deviceReseted();
+		MyGUI::IntSize size = GUIServer::GetScreenSize();
+		m_platform->getRenderManagerPtr()->deviceReseted(size.width, size.height);
 	}
 
 	void GUIServer::InitGuiRootScript()
@@ -154,6 +150,25 @@ namespace App
 		const RenderBase::DisplayMode& dm = vpw->GetDisplayMode();
 		return MyGUI::IntSize(dm.GetWidth(), dm.GetHeight());//s
 	}
+
+	void GUIServer::SetResolution(const MyGUI::IntSize& size)
+	{
+		MyGUI::IntSize buffer = GUIServer::GetScreenSize();
+		MyGUI::GenesisRenderManager::getInstancePtr()->setResolution(size.width, size.height, buffer.width, buffer.height);
+	}
+	const MyGUI::IntSize& GUIServer::GetResolution()
+	{
+		return MyGUI::GenesisRenderManager::getInstancePtr()->getResolution();
+	}
+	bool GUIServer::AutoResolutionWidth()
+	{
+		return MyGUI::GenesisRenderManager::getInstancePtr()->autoResolutionWidth();
+	}
+	bool GUIServer::AutoResolutionHeight()
+	{
+		return MyGUI::GenesisRenderManager::getInstancePtr()->autoResolutionHeight();
+	}
+
 
 	bool GUIServer::StartTick(bool start)
 	{
@@ -348,7 +363,8 @@ namespace App
 			uilog += "\\gui.log";
 		}
 #endif
-		m_platform->initialise("General", uilog);		
+		MyGUI::IntSize buffer = GUIServer::GetScreenSize();
+		m_platform->initialise(buffer.width, buffer.height, "General", uilog);		
 
 		m_gui = n_new(Gui);
 		m_gui->initialise(m_coreFile.AsCharPtr());
@@ -378,7 +394,7 @@ namespace App
 			if (vpw->GetNeedUpdate())
 			{
 				Graphic::GraphicSystem::Instance()->SetCurrentTargetWindow(vpw, RenderBase::RenderTarget::ClearNone);
-				GetPlatform()->getRenderManagerPtr()->renderGUI();
+				GetPlatform()->getRenderManagerPtr()->renderGUI((float)App::GameTime::Instance()->GetFrameTime());
 			}
 
 		}

@@ -35,7 +35,7 @@ THE SOFTWARE.
 #include "io/archfs/archivefilesystem.h"
 #include "io/FileService/fileservicesystem.h"
 
-#include "packageTool/PackageSystem.h"
+#include "packagetool/PackageSystem.h"
 
 namespace IO
 {

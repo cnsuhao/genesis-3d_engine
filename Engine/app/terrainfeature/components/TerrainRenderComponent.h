@@ -114,6 +114,11 @@ namespace App
 		virtual bool GetCastShadow();
 		virtual void SetReceiveShadow( bool bReceiveShadow );
 		virtual bool GetReceiveShadow();
+
+#ifdef __GENESIS_EDITOR__
+		virtual void SetEditorVisible(bool bVis);
+#endif
+
 	protected:
 		Resources::TextureResInfo* _GetTextureParam(IndexT index,const Graphic::ShaderParamString& shdTexKey);
 		void _SetMaterialTextureParam(IndexT matIndex, const ShaderParamString& paramName, const Resources::ResourceId& texID, Resources::Priority priority = Resources::ResourcePriority::TextureDefault);
@@ -149,6 +154,8 @@ namespace App
 		void RebuildAllNodes();
 
 		void CheckRenderables();//called after material being setted
+
+		void CheckMaterials();
 
 		// Get all terrain renderobject
 		TerrainRenderComponent::TerrainRenderObjects GetAllRenderObjects();

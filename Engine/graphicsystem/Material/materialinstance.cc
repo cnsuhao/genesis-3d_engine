@@ -35,6 +35,7 @@ namespace Graphic
 		using namespace Resources;
 	GPtr<MaterialInstance> MaterialInstance::NullMaterial(NULL);
 	static uint sInstanceID = 1;//零位保留，表示空
+	static const uint sSortDefault = 1000; 
 	static const Util::String scUserDefTex="#UserDefTex";
 
 
@@ -42,8 +43,9 @@ namespace Graphic
 		, m_allLoaded(false)
 		, m_isbuild(false)
 		, m_materialID("")
+		, m_sort(sSortDefault)
 	{
-		m_sort = sInstanceID;
+		//m_sort = sSortDefault;
 		m_InstanceID = sInstanceID;
 		++sInstanceID;
 		//empty
@@ -200,7 +202,8 @@ namespace Graphic
 		if (ePFR_Succeed == ret)
 		{
 			mp->SetValue(val);
-			_SetConstantParamOld(paramName, Util::String::FromFloat4(val));
+			Util::String val1 = mp->GetStringValue();
+			_SetConstantParamOld(paramName, val1 );
 		}
 		return ret;
 	}
@@ -240,6 +243,7 @@ namespace Graphic
 				{
 					MaterialParamVector* mpv = static_cast<MaterialParamVector*>(mp);
 					mpv->SetValue(val.AsFloat4());
+					val = mpv->GetStringValue();
 					break;
 				}
 			case Graphic::eMaterialParamFloat:
@@ -400,9 +404,70 @@ namespace Graphic
 
 			for (IndexT j = 0; j < list.Size(); ++j)
 			{
-				if (matParmList[i]->GetName() == list[j]->GetName())
+				if (matParmList[i]->GetName() == list[j]->GetName()
+					&& matParmList[i]->GetType() == matParmList[i]->GetType())
 				{
-					matParmList[i]->SetStringValue(list[j]->GetStringValue());
+					switch (matParmList[i]->GetType())
+					{
+					case eMaterialParamFloat:
+						{
+							MaterialParamFloat* source = static_cast<MaterialParamFloat*>(list[j]);
+							MaterialParamFloat* dest = static_cast<MaterialParamFloat*>(matParmList[i]);
+							dest->SetValue(source->GetValue());
+							dest->SetStringValue(source->GetStringValue());
+						}
+						break;
+					case eMaterialParamVector:
+						{
+							MaterialParamVector* source = static_cast<MaterialParamVector*>(list[j]);
+							MaterialParamVector* dest = static_cast<MaterialParamVector*>(matParmList[i]);
+							dest->SetValue(source->GetValue());
+							dest->SetStringValue(source->GetStringValue());
+						}
+						break;
+					case eMaterialParamMatrix:
+						{
+							MaterialParamMatrix* source = static_cast<MaterialParamMatrix*>(list[j]);
+							MaterialParamMatrix* dest = static_cast<MaterialParamMatrix*>(matParmList[i]);
+							dest->SetValue(source->GetValue());
+							dest->SetStringValue(source->GetStringValue());
+						}
+						break;
+					case eMaterialParamTexture1D:
+						{
+							MaterialParamTex1D* source = static_cast<MaterialParamTex1D*>(list[j]);
+							MaterialParamTex1D* dest = static_cast<MaterialParamTex1D*>(matParmList[i]);
+							dest->SetHandle(source->GetHandle());
+						}
+						break;
+					case eMaterialParamTexture2D:
+						{
+							MaterialParamTex2D* source = static_cast<MaterialParamTex2D*>(list[j]);
+							MaterialParamTex2D* dest = static_cast<MaterialParamTex2D*>(matParmList[i]);
+							dest->SetHandle(source->GetHandle());
+							dest->SetStringValue(source->GetStringValue());
+						}
+						break;
+					case eMaterialParamTexture3D:
+						{
+							MaterialParamTex3D* source = static_cast<MaterialParamTex3D*>(list[j]);
+							MaterialParamTex3D* dest = static_cast<MaterialParamTex3D*>(matParmList[i]);
+							dest->SetHandle(source->GetHandle());
+							dest->SetStringValue(source->GetStringValue());
+						}
+						break;
+					case eMaterialParamTextureCUBE:
+						{
+							MaterialParamTexCube* source = static_cast<MaterialParamTexCube*>(list[j]);
+							MaterialParamTexCube* dest = static_cast<MaterialParamTexCube*>(matParmList[i]);
+							dest->SetHandle(source->GetHandle());
+							dest->SetStringValue(source->GetStringValue());
+						}
+						break;
+					default:
+						n_error("TODO: MaterialInstance::UpdateParamList(): current material parameter is not implemented!\n");
+						break;
+					}
 				}
 			}
 		}

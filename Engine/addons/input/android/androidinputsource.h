@@ -69,6 +69,7 @@ protected:
 	void OnTouchMove(const Input::MobileTouchEvent* pEvent);
 
 	void OnTouch(const Input::MobileTouchEvent* pEvent, const int type);
+	void OnKeyboardEvent(const Input::MoibleInputEvent* pEvent);
 
 protected:
 	Util::Array<Input::InputEvent> m_InputEventList;

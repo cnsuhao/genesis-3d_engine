@@ -108,25 +108,5 @@ namespace ScriptRuntime
         {
             ICall_Material_SetValueMatrix44(this, paramName, ref value);
         }
-
-        /// <summary>
-        /// 设置着色器中的全局矩阵参数,比如摄像机变换矩阵
-        /// </summary>
-        /// <param name="index">着色器中的全局矩阵参数类型</param>
-        /// <param name="value">要设置的矩阵的值</param>
-        public static void SetGlobalValue(GlobalShaderMatrix index,ref Matrix44 value)
-        {
-            ICall_Material_SetGlobalMatrix(index, ref value);
-        }
-
-        /// <summary>
-        /// 设置着色器中的全局向量参数,比如环境光
-        /// </summary>
-        /// <param name="index">着色器中的全局向量参数类型</param>
-        /// <param name="value">要设置的向量的值</param>
-        public static void SetGlobalValue(GlobalShaderVector index,ref Vector4 value)
-        {
-            ICall_Material_SetGlobalVector(index, ref value);
-        }
     }
 }

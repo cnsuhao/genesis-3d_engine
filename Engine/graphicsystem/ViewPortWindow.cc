@@ -67,12 +67,18 @@ namespace Graphic
 
 	void ViewPortWindow::ApplyWindow()
 	{
-		GetRenderWindow()->EndRender();
+		if (GetRenderWindow())
+		{
+			GetRenderWindow()->EndRender();
+		}
 	}
 
 	void ViewPortWindow::BeginRender()
 	{
-		GetRenderWindow()->BeginRender();
+		if (GetRenderWindow())
+		{
+			GetRenderWindow()->BeginRender();
+		}
 	}
 
 	void ViewPortWindow::_OnChangeSize() 
@@ -84,7 +90,7 @@ namespace Graphic
 
 	void ViewPortWindow::ApplyGlobalShaderParam() const
 	{
-		Material::GetGlobalMaterialParams()->SetVectorParam(eGShaderVecScreenSize,float4(float(),float(mDisplayMode.GetHeight()),float(0.5/mDisplayMode.GetWidth()),float(0.5/mDisplayMode.GetHeight())));
+		Material::GetGlobalMaterialParams()->SetVectorParam(eGShaderVecScreenSize,float4(float(mDisplayMode.GetWidth()),float(mDisplayMode.GetHeight()),float(0.5/mDisplayMode.GetWidth()),float(0.5/mDisplayMode.GetHeight())));
 	}
 
 	void ViewPortWindow::setupBackBuffer()

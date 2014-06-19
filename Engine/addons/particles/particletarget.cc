@@ -217,7 +217,7 @@ namespace Particles
 
 		vbd2.Setup(needCount, sizeof(ParticleVertexData), RenderBase::BufferData::Dynamic,RenderBase::PrimitiveTopology::TriangleList, false);
 	}
-	void ParticleTarget::_initSimpleGPUVertexBuffer(Graphic::VertexBufferData2& vbd2, SizeT needCount)
+	void ParticleTarget::_initSpriteGPUVertexBuffer(Graphic::VertexBufferData2& vbd2, SizeT needCount)
 	{
 		Util::Array<RenderBase::VertexComponent>& verDeclare = vbd2.GetVertexComponents();
 		verDeclare.Append( VertexComponent(VertexComponent::Color,0, VertexComponent::ColorBGRA) );
@@ -225,9 +225,9 @@ namespace Particles
 		verDeclare.Append( VertexComponent(VertexComponent::Normal,0, VertexComponent::Float3) );
 		verDeclare.Append( VertexComponent(VertexComponent::TexCoord, 0, VertexComponent::Float2) );
 		verDeclare.Append( VertexComponent(VertexComponent::Size, 0, VertexComponent::Float) );
-		vbd2.Setup(needCount, sizeof(SimpleGPUParticleVertex), RenderBase::BufferData::Dynamic,RenderBase::PrimitiveTopology::PointList, false);
+		vbd2.Setup(needCount, sizeof(SpriteGPUParticleVertex), RenderBase::BufferData::Dynamic,RenderBase::PrimitiveTopology::PointList, false);
 	}
-	void ParticleTarget::_initAffectGPUVertexBuffer(Graphic::VertexBufferData2& vbd2, SizeT needCount)
+	void ParticleTarget::_initBoardGPUVertexBuffer(Graphic::VertexBufferData2& vbd2, SizeT needCount)
 	{
 		Util::Array<RenderBase::VertexComponent>& verDeclare = vbd2.GetVertexComponents();
 		verDeclare.Append( VertexComponent(VertexComponent::Color,0, VertexComponent::ColorBGRA) );
@@ -235,8 +235,7 @@ namespace Particles
 		verDeclare.Append( VertexComponent(VertexComponent::Position,0, VertexComponent::Float3) );
 		verDeclare.Append( VertexComponent(VertexComponent::Normal,0, VertexComponent::Float3) );
 		verDeclare.Append( VertexComponent(VertexComponent::TexCoord, 0, VertexComponent::Float2) );
-		verDeclare.Append( VertexComponent(VertexComponent::Size, 0, VertexComponent::Float) );
-		vbd2.Setup(needCount, sizeof(SimpleGPUParticleVertex), RenderBase::BufferData::Dynamic,RenderBase::PrimitiveTopology::PointList, false);
+		vbd2.Setup(needCount, sizeof(BoardGPUParticleVertex), RenderBase::BufferData::Static,RenderBase::PrimitiveTopology::TriangleList, false);
 	}
 	void ParticleTarget::_initVertexBufferData(Graphic::IndexBufferData2& ibd2, SizeT needCount)
 	{

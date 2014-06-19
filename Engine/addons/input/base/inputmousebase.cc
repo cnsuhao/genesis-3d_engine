@@ -144,7 +144,7 @@ InputMouseBase::OnEvent(const InputEvent& inputEvent)
 
         case InputEvent::MouseMove:
             this->UpdateMousePositions(inputEvent.GetAbsMousePos(), inputEvent.GetNormMousePos());
-			this->currentEvents.Append(MouseButtonEvent(InputMouseButton::InvalidMouseButton, inputEvent.GetType()));
+			this->currentEvents.Append(MouseButtonEvent(InputMouseButton::InvalidMouseButton, inputEvent.GetType(),inputEvent.GetAbsMousePos(), inputEvent.GetNormMousePos()));
             break;
 
         case InputEvent::RawMouseMove:
@@ -159,7 +159,7 @@ InputMouseBase::OnEvent(const InputEvent& inputEvent)
                     this->buttonStates[btn].down = true;
                     this->buttonStates[btn].pressed = true;
                     this->UpdateMousePositions(inputEvent.GetAbsMousePos(), inputEvent.GetNormMousePos());
-					this->currentEvents.Append(MouseButtonEvent(btn, inputEvent.GetType()));
+					this->currentEvents.Append(MouseButtonEvent(btn, inputEvent.GetType(),inputEvent.GetAbsMousePos(), inputEvent.GetNormMousePos()));
                 }
             }
             break;
@@ -178,7 +178,7 @@ InputMouseBase::OnEvent(const InputEvent& inputEvent)
                     // be cleared at the beginning of the next frame
                     // when the button up flag was set
                     this->UpdateMousePositions(inputEvent.GetAbsMousePos(), inputEvent.GetNormMousePos());
-					this->currentEvents.Append(MouseButtonEvent(btn, inputEvent.GetType()));
+					this->currentEvents.Append(MouseButtonEvent(btn, inputEvent.GetType(),inputEvent.GetAbsMousePos(), inputEvent.GetNormMousePos()));
                 }
             }
             break;
@@ -190,19 +190,19 @@ InputMouseBase::OnEvent(const InputEvent& inputEvent)
                 {
                     this->buttonStates[btn].doubleClicked = true;
                     this->UpdateMousePositions(inputEvent.GetAbsMousePos(), inputEvent.GetNormMousePos());
-					this->currentEvents.Append(MouseButtonEvent(btn, inputEvent.GetType()));
+					this->currentEvents.Append(MouseButtonEvent(btn, inputEvent.GetType(),inputEvent.GetAbsMousePos(), inputEvent.GetNormMousePos()));
                 }
             }
             break;
 
         case InputEvent::MouseWheelForward:
             this->wheelForward = true;
-			this->currentEvents.Append(MouseButtonEvent(InputMouseButton::MiddleButton, inputEvent.GetType()));
+			this->currentEvents.Append(MouseButtonEvent(InputMouseButton::MiddleButton, inputEvent.GetType(),inputEvent.GetAbsMousePos(), inputEvent.GetNormMousePos()));
             break;
 
         case InputEvent::MouseWheelBackward:
             this->wheelBackward = true;
-			this->currentEvents.Append(MouseButtonEvent(InputMouseButton::MiddleButton, inputEvent.GetType()));
+			this->currentEvents.Append(MouseButtonEvent(InputMouseButton::MiddleButton, inputEvent.GetType(),inputEvent.GetAbsMousePos(), inputEvent.GetNormMousePos()));
             break;
 
 		default:

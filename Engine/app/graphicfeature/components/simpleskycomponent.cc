@@ -25,6 +25,7 @@ THE SOFTWARE.
 #include "simpleskycomponent.h"
 #include "appframework/actor.h"
 #include "resource/meshres.h"
+#include "graphicsystem/Material/materialinstance.h"
 
 namespace App
 {
@@ -36,7 +37,9 @@ SimpleSkyComponent::SimpleSkyComponent():
 		m_skyTex2(NULL),
 		m_skyTex3(NULL),
 		m_skyTex4(NULL),
-		m_skyTex5(NULL)
+		m_skyTex5(NULL),
+		m_skyFogLowest(0.0f),
+		m_skyFogHighest(0.5f)
 {
 
 }
@@ -119,12 +122,17 @@ void SimpleSkyComponent::updateScale( Graphic::Camera* camera )
 	float nw = camera->GetCameraSetting().GetNearWidth();
 	float nz =  camera->GetCameraSetting().GetZNear();
 
-
-
 	float scale = Math::n_max(nh,nw);
-	scale = Math::n_max(nz,scale)/75;
-	mActor->SetScale(Math::vector(scale,scale,scale));
+	scale = Math::n_max(nz,scale)/50;
 	
+	Math::matrix44 _mscale;
+	_mscale.scale(Math::float4(scale,scale,scale,1.0f));
+	Math::matrix44 trans = camera->GetCameraSetting().GetViewTransform();
+	trans.set_position(Math::float4(0.0f,0.0f,0.0f,1.0f));
+	Math::matrix44 rot = Math::matrix44::rotationx(-90);
+	trans = Math::matrix44::multiply(trans,rot);
+	trans = Math::matrix44::multiply(trans,_mscale);
+	mActor->SetTransform(trans);	
 }
 
 //-----------------------------------------------------------------
@@ -134,27 +142,27 @@ void SimpleSkyComponent:: SetSkyTexByNum( int num, Util::String& tex )
 	{
 	case 0:
 		m_skyTex0 = tex;
-		SetTexture(0, "_diffuseMap", m_skyTex0);//, 0);//
+		SetTexture(0, "_diffuseMap", m_skyTex0);
 		break;
 	case 1:
 		m_skyTex1 = tex;
-		SetTexture(1, "_diffuseMap", m_skyTex1);//, 0);
+		SetTexture(1, "_diffuseMap", m_skyTex1);
 		break;
 	case 2:
 		m_skyTex2 = tex;
-		SetTexture(2, "_diffuseMap", m_skyTex2);//, 0);
+		SetTexture(2, "_diffuseMap", m_skyTex2);
 		break;
 	case 3:
 		m_skyTex3 = tex;
-		SetTexture(3, "_diffuseMap", m_skyTex3);//, 0);
+		SetTexture(3, "_diffuseMap", m_skyTex3);
 		break;
 	case 4:
 		m_skyTex4 = tex;
-		SetTexture(4, "_diffuseMap", m_skyTex4);//, 0);
+		SetTexture(4, "_diffuseMap", m_skyTex4);
 		break;
 	case 5:
 		m_skyTex5 = tex;
-		SetTexture(5, "_diffuseMap", m_skyTex5);//, 0);
+		SetTexture(5, "_diffuseMap", m_skyTex5);
 		break;
 	default:
 		break;
@@ -190,6 +198,33 @@ const Util::String SimpleSkyComponent::GetSkyTexByNum( int num )
 	return temp;
 }
 //------------------------------------------------------------------------------
+float SimpleSkyComponent::GetSkyFogLowest()
+{
+	return m_skyFogLowest;
+}
+float SimpleSkyComponent::GetSkyFogHighest()
+{
+	return m_skyFogHighest;
+}
+void SimpleSkyComponent::SetSkyFogLowest(IndexT iSubMesh, const ShaderParamString& paramName,float low)
+{
+	m_skyFogLowest = low;
+	GPtr<Graphic::MaterialInstance>& mat = GetMaterial(iSubMesh);
+	if ( mat )
+	{
+		mat->SetConstantParam(paramName,low);
+	}
+}
+void SimpleSkyComponent::SetSkyFogHighest(IndexT iSubMesh, const ShaderParamString& paramName,float high)
+{
+	m_skyFogHighest = high;
+	GPtr<Graphic::MaterialInstance>& mat = GetMaterial(iSubMesh);
+	if ( mat )
+	{
+	    mat->SetConstantParam(paramName,high);
+	}
+}
+//------------------------------------------------------------------------------
 void SimpleSkyComponent::SetMaterialID( IndexT iSubMesh, const Resources::ResourceId& matID,const bool bCopy/* = false*/,Resources::Priority p   )
 {
 	//skybox's setmaterial should be null
@@ -198,7 +233,6 @@ void SimpleSkyComponent::SetMaterialID( IndexT iSubMesh, const Resources::Resour
 //------------------------------------------------------------------------------
 void SimpleSkyComponent::GetReferenceResourceId(Util::Array<Resources::ReferenceResource>& list) const
 {
-
 	list.Append(Resources::ReferenceResource(mMeshInfo.meshID, Resources::RR_Unknown));
 
 	list.Append(Resources::ReferenceResource(m_skyTex0, Resources::RR_Texture));

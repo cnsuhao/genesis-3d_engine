@@ -29,6 +29,7 @@ THE SOFTWARE.
 #include "input/android/androidtouchevent.h"
 #include "graphicsystem/GraphicSystem.h"
 #include "input/inputmobileconfig.h"
+#include "input/mobilekeyboardevent.h"
 
 namespace AndroidInput
 {
@@ -102,14 +103,56 @@ int AndroidInputSource::OnAndroidProc(MoibleInputEvent* pEvent)
 		break;
 
 	case MoibleInputEvent::INPUT_EVENT_TYPE_KEY:
-		break;
-	default:
+		{
+			OnKeyboardEvent(pEvent);
+		}
 		break;
 	}
 
 	return 0;
 }
+void AndroidInputSource::OnKeyboardEvent(const Input::MoibleInputEvent* pEvent)
+{
+	//put event to eventProcessList
+	if ( !pEvent )
+	{
+		return;
+	}
+	Input::MoibleInputEvent* punCEvent = const_cast<Input::MoibleInputEvent*>(pEvent);
+	Input::MobileKeyboardEvent* pkeyEvent = dynamic_cast<Input::MobileKeyboardEvent*>( punCEvent );
+	if ( !pkeyEvent )
+	{
+		return;
+	}
+	Input::InputEvent inputEvent;
+	switch(pkeyEvent->GetMotionType())
+	{
+		case Input::MobileKeyboardEvent::MOTION_EVENT_KEY_DOWN:
+			{
+				inputEvent.SetType(Input::InputEvent::KeyDown);
+				inputEvent.SetKey(pkeyEvent->GetKeycode());
+			}
+			break;
+		case Input::MobileKeyboardEvent::MOTION_EVENT_KEY_UP:
+			{
+				inputEvent.SetType(Input::InputEvent::KeyUp);
+				inputEvent.SetKey(pkeyEvent->GetKeycode());
+			}
+			break;
+		case Input::MobileKeyboardEvent::MOTION_EVENT_CHAR:
+			{
+				inputEvent.SetType(Input::InputEvent::Character);
+				inputEvent.SetChar(pkeyEvent->GetChar());
+			}
+			break;
+		default:
+			break;
 
+	}
+	
+	m_InputEventList.Append(inputEvent);
+
+}
 void AndroidInputSource::OnTouchEvent(const MobileTouchEvent* pEvent)
 {
 #if _DEBUG
@@ -126,10 +169,7 @@ void AndroidInputSource::OnTouchEvent(const MobileTouchEvent* pEvent)
 
 	case MobileTouchEvent::MOTION_EVENT_ACTION_DOWN:
 	case MobileTouchEvent::MOTION_EVENT_ACTION_UP:
-	case MobileTouchEvent::MOTION_EVENT_ACTION_CANCEL:
 		OnTouch(pEvent, actionType);
-		break;
-	default:
 		break;
 	}
 }
@@ -168,12 +208,6 @@ void AndroidInputSource::OnTouch(const MobileTouchEvent* pEvent, const int type)
 	case MobileTouchEvent::MOTION_EVENT_ACTION_UP:
 		inputEvent.SetType(InputEvent::TouchMotionUp);
 		m_InputEventList.Append(inputEvent);
-		break;
-	case MobileTouchEvent::MOTION_EVENT_ACTION_CANCEL:
-		inputEvent.SetType(InputEvent::TouchMotionCancel);
-		m_InputEventList.Append(inputEvent);
-		break;
-	default:
 		break;
 	}
 }

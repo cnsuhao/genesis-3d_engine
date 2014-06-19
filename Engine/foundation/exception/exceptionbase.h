@@ -25,7 +25,7 @@ THE SOFTWARE.
 #ifndef __EXCEPTION_H__
 #define __EXCEPTION_H__
 #include <exception>
-#include "Util/string.h"
+#include "util/string.h"
 
 namespace Exceptions
 {

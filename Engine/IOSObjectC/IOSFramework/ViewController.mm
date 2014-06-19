@@ -207,7 +207,7 @@ DeviceLevel GetDeviceLevel()
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
 	NSString *documentsDirectory = [paths objectAtIndex:0];
 	const char *appWriteableDic = [documentsDirectory UTF8String];
-    EngineShell::InitEngine(g_Width,g_Height,resChar,appWriteableDic,"asset:BeginScene.scene",true);
+    EngineShell::InitEngine(g_Width,g_Height,resChar,appWriteableDic,"asset:editBox3.scene",false);
 	
 }
 

@@ -35,7 +35,7 @@ THE SOFTWARE.
 #include "input/android/androidinputserver.h"
 #include "input/inputtouchscreen.h"
 #elif defined __OSX__
-#include "input/OSX/OSXinputserver.h"
+#include "input/osx/osxinputserver.h"
 #include "input/inputtouchscreen.h"
 #endif
 
@@ -52,7 +52,9 @@ namespace App
 		return 0;
 #endif
 		const GPtr<Input::InputKeyboard>& keyboard = App::InputFeature::Instance()->GetInputServer()->GetDefaultKeyboard();
-		return (mono_bool)keyboard->KeyDown((Input::InputKey::Code)iKeyCode);	
+
+		bool down = keyboard->KeyDown((Input::InputKey::Code)iKeyCode);
+		return (mono_bool)down;	
 	}
 	//------------------------------------------------------------------------
 	static mono_bool ICall_Input_KeyUp( int iKeyCode)
@@ -320,7 +322,7 @@ namespace App
 		return mouse->GetCurrentEventCount();
 	}
 
-	static void ICall_Input_GetCurrentMouseButtonEvent(int index, int& code, int& event)
+	static void ICall_Input_GetCurrentMouseButtonEvent(int index, int& code, int& event,Math::float2& pixelPos,Math::float2& screenPos)
 	{
 #ifdef __OSX__
 		return;
@@ -332,6 +334,8 @@ namespace App
 		Input::MouseButtonEvent mbe = mouse->GetCurrentEvent(index);
 		code = mbe.button;
 		event = mbe.event;
+		pixelPos = mbe.pixelPos;
+		screenPos = mbe.screenPos;
 	}
 
 	static int ICall_Input_GetCurrentTouchEventCount()
@@ -348,18 +352,22 @@ namespace App
 #endif
 	}
 
-	static void ICall_Input_GetCurrentTouchEvent(int index, int& id, int& event)
+	static void ICall_Input_GetCurrentTouchEvent(int index, int& id, int& event,Math::float2& pixelPos,Math::float2& screenPos)
 	{
 #ifdef __ANDROID__ 
 		const GPtr< Input::InputTouchScreen>& touchScreen = App::InputFeature::Instance()->GetInputServer().downcast<AndroidInput::AndroidInputServer>()->GetDefaultTouchScreen();
 		Input::TouchEvent te = touchScreen->GetCurrentEvent(index);
 		id = te.id;
 		event = te.event;
+		pixelPos = te.pixelPos;
+		screenPos = te.screenPos;
 #elif defined __OSX__
 		const GPtr< Input::InputTouchScreen>& touchScreen = App::InputFeature::Instance()->GetInputServer().downcast<OSXInput::OSXInputServer>()->GetDefaultTouchScreen();
 		Input::TouchEvent te = touchScreen->GetCurrentEvent(index);
 		id = te.id;
 		event = te.event;
+		pixelPos = te.pixelPos;
+		screenPos = te.screenPos;
 #else
 		//n_warning("No Implemention on WIN32 ver.\n");
 		id = -1;

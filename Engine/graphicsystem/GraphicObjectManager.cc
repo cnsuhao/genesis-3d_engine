@@ -58,7 +58,7 @@ namespace App
 		GPtr<Resource> pRes(res);
 		GPtr<MeshRes> pMesh = pRes.downcast<MeshRes>();
 
-		uint32 updateThreadID = uint32(Thread::GetMyThreadId());
+		intptr_t updateThreadID = intptr_t(Thread::GetMyThreadId());
 		if ( GraphicObjectManager::Instance()->m_MainThreadID == updateThreadID )
 		{
 			GraphicObjectManager::Instance()->UpdataPrimitiveHandle( pMesh );
@@ -72,7 +72,7 @@ namespace App
 		GPtr<Resource> pRes(res);
 		GPtr<ImageRes> pImage = pRes.downcast<ImageRes>();
 
-		uint32 updateThreadID = uint32(Thread::GetMyThreadId());
+		intptr_t updateThreadID = intptr_t(Thread::GetMyThreadId());
 
 		if ( GraphicObjectManager::Instance()->m_MainThreadID == updateThreadID )
 		{
@@ -83,7 +83,7 @@ namespace App
 	//------------------------------------------------------------------------
 	GraphicObjectManager::GraphicObjectManager()
 	{
-		m_MainThreadID = uint32(Thread::GetMyThreadId());
+		m_MainThreadID = intptr_t(Thread::GetMyThreadId());
 
 		__ConstructImageSingleton;
 	}

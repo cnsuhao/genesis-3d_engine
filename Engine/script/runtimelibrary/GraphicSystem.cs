@@ -36,13 +36,23 @@ namespace ScriptRuntime
 
  
         /// <summary>
-        /// 获取场景中的主相机
+        /// 获得当前正在渲染的相机(已过期，请用GetRenderingCamera()，代替)
         /// </summary>
         /// <returns>相机组件</returns>
+        [System.Obsolete("Please, use fuction GetRenderingCamera() instead.")]
         public static CameraComponent GetSceneCamera()
         {
             return ICall_GraphicSystem_GetSceneCamera();
         }
+        /// <summary>
+        /// 获得当前正在渲染的相机
+        /// </summary>
+        /// <returns>相机组件</returns>
+        public static CameraComponent GetRenderingCamera()
+        {
+            return ICall_GraphicSystem_GetRenderingCamera();
+        }
+
         /// <summary>
         /// 以相机作为参数，渲染场景
         /// </summary>
@@ -81,15 +91,7 @@ namespace ScriptRuntime
         {
             return ICall_GraphicSystem_GetHeight();
         }
-        /// <summary>
-        /// 根据相机类型获得相机的RenderToTexture
-        /// </summary>
-        /// <param name="type">相机类型参数，值可选:eCO_InvalidCamera,eCO_Shadow,eCO_Main,eCO_PuppetMain</param>
-        /// <returns>返回RenderToTexture</returns>
-        public static RenderToTexture GetCameraRenderToTextureByCameraType(int type)
-        {
-            return ICall_GraphicSystem_GetCameraRenderToTextureByCameraType(type);
-        }
+
         /// <summary>
         /// 根据资源ID创建材质实例
         /// </summary>
@@ -123,6 +125,9 @@ namespace ScriptRuntime
         extern private static CameraComponent ICall_GraphicSystem_GetSceneCamera();
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        extern private static CameraComponent ICall_GraphicSystem_GetRenderingCamera();
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         extern private static void ICall_GraphicSystem_RenderCamera(Camera render);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -133,9 +138,6 @@ namespace ScriptRuntime
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         extern private static int ICall_GraphicSystem_GetHeight();
-
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        extern private static RenderToTexture ICall_GraphicSystem_GetCameraRenderToTextureByCameraType(int type);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         extern private static MaterialInstance ICall_GraphicSystem_CreateMaterial(String resID);

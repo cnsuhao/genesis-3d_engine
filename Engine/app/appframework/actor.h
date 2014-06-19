@@ -69,7 +69,7 @@ namespace App
 	enum SysLayerID
 	{
 		eSL_Defualt = 0,//RenderLayer::eRLDefault
-		eSL_Debug = 31,//RenderLayer::eRLDebug
+		eSL_Assist = 31,//RenderLayer::eSL_Assist
 	};
 
 	
@@ -87,7 +87,40 @@ namespace App
 		}
 		Actor* parent;
 	};
+	class ActorPropertySet
+	{
+	public:
+		enum FlagProperty
+		{
+			logic_exclusive_pos_rot = 1 << 0,
+			logic_exclusive_RootActorName = 1 << 1
+		};
+		const static ActorPropertySet s_defaultVal;
+		ActorPropertySet():m_Flags(0)
+		{
 
+		}
+		~ActorPropertySet(){};
+		bool TestFlag(FlagProperty eFlag) const
+		{
+			return (eFlag & m_Flags) != 0;
+		}
+		void SetFlag(FlagProperty eFlag,bool bVal)
+		{
+			if ( bVal )
+			{
+				m_Flags |= eFlag;
+			} 
+			else
+			{
+				m_Flags &= (~eFlag);
+			}
+		}
+	private:
+		uint m_Flags;
+
+
+	};
 	// Modified From Nebula3's Entity(Actor) and Property(Component).  MayBe It's Good for Radon Labs. 
 	// But I think It's too Difficult to Understand Nebula3's Design for Newer. For Example:  Property in DB Storage , So Many Thread, So Many Details Hidden in Addon... 
 	// Actor:     Manage RelationShip And Component. TODO:  Add TinyActor For Object With No Game Logic.
@@ -176,15 +209,15 @@ namespace App
 		const GPtr<Actor>& GetChild(IndexT i) const;
 
 		// find actor by FastID
-		const GPtr<Actor>& FindChild(FastId id) const;
+		const GPtr<Actor>& FindChild(FastId id, bool includeGrandson = true) const;
 
-		const GPtr<Actor>& FindChildByTag(App::TagID id) const;
+		const GPtr<Actor>& FindChildByTag(App::TagID id, bool includeGrandson = true) const;
 
-		void FindChildrenByTag(const App::TagID tagID,Util::Array< GPtr<Actor> >& actors) const;
+		void FindChildrenByTag(const App::TagID tagID,Util::Array< GPtr<Actor> >& actors, bool includeGrandson = true) const;
 
-		const GPtr<Actor>& FindChild(const Util::Guid& guid) const;
+		const GPtr<Actor>& FindChild(const Util::Guid& guid, bool includeGrandson = true) const;
 
-		const GPtr<Actor>& FindChild(const Util::String& name) const;
+		const GPtr<Actor>& FindChild(const Util::String& name, bool includeGrandson = true) const;
 
 		// find child actor index in child list
 		IndexT FindChildIndex(FastId id) const;
@@ -351,7 +384,9 @@ namespace App
 		// if includePrivateProperty is true, the actor's property( like transform, layerID,...) , components and child actor will copy
 		// if needRecurVFL is false, the actor's visible,frozen,lock states will affect its children. 
 		// after copy, the actor is deactive. should manu active if need
-		virtual void CopyFrom( const GPtr<Actor>& pSource, bool includePrivateProperty , bool isTemplate = false , bool needRecurVFL = true);
+		virtual void CopyFrom( const GPtr<Actor>& pSource,const ActorPropertySet& actorPropertySet, bool includePrivateProperty , bool isTemplate = false , bool needRecurVFL = true);
+		
+		
 
 		//virtual void CopyFromTemplateRes(Resources::ResourceId resID);'
 
@@ -385,6 +420,13 @@ namespace App
 		// recompute world transform if need
 		void _UpdateWolrdTransform() const;
 		void _UpdateLocalTransform() const;
+		
+		void _CopyFrom_MustProperty( const GPtr<Actor>& pSource, bool needRecurVFL);
+		void _CopyFrom_IncludeProperty( const GPtr<Actor>& pSource,const ActorPropertySet& actorPropertySet);
+		void _CopyFrom_TemplateProperty( const GPtr<Actor>& pSource,const ActorPropertySet& actorPropertySet);
+		void _CopyFrom_CommonProperty( const GPtr<Actor>& pSource,const ActorPropertySet& actorPropertySet);
+		
+
 		
 
 		void _CheckActive();
@@ -434,20 +476,14 @@ namespace App
 		void SetEulerRotation(const Math::vector & rot);
 
 		void SetFrozen( bool bFrozen , bool needRecursive = true );
-		void SetLocked( bool bLocked , bool needRecursive = true );
 		bool GetFrozen() { return mFrozen; }
-		bool GetLocked() { return mLocked; }
-		//only called after copy,pSource is the actor used for copyfrom source
-		void SetLockedActorTransformRecursive(const GPtr<App::Actor>& pSource);
-
 	protected:
-		void SetLockedActorLocalTransform( const Actor *parent );
+
 
 		Math::vector	mEulerAngle;
 		uint	mQueryMask;
 
 		bool    mFrozen;
-		bool    mLocked;
 #endif
 	public:
 		enum EditorFlag
@@ -464,6 +500,8 @@ namespace App
 		//return true if this actor is a child of one actor that has a animation component
 		bool IsChildOfAnimationActor();
 
+		void SetModelName(const Util::String& name) { mModelName = name; }
+		const Util::String& GetModelName(void) const { return mModelName; }
 	protected:// date
 		uint    mEditorFlag;
 
@@ -518,6 +556,8 @@ namespace App
 		
 		bool mVisible;
 		Resources::Priority mPriority;
+
+		Util::String	mModelName;
 
 		//GPtr<Resources::TemplateResInfo> mTemplateResInfo;
 

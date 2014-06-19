@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 #include "stdneb.h"
 #include "io/filestream.h"
-#include "packageTool/FileData.h"
+#include "packagetool/FileData.h"
 #include "io/ioserver.h"
 
 namespace Pack

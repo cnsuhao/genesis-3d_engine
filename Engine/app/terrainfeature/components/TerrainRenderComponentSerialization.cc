@@ -208,6 +208,8 @@ namespace App
 		pTRenderCom->GetTerrainDataSource()->SetDataSourceSetting(dataSetting);
 
 		pTRenderCom->CheckRenderables();
+		pTRenderCom->CheckMaterials();
+
 		// render data
 		const SizeT count = pTRenderCom->GetShaderCount();
 
@@ -503,6 +505,16 @@ namespace App
 		pWriter->SerializeUInt(s_TerrainLMIndex, mObject->GetLMIndex() );
 		pWriter->SerializeUInt(s_TerrainLMSize, mObject->GetLMSize() );
 		pWriter->SerializeUInt(s_TerrainLightmapMode, (uint)mObject->GetLightmapMode() );
+
+
+		for(int matIndex=0;matIndex<mObject->GetMaterialCount();matIndex++)
+		{
+			GPtr<Graphic::MaterialInstance> instance = mObject->GetMaterial(matIndex);
+			if (instance)
+			{
+				Resources::ResourceManager::Instance()->SaveMaterial(instance->GetMaterialID());
+			}
+		}
 
 		return;
 	}

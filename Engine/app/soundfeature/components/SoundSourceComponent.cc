@@ -717,8 +717,12 @@ namespace App
 	bool SoundSource::Set3D(const bool &is3D)
 	{
 		n_assert(mSoundRes);
+		bool result = mSoundRes->Set3D(is3D);
 
-		return mSoundRes->Set3D(is3D);
+		if(result && Is3D())
+			_OnMoveAfter();
+
+		return result;
 	}
 
 	//------------------------------------------------------------------------------
@@ -995,6 +999,8 @@ namespace App
 			break;
 		}
 
+		if(Is3D())
+			_OnMoveAfter();
 	}
 	//------------------------------------------------------------------------------
 	void SoundSource::SetPosition(uint position)

@@ -148,7 +148,7 @@ void ShaderJoint::_ParseVsOutput(const CommonShaderSetting* pCommon, const Shadi
 	}
 	
 
-	Util::String testCode = includeContent + m_sJointedSource + g_sSimpleLight;
+	Util::String testCode = "#define D3D9\n" + includeContent + m_sJointedSource + g_sSimpleLight;
 
 	testCode += "float4 psMain (" + m_CustomFunc.paramInputType + " p) : COLOR\n";
 	testCode += "{\n";

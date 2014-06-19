@@ -66,16 +66,14 @@ namespace MyGUI
 			  delete mInputManager;
 		  }
 
-		  void initialise( const std::string& _group, const std::string& _logName = MYGUI_PLATFORM_LOG_FILENAME)
+		  void initialise(int bufferWidth, int bufferHeight, const std::string& _group, const std::string& _logName = MYGUI_PLATFORM_LOG_FILENAME)
 		  {			
-
 			  assert(!mIsInitialise);
 			  mIsInitialise = true;
-			  mRenderManager->setResolution(0, 0);
+			  mRenderManager->initialise(0, 0, bufferWidth, bufferHeight);
 			  if (!_logName.empty())
 				  LogManager::getInstance().createDefaultSource(_logName);
 
-			  mRenderManager->initialise();
 			  mDataManager->initialise(_group);
 		  }
 

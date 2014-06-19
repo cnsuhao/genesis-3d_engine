@@ -24,7 +24,7 @@ THE SOFTWARE.
 #ifndef CAMERA_H_
 #define CAMERA_H_
 
-#include "RenderSystem/RenderSystem.h"
+#include "rendersystem/RenderSystem.h"
 #include "Camera/CameraSetting.h"
 #include "base/GraphicObject.h"
 #include "Light/Light.h"
@@ -202,6 +202,8 @@ namespace Graphic
 		const GPtr<RenderToTexture>& GetSwapTexture() const;
 		///set lightlit map
 		void SetLightLitMap(const GPtr<RenderToTexture>& rtt);
+		
+		bool IsRenderDepthMap() const;
 		/// render depth map
 		bool HasDepthMap() const;
 		/// get depth map
@@ -213,6 +215,7 @@ namespace Graphic
 
 		const GPtr<RenderToTexture>& GetDeferredLightMap() const;
 
+		bool IsRenderLightLitMap() const;
 		/// render light lit map
 		bool HasLightLitMap() const;
 		/// get light lit map
@@ -316,6 +319,20 @@ namespace Graphic
 		void SetUseCallBack(bool bUse);
 
 		bool GetUseCallBack();
+
+#if __GENESIS_EDITOR__
+
+		enum CameraTarget
+		{
+			SCENE = 0,
+			GAME
+		};
+
+		void SetCameraTarget(const CameraTarget bTarget);
+
+		CameraTarget GetCameraTarget() const;
+#endif
+
 	private: 
 
 		void registWindowEvent();
@@ -372,6 +389,10 @@ namespace Graphic
 		bool m_bUseWindowSize;
 		bool m_bUseBeforeDrawEvent;
 		bool m_bUseCallBack;
+
+#if __GENESIS_EDITOR__
+		CameraTarget m_CamTarget;
+#endif
 
 	};
 
@@ -474,9 +495,14 @@ namespace Graphic
 		return m_swapTexture;
 	}
 
-	inline bool Camera::HasDepthMap() const
+	inline bool Camera::IsRenderDepthMap() const
 	{
 		return m_bRenderDepthMap;
+	}
+
+	inline bool Camera::HasDepthMap() const
+	{
+		return m_bRenderDepthMap && m_depthMap.isvalid();
 	}
 
 	inline const GPtr<RenderToTexture>& Camera::GetDepthMap() const
@@ -499,9 +525,14 @@ namespace Graphic
 		return m_deferredLightMap;
 	}
 
-	inline bool Camera::HasLightLitMap() const
+	inline bool Camera::IsRenderLightLitMap() const
 	{
 		return m_bRenderLightLitMap;
+	}
+
+	inline bool Camera::HasLightLitMap() const
+	{
+		return m_bRenderLightLitMap && m_lightLitTexture.isvalid();
 	}
 
 	inline const GPtr<RenderToTexture>& Camera::GetLightLitTexture() const
@@ -727,6 +758,17 @@ namespace Graphic
 		return m_bUseCallBack;
 	}
 	//---------------------------------------------------------------------------------
+#if __GENESIS_EDITOR__
+	inline void Camera::SetCameraTarget(const CameraTarget bTarget)
+	{
+		m_CamTarget = bTarget;
+	}
+
+	inline Camera::CameraTarget Camera::GetCameraTarget() const
+	{
+		return m_CamTarget;
+	}
+#endif
 }
 
 

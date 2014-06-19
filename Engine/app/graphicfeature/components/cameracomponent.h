@@ -174,6 +174,12 @@ public:
 
 	bool GetRenderShadowMap() const;
 
+#if __GENESIS_EDITOR__
+	void SetCameraTarget(const Graphic::Camera::CameraTarget bTarget);
+
+	Graphic::Camera::CameraTarget GetCameraTarget() const;
+#endif
+
 protected:
 	friend class CameraComponentSerialization;
 
@@ -450,6 +456,21 @@ CameraComponent::SetLightLitTexture(const GPtr<Graphic::RenderToTexture>& rtt)
 	m_camera->SetLightLitMap(rtt);
 }
 
+#if __GENESIS_EDITOR__
+inline void CameraComponent::SetCameraTarget(const Graphic::Camera::CameraTarget bTarget)
+{
+	m_camera->SetCameraTarget(bTarget);
+}
+
+inline Graphic::Camera::CameraTarget CameraComponent::GetCameraTarget() const
+{
+	return m_camera->GetCameraTarget();
+}
+
+#endif
+
 }; // namespace GraphicsFeature
 //------------------------------------------------------------------------------
+
+
 #endif //__CAMERACOMPONENT_H__

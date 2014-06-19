@@ -70,7 +70,8 @@ namespace App
 			_BuildSimpleRenderObject();	
 		}
 		mRenderObject->SetTransform(mActor->GetWorldTransform());
-		if (mVisible)
+
+		if (mVisible)		
 		{
 			_AttachRenderObject();
 		}
@@ -138,6 +139,10 @@ namespace App
 
 	void SpriteBaseRenderComponent::SetVisible(bool bVis)
 	{
+		if ( bVis == mVisible )
+		{
+			return;
+		}
 		Super::SetVisible(bVis);
 		if (IsActive())
 		{
@@ -152,6 +157,17 @@ namespace App
 		}
 	}
 
+#ifdef __GENESIS_EDITOR__
+	void SpriteBaseRenderComponent::SetEditorVisible(bool bVis)
+	{
+		Super::SetEditorVisible(bVis);
+		if (IsActive())
+		{
+			mRenderObject->SetEditorVisible(bVis);
+			
+		}
+	}
+#endif
 
 	void SpriteBaseRenderComponent::_AttachRenderObject()
 	{

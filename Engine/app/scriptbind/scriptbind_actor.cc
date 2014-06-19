@@ -206,8 +206,8 @@ namespace App
 	static void ICall_Actor_SetParent( MonoObject* pMonoObj, MonoObject* pParent )
 	{
 		ScriptObjWrapper<Actor> self( pMonoObj );
-		ScriptObjWrapper<Actor> parent( pParent );
-		self->SetParent( parent.GetCppObjPtr() );
+		Actor* parent = ScriptObjToCppPointer<Actor>(pParent);
+		self->SetParent( parent );
 	}
 	//------------------------------------------------------------------------
 	static SizeT ICall_Actor_GetChildCount( MonoObject* pMonoObj )
@@ -255,10 +255,8 @@ namespace App
 	static void ICall_Actor_AddChild( MonoObject* pMonoObj, MonoObject* pChildObj )
 	{
 		ScriptObjWrapper<Actor> self( pMonoObj );
-
-		ScriptObjWrapper<Actor> child( pChildObj );
-		GPtr<Actor> pChildPtr( child.GetCppObjPtr() );
-
+		Actor* child = ScriptObjToCppPointer<Actor>(pChildObj);
+		GPtr<Actor> pChildPtr( child );
 		self->AddChild( pChildPtr );
 	}
 	//------------------------------------------------------------------------
@@ -420,8 +418,9 @@ namespace App
 		if(pPEC == NULL)
 			return;
 		ScriptObjWrapper<Actor> self( pMonoObj ); 
-		ScriptObjWrapper<Component> com(pPEC); 
-		GPtr<Component> pCom = static_cast<Component*>( com.GetCppObjPtr() ); 
+
+		Component* com = ScriptObjToCppPointer<Component>(pPEC);
+		GPtr<Component> pCom = static_cast<Component*>( com ); 
 		self->RemoveComponent( pCom ); 
 	}
 	//------------------------------------------------------------------------

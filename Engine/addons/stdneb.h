@@ -32,7 +32,7 @@ THE SOFTWARE.
 #elif __PS3__
 #include "core/ps3/precompiled.h"
 #elif __OSX__
-#include "core/OSX/precompiled.h"
+#include "core/osx/precompiled.h"
 #elif __ANDROID__
 #include "core/android/precompiled.h"
 #else

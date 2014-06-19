@@ -43,6 +43,7 @@ namespace Particles
 		void SetShaderParam();
 		void InitShaderParam();
 		void SetShaderMask(const GPtr<ShaderProgramCompiler::ShaderMarcro>& pMarcro);
+		const Math::float3 _getEndPos(const Math::float3& pos,const Math::float3 speed,float time);
 	protected:
 		Math::MinMaxCurve			mMinMaxSpeed;
 

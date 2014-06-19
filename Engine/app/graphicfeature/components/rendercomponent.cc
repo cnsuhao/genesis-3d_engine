@@ -49,6 +49,9 @@ namespace App
 		,m_bAllTexLoaded(true)
 		,mVisible(true)
 		,m_bShaderMask(true)
+#ifdef __GENESIS_EDITOR__
+		,m_bEidtorVis(true)
+#endif
 	{
 		//empty
 	}
@@ -594,7 +597,12 @@ namespace App
 	//--------------------------------------------------------------------------------
 	void RenderComponent::SetVisible( bool bVisible)
 	{
+		if ( bVisible == mVisible )
+		{
+			return ;
+		}
 		mVisible = bVisible;
+		
 	}
 	//------------------------------------------------------------------------------
 	bool RenderComponent::GetVisible()
@@ -809,5 +817,15 @@ namespace App
 		}
 		Super::GetReferenceResourceId(list);
 	}
-
+	//------------------------------------------------------------------------
+#ifdef __GENESIS_EDITOR__
+	void RenderComponent::SetEditorVisible(bool bVis)
+	{
+		m_bEidtorVis = bVis;
+	}
+	bool RenderComponent::IsEditorVisible()
+	{
+		return m_bEidtorVis;
+	}
+#endif
 }

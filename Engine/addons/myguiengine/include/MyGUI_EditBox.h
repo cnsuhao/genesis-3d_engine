@@ -282,7 +282,8 @@ namespace MyGUI
 		void notifyMouseDrag(Widget* _sender, int _left, int _top, MouseButton _id);
 		void notifyMouseButtonDoubleClick(Widget* _sender);
 
-		void notifyScrollChangePosition(ScrollBar* _sender, size_t _position);
+		void notifyScrollChangePosition(ScrollBar* _sender, int _position);// expand by genesis-3d
+
 		void notifyMouseWheel(Widget* _sender, int _rel);
 
 		// обновление представления

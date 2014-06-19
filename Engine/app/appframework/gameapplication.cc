@@ -100,6 +100,8 @@ GameApplication::GameApplication()
 	, mQuit(false)
 	, mDeviceState(DS_Normal)
 	, m_pShaderFactory(NULL)
+	, mOpenSceneDirty(false)
+	, mCloseSceneDirty(false)
 {
     __ConstructThreadSingleton;
 	_RegisterDynamicClass();
@@ -355,55 +357,75 @@ GameApplication::Run()
 #if __NEBULA3_HTTP__
 		this->mHttpServerProxy->HandlePendingRequests(); 
 #endif
-
-
-	////this->mCoreServer->Trigger();
-	//trigger our game server, which triggers all game features
 	 
-
-	switch (mDeviceState)
-	{
-	case DS_Lost:
+		if (mOpenSceneDirty)
 		{
-			mGraphicsFeature->OnDeviceLost();
-			mDeviceState = DS_Losted;
+			openScene(mOpenSceneName);
+			ActorManager::Instance()->ForceGC();
+			mOpenSceneDirty = false;
 		}
-		break;
-	case DS_Losted:
+		switch (mDeviceState)
 		{
-			if (mGraphicsFeature->CheckReset())
+		case DS_Lost:
 			{
-				mDeviceState = DS_Reset;  
+				mGraphicsFeature->OnDeviceLost();
+				mDeviceState = DS_Losted;
 			}
-			this->mCoreServer->Trigger();
-			mGameServer->OnFrameWithoutGraphics(); 
+			break;
+		case DS_Losted:
+			{
+				if (mGraphicsFeature->CheckReset())
+				{
+					mDeviceState = DS_Reset;  
+				}
+				this->mCoreServer->Trigger();
+				mGameServer->OnFrameWithoutGraphics(); 
+			}
+			break;
+		case DS_Reset:
+			{
+				mGraphicsFeature->OnDeviceReset();
+				mDeviceState = DS_Normal;
+			}
+			break;
+		case DS_Normal:
+			{
+				this->mCoreServer->Trigger();
+				mGameServer->OnFrame();   
+			}
+			break;
+		default:
+			break;
 		}
-		break;
-	case DS_Reset:
+		if (mCloseSceneDirty)
 		{
-			mGraphicsFeature->OnDeviceReset();
-			mDeviceState = DS_Normal;
+			closeScene(mCloseSceneName);
+			ActorManager::Instance()->ForceGC();
+			mCloseSceneDirty = false;
 		}
-		break;
-	case DS_Normal:
-		{
-			this->mCoreServer->Trigger();
-			mGameServer->OnFrame();   
-		}
-		break;
-	default:
-		break;
-	}
-
 	PROFILE_PRESENT();
 }
 
 //------------------------------------------------------------------------------
-bool GameApplication::OpenScene(const Util::String& sSceneName, bool create)
+bool GameApplication::OpenScene(const Util::String& sceneName, bool force)
 {
 	n_assert(IsOpen());
+	if (force)
+	{
+		return openScene(sceneName);
+	}
+	else
+	{
+		mOpenSceneName = sceneName;
+		mOpenSceneDirty = true;
+		return true;
+	}
+}
+
+bool GameApplication::openScene(const Util::String& sceneName)
+{
 	App::SceneScheduleManager* pSceneSchedule = App::SceneScheduleManager::Instance();
-	return pSceneSchedule->OpenScene(sSceneName, create);
+	return pSceneSchedule->OpenScene(sceneName, false);
 }
 //------------------------------------------------------------------------------
 void GameApplication::OnStopped()
@@ -456,18 +478,27 @@ const GPtr<Scene>& GameApplication::GetCurrentScene() const
 }
 
 //------------------------------------------------------------------------------
-bool GameApplication::CloseScene(const Util::String& sSceneName)
+bool GameApplication::closeScene(const Util::String& sceneName)
 {
-	//现在只支持单场景。
 	App::SceneScheduleManager* pSceneSchedule = App::SceneScheduleManager::Instance();
-	if(sSceneName == pSceneSchedule->GetMainScene()->GetName())
+	return	pSceneSchedule->CloseScene(sceneName);
+}
+
+bool GameApplication::CloseScene( const Util::String& sceneName, bool force )
+{
+	n_assert(IsOpen());
+	if (force)
 	{
-		CloseAllScenes();
+		return closeScene(sceneName);
+	}
+	else
+	{
+		mCloseSceneName = sceneName;
+		mCloseSceneDirty = true;
 		return true;
 	}
-	return false;
-
 }
+
 //------------------------------------------------------------------------
 void GameApplication::CloseAllScenes()
 {

@@ -110,6 +110,8 @@ namespace Graphic
 		eGShaderParticleMovement,							//		g_ParticleMovement;
 		eGShaderParticleColor,								//		g_ParticleColor;
 		eGShaderParticleTexAnim,							//		g_ParticleTexAnim;
+		eGShaderParticleUpVec,								//		g_ParticleUpVec
+		eGShaderParticleRightVec,							//		g_ParticleRightVec
 
 		eGShaderMatLMTexParam,                              //      g_LMTexParam
 		eGShaderMatLMEnable,								//      g_UseLM

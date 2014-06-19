@@ -31,6 +31,7 @@ THE SOFTWARE.
 #include "appframework/app_fwd_decl.h"
 //#include "app/physXfeature/PhysicsShapeComponent.h"
 #include "app/scriptfeature/inc/script_message.h"
+#include "scriptfeature/script_root_instance.h"
 
 namespace Graphic
 {
@@ -161,7 +162,7 @@ namespace App
 	//------------------------------------------------------------------------
 	inline MonoObject* ScriptInstance::invokeScript(EEntryMethodIndex methodIndex, void** params /* = NULL */)
 	{
-		if ( IsInit() )
+		if ( IsInit() && ScriptRootInstance::HasInstance() )
 		{		
 			MonoMethod* pMethod = m_pArrEntryMethods->operator[]( methodIndex );
 			if ( pMethod )

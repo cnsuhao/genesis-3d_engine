@@ -53,7 +53,7 @@ namespace Graphic
 		eRLWater = BIT_FLAG(4),
 		eRLCustomBegin = BIT_FLAG(6),//
 		eRLCustomEnd = BIT_FLAG(29),//
-		eRLDebug = BIT_FLAG(31),
+		eSL_Assist = BIT_FLAG(31),
 
 		eRLSYSAll = eRLDefault | eRLWater,
 		eRLCustomAll = BIT_FLAG(6) | BIT_FLAG(7) | 0x0fffff00 | BIT_FLAG(28) | BIT_FLAG(29),

@@ -55,6 +55,16 @@ namespace MyGUI
 		}
 	}
 
+	void GenesisVertexBufferMgr::RemoveVertexBuffer( GenesisVertexBuffer* const& pBuffer )
+	{
+		IndexT res = m_AllVertexBuffers.FindIndex(pBuffer);
+
+		if (res != InvalidIndex)
+		{
+			m_AllVertexBuffers.EraseIndex(res);
+		}
+	}
+
 	void GenesisVertexBufferMgr::ResetAllBuffers() const
 	{
 		SizeT nCount = m_AllVertexBuffers.Size();

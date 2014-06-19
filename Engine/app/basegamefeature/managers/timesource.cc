@@ -33,7 +33,7 @@ __ImplementClass(GameTime,'GTSG',App::TimeSource);
 __ImplementImageSingleton(GameTime);
 using namespace Timing;
 
-#define WRAPTIME 100.0f
+#define WRAPTIME 5.0f
 //------------------------------------------------------------------------
 GameTime::GameTime()
 {
@@ -102,7 +102,7 @@ TimeSource::UpdateTime(Time frameTime)
 
 		if (this->mWrapTime > WRAPTIME)
 		{
-			this->mWrapTime -= WRAPTIME;
+			this->mWrapTime = 0.0f;
 		}
     }
 }

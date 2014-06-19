@@ -232,6 +232,8 @@ namespace ScriptRuntime
     {
         public MouseCode button;
         public InputEventType eventType;
+        public Vector2 relativePos;
+        public Vector2 absolutePos;
     }
 
     /// <summary>
@@ -241,6 +243,8 @@ namespace ScriptRuntime
     {
         public int id;
         public InputEventType eventType;
+        public Vector2 relativePos;
+        public Vector2 absolutePos;
     }
 
 }

@@ -81,6 +81,10 @@ namespace App
 
 		bool Intersect(const Math::Ray& worldRay, Math::scalar& fout, Math::scalar fTolerance = N_TINY);
 
+#ifdef __GENESIS_EDITOR__
+		virtual void SetEditorVisible(bool bVis);
+#endif
+
 	protected:
 		/// @Component::OnActivate  called from Actor::ActivateComponents()
 		virtual void OnActivate();

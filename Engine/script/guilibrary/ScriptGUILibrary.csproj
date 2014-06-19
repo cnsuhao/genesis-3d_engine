@@ -28,6 +28,7 @@
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\Debug\ScriptGUILibrary.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -38,6 +39,7 @@
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\Release\ScriptGUILibrary.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Button.cs" />
@@ -119,6 +121,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>xcopy $(TargetPath) $(ProjectDir)..\..\..\..\genesis_editor\bin\win32\DefaultAssets\Script /q /y</PostBuildEvent>
+    <PostBuildEvent>xcopy $(TargetPath) $(ProjectDir)..\..\..\..\genesis_editor\bin\win32\DefaultAssets\Script /q /y
+xcopy $(TargetDir)$(TargetName).XML  $(ProjectDir)..\..\..\..\genesis_editor\bin\win32\DefaultAssets\Script /q /y</PostBuildEvent>
   </PropertyGroup>
 </Project>

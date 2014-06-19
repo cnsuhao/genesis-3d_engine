@@ -37,6 +37,9 @@ namespace Graphic
 		, m_Projected(true)
 		, mbReceiveShadow(false)
 		, mbCastShadow(false)
+#ifdef __GENESIS_EDITOR__
+		, m_bEditorVis(true)
+#endif
 	{	
 		m_transform = matrix44::identity();
 	}

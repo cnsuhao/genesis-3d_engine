@@ -94,10 +94,10 @@ namespace MyGUI
 		}
 	}
 
-	void DDContainer::mouseDrag(MouseButton _id)
+	bool DDContainer::mouseDrag(MouseButton _id)// expand by genesis-3d
 	{
 		if (MouseButton::Left != _id)
-			return;
+			return false;// expand by genesis-3d
 
 		// нужно ли обновить данные
 		bool update = false;
@@ -121,14 +121,17 @@ namespace MyGUI
 			else
 			{
 				// сбрасываем фокус мыши (не обязательно)
-				InputManager::getInstance().resetMouseCaptureWidget();
+
+				// expand by genesis-3d
+				// reset or not logic move to item box
+				//InputManager::getInstance().resetMouseCaptureWidget();
 			}
 		}
 
 		// дроп не нужен
 		if (!mNeedDrop)
 		{
-			return;
+			return false;// expand by genesis-3d
 		}
 
 		// делаем запрос, над кем наша мыша
@@ -138,7 +141,8 @@ namespace MyGUI
 		updateDropItems();
 
 		// если равно, значит уже спрашивали
-		if (mOldDrop == item) return;
+		if (mOldDrop == item) 
+			return true;// expand by genesis-3d
 		mOldDrop = item;
 
 		// сбрасываем старую подсветку
@@ -209,6 +213,7 @@ namespace MyGUI
 		updateDropItemsState(data);
 
 		eventChangeDDState(this, state);
+		return true;// expand by genesis-3d
 	}
 
 	void DDContainer::endDrop(bool _reset)

@@ -59,16 +59,15 @@ namespace Particles
 			mParentSystem->SetLoadEmitterMesh(false);
 		}
 		mMeshName = name;
+#ifdef __GENESIS_EDITOR__	//	edtior  use
+		mRealMeshName = name;
+#endif
 		mMeshRes = NULL;
 		mVertList.Clear();
 	}
 	//--------------------------------------------------------------------------------
 	void ModelEmitter::SetMeshRes(void* resource)
 	{
-		if (mParentSystem)
-		{
-			mParentSystem->SetLoadEmitterMesh(false);
-		}
 		mMeshRes = resource;
 	}	
 	//-----------------------------------------------------------------------
@@ -84,7 +83,9 @@ namespace Particles
 		if (mVertList.IsEmpty())
 		{
 			Resources::MeshRes* meshres = (Resources::MeshRes*)mMeshRes;
-
+#ifdef __GENESIS_EDITOR__	//	edtior  use
+			mRealMeshName = meshres->GetResourceId().AsString();
+#endif
 			const Resources::NormalData::value_type* normals = meshres->GetVertexData<Resources::NormalData>();
 			const Resources::PositionData::value_type* verteies = meshres->GetVertexData<Resources::PositionData>();
 

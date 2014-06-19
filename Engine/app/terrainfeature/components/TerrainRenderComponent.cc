@@ -231,7 +231,9 @@ namespace App
 		const Math::matrix44& world = mActor->GetWorldTransform();
 		m_TerrainWordTransform.set_position( world.get_position() );
 
+
 		if(mVisible)
+		
 		{
 			//when active, need rebuild all data
 			m_bIsHeightMapDirty = true;
@@ -246,6 +248,7 @@ namespace App
 	//------------------------------------------------------------------------------
 	void TerrainRenderComponent::OnDeactivate()
 	{
+
 		if(mVisible)
 		{
 			_ClearRenderObjects();
@@ -257,6 +260,24 @@ namespace App
 
 		return;
 	}
+	//------------------------------------------------------------------------------
+#ifdef __GENESIS_EDITOR__
+	void TerrainRenderComponent::SetEditorVisible(bool bVis)
+	{
+		Super::SetEditorVisible(bVis);
+
+		if (IsActive())
+		{
+			SizeT nCount = m_RenderObjects.Size();
+
+			for (IndexT i = 0; i <  nCount; ++i)
+			{
+				m_RenderObjects.ValueAtIndex(i)->SetEditorVisible(bVis);
+			}
+		}
+
+	}
+#endif
 	//------------------------------------------------------------------------------
 	void TerrainRenderComponent::SetVisible(bool bVisible)
 	{
@@ -437,6 +458,35 @@ namespace App
 			{
 				unit.ResetRenderable<RenderObjectType::RenderableType>();
 				_ResetRenderableMark(i);
+			}
+		}
+	}
+	//------------------------------------------------------------------------
+	void TerrainRenderComponent::CheckMaterials()
+	{
+		for (int i = 0; i < mRenderableResUnitList.Size(); ++i)
+		{
+			const Graphic::RenderbleResUnit& unit  = mRenderableResUnitList[i];
+			const Graphic::Renderable* pRenderable = unit.GetRenderable();
+			
+			if (pRenderable->GetMaterial()->GetMaterialID() == "sys:Missing_Material.material")
+			{
+				if (i == 0)
+				{
+					SetMaterialByShaderID(sBaseMapMaterialIdx, sBaseMapShaderID,true);
+				}
+				else if ( i == 1)
+				{
+					SetMaterialByShaderID(sColorMapMaterialIdx, sColorMapShderID,true);	
+				}
+				else if ( i == 2)
+				{
+					SetMaterialID(i, "sys:TerrainDefault.material", false, 0);
+				}
+				else
+				{
+					SetMaterialID(i, "sys:TerrainDefaultAdd.material", false, 0);
+				}
 			}
 		}
 	}
@@ -865,7 +915,9 @@ namespace App
 			m_TerrainDataSource->DelControlMap(controlMapCout_Before -1);
 		}
 
+
 		if(mVisible)
+		
 		{
 			// delete layer related info 
 			//(these render data will be attached when rebuild LOD data)
@@ -922,10 +974,6 @@ namespace App
 			oldTilezOffset = tileOffsetValue.AsFloat4();
 		}
 
-		//Get old material sortID(or instanceID) to make new material has same draw order
-		GPtr<Graphic::MaterialInstance> matInstance = GetMaterial(matIdx);
-		uint sortId = n_min(matInstance->GetInstanceID(),matInstance->GetSort());
-
 		//Delete old material
 // 		GPtr<Graphic::MaterialInstanceManager>& pManager = App::GraphicObjectManager::Instance()->GetMaterialInstanceManager();
 // 		pManager->RemoveMaterialInstance(matInstance->GetMaterialID());
@@ -941,10 +989,6 @@ namespace App
 		_ModifyTerrainMaterialDir(curMatID,newMatId);
 		Resources::ResourceManager::Instance()->ModifyMaterialInstanceID(curMatID,newMatId);
 
-		//Set sortID to new material
-		GPtr<Graphic::MaterialInstance> newMatInstance = GetMaterial(matIdx);
-		newMatInstance->SetSort(sortId);
-
 		// Set texture brush's uv info
 		_SetMaterialTileOffsetParam(matIdx, sUVParamName, oldTilezOffset);
 
@@ -957,6 +1001,13 @@ namespace App
 		if ( oldControlTexID.IsValid() )
 		{
 			_SetMaterialTextureParam(matIdx,sControlParamName, oldControlTexID, 0);
+		}
+
+		//Reset material sortId to make sure terrain renderobjs have right order
+		for(int matIndex=0;matIndex<GetMaterialCount();matIndex++)
+		{
+			GPtr<Graphic::MaterialInstance> instance = GetMaterial(matIndex);
+			instance->SetSort(matIndex);
 		}
 
 		m_bIsTextureDirty = true;
@@ -1443,7 +1494,10 @@ namespace App
 
 		Math::float3 ratio(terrainScale.x(),heightScale,terrainScale.y());
 		m_TerrainDataSource->SetTerrainRatio(ratio);
+
 		if(mVisible)
+
+		
 		{
 			m_bIsHeightMapDirty = true;
 		}
@@ -1467,7 +1521,9 @@ namespace App
 
 		m_TerrainDataSource->ResetHeightmpData(nextPowerOfTwo);
 
+
 		if(mVisible)
+		
 		{
 			//	if MipMap level changed, Node and Renderable should be destroyed
 			_ClearRenderObjects();
@@ -1504,7 +1560,9 @@ namespace App
 		SetBaseHeight((int)settings.baseheight);
 
 		// Clear data
+
 		if(mVisible)
+		
 		{
 			_ClearRenderObjects();
 			m_bIsHeightMapDirty = true;
@@ -1648,7 +1706,10 @@ namespace App
 			(*itor) = *lvalue;
 		}
 		m_TerrainDataSource->BuildHeightmpData(heightMapH,heights);
+
+
 		if(mVisible)
+		
 		{
 			m_bIsHeightMapDirty = true;
 		}

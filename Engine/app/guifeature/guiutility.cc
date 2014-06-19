@@ -545,10 +545,11 @@ namespace App
 		_sendEvent(_sender, &arg);
 	}
 
-	void GuiUtility::onScrollChangePosition(MyGUI::ScrollBar* scroll_bar, size_t position)
+	void GuiUtility::onScrollChangePosition(MyGUI::ScrollBar* scroll_bar, int position)
 	{
 		ScrollChangePositionEventArg arg;
 		arg.EventType = EventType::ScrollChangePosition;
+		arg.Position = position;
 
 
 		_sendEvent(scroll_bar, &arg);

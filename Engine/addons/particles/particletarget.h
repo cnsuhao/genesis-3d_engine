@@ -349,8 +349,8 @@ namespace Particles
 		virtual void _RotatorParticle(Particle* particle, ParticleVertexData* particleVertex);
 		virtual Math::MinMaxCurve* getMinMaxCurve(ParticleCurveType pct);
 		void _initVertexBufferData(Graphic::VertexBufferData2& vbd2, SizeT needCount);
-		void _initSimpleGPUVertexBuffer(Graphic::VertexBufferData2& vbd2, SizeT needCount);
-		void _initAffectGPUVertexBuffer(Graphic::VertexBufferData2& vbd2, SizeT needCount);
+		void _initSpriteGPUVertexBuffer(Graphic::VertexBufferData2& vbd2, SizeT needCount);
+		void _initBoardGPUVertexBuffer(Graphic::VertexBufferData2& vbd2, SizeT needCount);
 		void _initVertexBufferData(Graphic::IndexBufferData2& ibd2, SizeT needCount);
 	protected:
 		void restActiveElemCount();

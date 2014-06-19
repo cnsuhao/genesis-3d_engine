@@ -98,6 +98,8 @@ namespace Graphic
 		m_globalShaderParams[eGShaderParticleMovement] = GlobalShaderParam(float4(0.f,0.f,0.f,0.f),Util::String("g_ParticleMovement"));
 		m_globalShaderParams[eGShaderParticleColor] = GlobalShaderParam(float4(1.f,1.f,1.f,1.f),Util::String("g_ParticleColor"));
 		m_globalShaderParams[eGShaderParticleTexAnim] = GlobalShaderParam(float4(1.f,1.f,0.f,0.f),Util::String("g_ParticleTexAnim"));
+		m_globalShaderParams[eGShaderParticleUpVec] = GlobalShaderParam(float4(0.f,1.f,0.f,0.f),Util::String("g_ParticleUpVec"));
+		m_globalShaderParams[eGShaderParticleRightVec] = GlobalShaderParam(float4(1.f,0.f,0.f,0.f),Util::String("g_ParticleRightVec"));
 
 		m_globalShaderParams[eGShaderMatLMTexParam] = GlobalShaderParam(float4(0.f,0.f,1.f,1.f),Util::String("g_LMTexParam"));
 		m_globalShaderParams[eGShaderMatLMEnable] = GlobalShaderParam(float4(0.f,0.f,0.f,0.f),Util::String("g_UseLM"));

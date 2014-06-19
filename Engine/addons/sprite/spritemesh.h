@@ -24,7 +24,7 @@ THE SOFTWARE.
 #ifndef __SPRITE_MESH_H__
 #define __SPRITE_MESH_H__
 #include "foundation/core/refcounted.h"
-#include "foundation/Util/array.h"
+#include "foundation/util/array.h"
 #include "foundation/math/size.h"
 #include "foundation/math/float3.h"
 #include "foundation/math/color.h"

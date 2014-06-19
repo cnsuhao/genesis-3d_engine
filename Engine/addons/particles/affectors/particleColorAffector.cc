@@ -42,6 +42,7 @@ namespace Particles
 	ColorAffector::ColorAffector(void) : ParticleAffector(),mMinAlpha(0.0f),mMaxAlpha(1.0f),mTimeAlpha(false)
 		, mColorCtlType(CCT_GRADCURVE)
 	{
+		mAffectType = AT_Color;
 		mMinMaxColorA.SetCurveState(Math::MinMaxCurve::Scalar);	
 		mMinMaxColorR.SetCurveState(Math::MinMaxCurve::Scalar);
 		mMinMaxColorG.SetCurveState(Math::MinMaxCurve::Scalar);
@@ -74,7 +75,7 @@ namespace Particles
 			return;
 		Math::Color32 clr;
 
-		float percent = (particle->mTotalTimeToLive - particle->mTimeToLive)/particle->mTotalTimeToLive;
+		float percent = particle->mTimeFraction;
 
 		float randomSid = Math::n_rand(0.0f,1.0f);
 		clr.r =  Math::n_scalartoByte(mMinMaxColorR.Calculate(percent,randomSid));

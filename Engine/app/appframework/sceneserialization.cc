@@ -29,7 +29,7 @@ THE SOFTWARE.
 #include "physXfeature/physicsCore/PhysicsServer.h"
 #include "graphicsystem/GraphicObjectManager.h"
 #include "Material/MaterialManager.h"
-#include "lightmap/lightmapSetting.h"
+#include "Lightmap/lightmapSetting.h"
 #include "addons/shadercompiler/ShadercompilerConfig.h"
 
 namespace App
@@ -519,11 +519,11 @@ namespace App
 		}
 
 		//// 没找到合适的地方，先放这儿了
-		GPtr<Graphic::MaterialInstanceManager>& manager = GraphicObjectManager::Instance()->GetMaterialInstanceManager();
+		/*GPtr<Graphic::MaterialInstanceManager>& manager = GraphicObjectManager::Instance()->GetMaterialInstanceManager();
 		if ( manager )
 		{
-			manager->SaveMaterial();
-		}
+		manager->SaveMaterial();
+		}*/
 
 
 	}

@@ -58,6 +58,7 @@ struct GraphicCardCapability
 	bool mDepthFormat;
 	bool mSeparateAplhaBlend;
 	bool mStencilTwoSize;
+	bool mS3TC;
 #endif
 
 #if RENDERDEVICE_D3D9

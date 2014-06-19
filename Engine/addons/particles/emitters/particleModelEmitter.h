@@ -51,13 +51,18 @@ namespace Particles
 
 		void SetMeshEmitType(MeshEmitType);
 		MeshEmitType GetMeshEmitType(void) const;
-
+#ifdef __GENESIS_EDITOR__	//	edtior  use
+		const Util::String& GetRealMeshName(void) const;
+	protected:
+		Util::String							mRealMeshName;
+#endif
 	protected:
 		Util::String									mMeshName;
 		void*											mMeshRes;
 		MeshEmitType								mEmitType;
 
 		Util::Array<ParticleVertexData>			mVertList;
+
 
 	public:
 		// @ISerialization::GetVersion. when change storage, must add SerializeSVersion count
@@ -94,7 +99,13 @@ namespace Particles
 	{
 		return mEmitType;
 	}
-
+#ifdef __GENESIS_EDITOR__	//	edtior  use
+	//--------------------------------------------------------------------------------
+	inline const Util::String& ModelEmitter::GetRealMeshName(void) const
+	{
+		return mRealMeshName;
+	}
+#endif
 }
 #endif
 

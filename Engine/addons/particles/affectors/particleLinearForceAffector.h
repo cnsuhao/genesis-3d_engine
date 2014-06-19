@@ -63,6 +63,8 @@ namespace Particles
 		void SetShaderParam();
 		void InitShaderParam();
 		void SetShaderMask(const GPtr<ShaderProgramCompiler::ShaderMarcro>& pMarcro);
+		inline const Math::float3& GetShaderParam() const;
+		const Math::float3 _getEndPos(const Math::float3& pos,const Math::float3 speed,float time);
 	protected:
 		Math::float3 mScaledVector;
 		ForceApplication mForceApplication;
@@ -123,6 +125,11 @@ namespace Particles
 	inline void	 LinearForceAffector::SetSpaceCoordType(const SpaceCoordType& sct)
 	{
 		mSpaceCoord = sct;
+	}
+	//--------------------------------------------------------------------------------
+	inline const Math::float3& LinearForceAffector::GetShaderParam() const
+	{
+		return mShaderParam;
 	}
 }
 

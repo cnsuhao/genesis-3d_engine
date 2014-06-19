@@ -177,6 +177,21 @@ namespace Graphic
 
 			if (mark)
 			{
+
+#if __GENESIS_EDITOR__
+				if (renderObj->IsEditorVisible() || camera->GetCameraTarget() == Camera::GAME)
+				{
+					if (mainCamera && renderObj->GetNeedCullCallBack())
+					{
+						params.m_callBacks.Append(renderObj);
+					}
+					Math::float4 renderablePos = renderObj->GetTransform().get_position();
+					Math::float4 camToObj = renderablePos - camPos;
+					VisibleNode& node = params.m_visibleNodes.PushBack();
+					node.object = renderObj;
+					node.distance = Math::float4::dot3(camDir,camToObj);
+				}
+#else
 				if (mainCamera && renderObj->GetNeedCullCallBack())
 				{
 					params.m_callBacks.Append(renderObj);
@@ -186,6 +201,8 @@ namespace Graphic
 				VisibleNode& node = params.m_visibleNodes.PushBack();
 				node.object = renderObj;
 				node.distance = Math::float4::dot3(camDir,camToObj);
+#endif
+				
 			}
 
 		}
@@ -199,9 +216,19 @@ namespace Graphic
 				uint mark = (*it)->GetRenderCullMark() & (uint)camera->GetCullMask();
 				if (mark)
 				{
+#if __GENESIS_EDITOR__
+					if ( (*it)->IsEditorVisible() || camera->GetCameraTarget() == Camera::GAME)
+					{
+						VisibleNode& node = params.m_visibleNodes.PushBack();
+						node.object = *it;
+						node.distance = 0;
+					}
+#else
 					VisibleNode& node = params.m_visibleNodes.PushBack();
 					node.object = *it;
 					node.distance = 0;
+#endif
+					
 				}
 				++it;
 			}

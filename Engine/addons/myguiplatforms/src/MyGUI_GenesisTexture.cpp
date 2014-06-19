@@ -93,7 +93,7 @@ namespace MyGUI
 		: mName(_name)
 		, mGroup(_group)
 		, mRenderTarget(nullptr)
-		, m_texHandle(NULL)
+		, m_texRes(NULL)
 		, m_width(0)
 		, m_height(0)
 		, mNumElemBytes(0)
@@ -130,25 +130,23 @@ namespace MyGUI
 
 	void GenesisTexture::destroy()
 	{
-
-		//[zhongdaohuan 2012/12/12] 如果这个texture是由render target创建的，那么，这个texture的句柄应该由render target类来管理。
-		//现在的terender target还不能由mygui自己创建，所以所有render target都是源于mygui外部，
-		//所以现在不会因mygui而引发内存泄漏问题，如果以后mygui内部自己也可以创建render target，那么，这里的逻辑应该重新评估。
 		if (nullptr == mRenderTarget)
 		{
 			if (m_bManualCreate)
 			{
-				if (m_texHandle.IsValid())
+				if (m_texRes->GetHandle())
 				{
-					GraphicSystem::Instance()->RemoveTexture(m_texHandle);
-					m_texHandle = NULL;
+					GraphicSystem::Instance()->RemoveTexture(m_texRes->GetHandle());
+					m_texRes = NULL;
 				}
 			}
 			GenesisTextureMgr::Instance()->RemoveManualTexture(this);
 		}
 
 		m_texStream = NULL;
+		m_texRes = NULL;
 		mRenderTarget = nullptr;
+		m_bManualCreate = false;
 		mNumElemBytes = 0;
 		mOriginalFormat = PixelFormat::Unknow;
 		mOriginalUsage = TextureUsage::Default;
@@ -358,14 +356,15 @@ namespace MyGUI
 			tex->SetStream( m_texStream.upcast<IO::Stream>() );
 			m_texStream->Close();
 			//m_texStream->SetAccessMode( IO::Stream::ReadAccess );
-			m_texHandle = Graphic::GraphicSystem::Instance()->CreateTexture(tex);
-
+			RenderBase::TextureHandle handle = Graphic::GraphicSystem::Instance()->CreateTexture(tex);
+			m_texRes = Resources::TextureResInfo::Create();
+			m_texRes->SetHandle(handle);
 			GenesisTextureMgr::Instance()->AddManualTexture(this);
 			m_bManualCreate = true;
 		}
 		else
 		{
-			m_texHandle = NULL;
+			m_texRes = NULL;
 			m_width = 0;
 			m_height = 0;
 			mOriginalUsage = TextureUsage::Default;
@@ -499,10 +498,9 @@ namespace MyGUI
 
 		m_texStream = NULL;*/
 
-		GPtr<TextureResInfo> tri = Resources::ResourceManager::Instance()->CreateTextureInfo(url, 0);
-		m_texHandle = tri->GetHandle();
+		m_texRes = Resources::ResourceManager::Instance()->CreateTextureInfo(url, 0);
 		RenderBase::TEXTURE_DESC texDesc;
-		GraphicSystem::Instance()->GetTextureDesc(m_texHandle, texDesc);
+		GraphicSystem::Instance()->GetTextureDesc(m_texRes->GetHandle(), texDesc);
 
 		m_width = texDesc.width;
 		m_height = texDesc.height;
@@ -518,14 +516,30 @@ namespace MyGUI
 		GenesisRTTexture* wjRt = static_cast<GenesisRTTexture*>(mRenderTarget);
 		const GPtr<Graphic::RenderToTexture>& rendetToTexture = wjRt->getRenderToTexture();
 		const GPtr<RenderBase::RenderTarget>& renderTarget = rendetToTexture->GetRenderTarget();
-
-
 		m_width = renderTarget->GetWidth();
 		m_height = renderTarget->GetHeight();
 		mOriginalUsage = TextureUsage::RenderTarget;
 		setFormat(FormatWjToMyGui(renderTarget->GetColorBufferFormat()));
-		m_texHandle = rendetToTexture->GetTextureHandle();
+
+		m_texRes = NULL;
+		m_bManualCreate = false;
 	}
+
+	RenderBase::TextureHandle GenesisTexture::GetTextureHandle() const
+	{
+		if (m_texRes.isvalid())
+		{
+			return m_texRes->GetHandle();
+		}
+		if (mRenderTarget)
+		{
+			GenesisRTTexture* wjRt = static_cast<GenesisRTTexture*>(mRenderTarget);
+			const GPtr<Graphic::RenderToTexture>& rendetToTexture = wjRt->getRenderToTexture();
+			return rendetToTexture->GetTextureHandle();
+		}
+		return NULL;
+	}
+
 
 	void GenesisTexture::setFormat(PixelFormat format)
 	{

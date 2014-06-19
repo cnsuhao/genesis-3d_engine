@@ -55,7 +55,7 @@ public:
     /// write a number of lines, separated by new-lines
     void WriteLines(const Util::Array<Util::String>& lines);
     /// generic writer method
-    template<typename T> void Write(const T& t);
+    //template<typename T> void Write(const T& t);
 };
 
 } // namespace IO

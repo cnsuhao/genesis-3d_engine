@@ -151,6 +151,11 @@ namespace MyGUI
 			return isFocus;
 		}
 
+		return changeMouseFocus(item, old_mouse_focus, _absx, _absy, _absz);
+	}
+
+	bool InputManager::changeMouseFocus(Widget* item, Widget* old_mouse_focus, int _absx, int _absy, int _absz)
+	{
 		if (item)
 		{
 			// поднимаемся до рута
@@ -472,6 +477,11 @@ namespace MyGUI
 		{
 			mouseFocus->_riseMouseLostFocus(nullptr);
 		}
+	}
+
+	void InputManager::_forceChangeMouseFocus(Widget* _focusNew, int _absx, int _absy, int _absz)
+	{
+		changeMouseFocus(_focusNew, mWidgetMouseFocus, _absx, _absy, _absz);
 	}
 
 	// удаляем данный виджет из всех возможных мест

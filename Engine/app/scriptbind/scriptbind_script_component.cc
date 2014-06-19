@@ -45,11 +45,23 @@ namespace App
 		//return NULL;
 	}
 
+	static int ICall_ScriptComponent_GetScriptInstanceCount(MonoObject* pMonoObj)
+	{
+		ScriptObjWrapper<ScriptComponent> self( pMonoObj );
+		return self->GetScriptInstanceCount();
+	}
 
+	static MonoObject* ICall_ScriptComponent_GetScriptObject(MonoObject* pMonoObj, int index)
+	{
+		ScriptObjWrapper<ScriptComponent> self( pMonoObj );
+		return self->GetScriptObject(index);
+	}
 	void ICallReg_ScriptRuntime_ScriptComponent( void )
 	{
 		static const InternalCallDetail s_cScriptBindInternalCallDetail[] = {
-			{ "ScriptRuntime.ScriptComponent::ICall_ScriptComponent_GetScriptByName", (void*)&ICall_ScriptComponent_GetScriptByName },
+			{ "ScriptRuntime.ScriptComponent::ICall_ScriptComponent_GetScriptByName",			(void*)&ICall_ScriptComponent_GetScriptByName },
+			{ "ScriptRuntime.ScriptComponent::ICall_ScriptComponent_GetScriptInstanceCount",	(void*)&ICall_ScriptComponent_GetScriptInstanceCount },
+			{ "ScriptRuntime.ScriptComponent::ICall_ScriptComponent_GetScriptObject",			(void*)&ICall_ScriptComponent_GetScriptObject },
 		};
 
 

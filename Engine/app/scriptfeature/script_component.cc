@@ -388,6 +388,18 @@ namespace App
 		return nullPtr;
 	}
 
+	MonoObject* ScriptComponent::GetScriptObject(int idx)
+	{
+		if (0 <= idx && idx < m_arrScriptInstances.Size())
+		{
+			if (m_arrScriptInstances[idx].isvalid())
+			{
+				return m_arrScriptInstances[idx]->GetMonoInstance();
+			}
+		}
+		return NULL;
+	}
+
 	//------------------------------------------------------------------------
 	void ScriptComponent::CopyFrom( const GPtr<Component>& pComponent )
 	{
@@ -1134,7 +1146,15 @@ namespace App
 #ifdef __GENESIS_EDITOR__
 			if ( !_pScriptInstance.isvalid() )
 			{
-				n_warning("Script instance creation failed! Please make sure that the file name is the same with the class name,and there is no compile errors!\n");
+				if (NULL != mActor)
+				{
+					n_warning("Script class(%s.%s) is no found, at actor(%s).\n", m_arrNameSpaces[ii].AsCharPtr(), m_arrClassNames[ii].AsCharPtr(), mActor->GetName().AsCharPtr());
+				}
+				else
+				{
+					n_warning("Script class(%s.%s) is no found.\n", m_arrNameSpaces[ii].AsCharPtr(), m_arrClassNames[ii].AsCharPtr());
+				}
+
 				continue;
 			}
 #endif

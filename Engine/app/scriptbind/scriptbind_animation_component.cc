@@ -130,16 +130,17 @@ namespace App
 	static void ICall_AnimationComponent_AddAttachedActor( MonoObject* pMonoObj, MonoObject* pActor, MonoString* pMonoString)
 	{
 		ScriptObjWrapper<AnimationComponent> self( pMonoObj );
-		ScriptObjWrapper<Actor> actor( pActor );
+
+		Actor* actor = ScriptObjToCppPointer<Actor>(pActor);
 		Util::String skelName = Utility_MonoStringToCppString( pMonoString );
-		self->AddAttachedActor(actor.GetCppObjPtr(),skelName);
+		self->AddAttachedActor(actor,skelName);
 	}
 	//------------------------------------------------------------------------
 	static void ICall_AnimationComponent_RemoveAttachedActor( MonoObject* pMonoObj, MonoObject* pActor)
 	{
 		ScriptObjWrapper<AnimationComponent> self( pMonoObj );
-		ScriptObjWrapper<Actor> actor( pActor );
-		self->RemoveAttachedActor(actor.GetCppObjPtr());
+		Actor* actor = ScriptObjToCppPointer<Actor>(pActor);
+		self->RemoveAttachedActor(actor);
 	}
 
 	//------------------------------------------------------------------------

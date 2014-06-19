@@ -75,6 +75,7 @@ namespace App
 		}
 		else
 		{
+
 			if (!mMeshLoading && mVisible)
 			{
 				_AttachRenderObject();
@@ -93,7 +94,8 @@ namespace App
 	//------------------------------------------------------------------------
 	void MeshRenderComponent::OnDeactivate()
 	{
-		if (IsActive() && mVisible)
+
+		if (IsActive() && mVisible)		
 		{
 			_DeattachRenderObject();
 		}
@@ -192,6 +194,10 @@ namespace App
 	 
 	void MeshRenderComponent::SetVisible(bool bVis)
 	{
+		if ( bVis == mVisible )
+		{
+			return;
+		}
 		Super::SetVisible(bVis);
 		if (IsActive())
 		{
@@ -205,6 +211,22 @@ namespace App
 			}
 		}
 	}
+#ifdef __GENESIS_EDITOR__
+	void MeshRenderComponent::SetEditorVisible(bool bVis)
+	{
+		Super::SetEditorVisible(bVis);
+
+		if (IsActive())
+		{
+			if (mRenderObject.isvalid())
+			{
+				mRenderObject->SetEditorVisible(bVis);
+				
+			}
+		}
+		
+	}
+#endif
 	void MeshRenderComponent::_AttachRenderObject()
 	{
 		if (mRenderObject.isvalid())
@@ -234,7 +256,9 @@ namespace App
 
 	void MeshRenderComponent::_OnMeshDirty(bool bDeleteRenderObject)
 	{
+
 		if (bDeleteRenderObject || (IsActive() && mVisible) )
+		
 		{
 			_DeattachRenderObject();
 		}
@@ -257,9 +281,16 @@ namespace App
 				mActor->_UpdateLocalBBox();
 				//mActor->SetLocalBoundingBox(mPrimitiveResInfo->GetRes().downcast<Resources::MeshRes>()->GetBoundingBox());
 				_BuildRenderRes();
+
 				if ( IsActive() && mVisible)
 				{
 					_AttachRenderObject();
+#ifdef __GENESIS_EDITOR__
+					if ( mRenderObject.isvalid() )
+					{
+						mRenderObject->SetEditorVisible(m_bEidtorVis);
+					}
+#endif
 				}
 				mPrimitive = mPrimitiveResInfo->GetHandle();
 				mMeshLoading = false;

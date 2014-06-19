@@ -37,6 +37,7 @@ namespace Particles
 	LimitAffector::LimitAffector(void) : ParticleAffector()
 		, mSeparateAxis(false)
 	{
+		mAffectType = AT_Limit;
 		mName = "LimitAffector";
 		mLimitX.SetScalar(0.0f);
 		mLimitY.SetScalar(0.0f);
@@ -53,7 +54,7 @@ namespace Particles
 		if (particle)
 		{
 
-			float curTime = (particle->mTotalTimeToLive - particle->mTimeToLive)/particle->mTotalTimeToLive;
+			float curTime = particle->mTimeFraction;
 
 			//mAxisX
 			float limitX = mLimitX.Calculate(curTime,particle->mRandom0);

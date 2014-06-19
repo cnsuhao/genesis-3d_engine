@@ -53,7 +53,7 @@ namespace MyGUI
 	public:
 
 		void AddVertexBuffer(GenesisVertexBuffer* const& pBuffer);
-
+		void RemoveVertexBuffer(GenesisVertexBuffer* const& pBuffer);
 		void ResetAllBuffers() const;
 
 	private:

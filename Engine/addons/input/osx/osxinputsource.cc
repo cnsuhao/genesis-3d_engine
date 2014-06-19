@@ -29,6 +29,7 @@ THE SOFTWARE.
 #include "input/osx/osxtouchevent.h"
 #include "graphicsystem/GraphicSystem.h"
 #include "input/inputmobileconfig.h"
+#include "input/mobilekeyboardevent.h"
 
 namespace OSXInput
 {
@@ -98,12 +99,56 @@ int OSXInputSource::OnOSXProc(MoibleInputEvent* pEvent)
 		break;
 
 	case MoibleInputEvent::INPUT_EVENT_TYPE_KEY:
+        {
+            OnKeyboardEvent(pEvent);
+        }
 		break;
 	}
 
 	return 0;
 }
-
+    void OSXInputSource::OnKeyboardEvent(const Input::MoibleInputEvent* pEvent)
+    {
+        //put event to eventProcessList
+        if ( !pEvent )
+        {
+            return;
+        }
+        Input::MoibleInputEvent* punCEvent = const_cast<Input::MoibleInputEvent*>(pEvent);
+        Input::MobileKeyboardEvent* pkeyEvent = dynamic_cast<Input::MobileKeyboardEvent*>( punCEvent );
+        if ( !pkeyEvent )
+        {
+            return;
+        }
+        Input::InputEvent inputEvent;
+        switch(pkeyEvent->GetMotionType())
+        {
+            case Input::MobileKeyboardEvent::MOTION_EVENT_KEY_DOWN:
+			{
+				inputEvent.SetType(Input::InputEvent::KeyDown);
+				inputEvent.SetKey(pkeyEvent->GetKeycode());
+			}
+                break;
+            case Input::MobileKeyboardEvent::MOTION_EVENT_KEY_UP:
+			{
+				inputEvent.SetType(Input::InputEvent::KeyUp);
+				inputEvent.SetKey(pkeyEvent->GetKeycode());
+			}
+                break;
+            case Input::MobileKeyboardEvent::MOTION_EVENT_CHAR:
+			{
+				inputEvent.SetType(Input::InputEvent::Character);
+				inputEvent.SetChar(pkeyEvent->GetChar());
+			}
+                break;
+            default:
+                break;
+                
+        }
+        
+        m_InputEventList.Append(inputEvent);
+        
+    }
 void OSXInputSource::OnTouchEvent(const MobileTouchEvent* pEvent)
 {
 	const MobileTouchEvent::MotionType actionType  = pEvent->GetMotionType();

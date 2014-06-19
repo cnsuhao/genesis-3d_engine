@@ -52,6 +52,7 @@ __ImplementClass(App::Actor, 'GACT', Core::RefCounted);
 uint Actor::s_fastIdCounter = 0;
 
 const GPtr<Actor> Actor::NullActor;
+const ActorPropertySet ActorPropertySet::s_defaultVal;
 //------------------------------------------------------------------------------
 /**
 */
@@ -61,6 +62,7 @@ Actor::Actor() :
     mActivated(false),
 	mActiveControl(false),
 	mTemplateName(""),
+	mModelName(""),
 	mIsLinkTemplate(false),
 	mLayerID(eSL_Defualt),
 	mTagID(1),
@@ -79,7 +81,6 @@ Actor::Actor() :
 #ifdef __GENESIS_EDITOR__
 	mQueryMask(0),
 	mFrozen(false),
-	mLocked(false),
 #endif
 	mEditorFlag(0), 
 	mPriority(ResourcePriority::Undefinition)
@@ -159,9 +160,23 @@ Actor::_Destory(bool forceShutDown )
 //------------------------------------------------------------------------
 void Actor::SetLayerID(LayerID id)
 {
+	if (id == mLayerID)
+		return;
+
 	n_assert(id < 32);
 	n_assert(0 <= id);
 	mLayerID = id;
+
+#if __USE_PHYSX__ || __GENESIS_EDITOR__
+	//从脚本设置的话，需要更新物理形状的groupId
+	GPtr<PhysicsBodyComponent> com = FindComponent<PhysicsBodyComponent>();
+	if(com.isvalid() && com->GetEntity()->IsValid())
+	{
+		com->GetEntity()->SetGroupID(id);
+	}
+#endif
+
+
 	IndexT i;
 	for (i = 0; i < this->mComponents.Size(); ++i)
 	{
@@ -1055,7 +1070,16 @@ Actor::AttachComponent(const GPtr<Component>& prop)
 {
     n_assert(0 != prop);
 
-    this->mComponents.Append(prop);
+	//修复bug252 脚本组件应当放在最后
+	SizeT len = mComponents.Size();
+	if (len > 0 && mComponents[len-1]->IsA(ScriptComponent::RTTI))
+	{
+		mComponents.Insert(len-1, prop);
+	}
+	else
+	{
+		mComponents.Append(prop);
+	}
 	prop->_SetActor(this);
 	prop->SetupAllResource();
 	if ( IsActive())
@@ -1372,7 +1396,7 @@ void Actor::SetActiveStateForTemplate()
 
 }
 //------------------------------------------------------------------------
-void Actor::CopyFrom( const GPtr<Actor>& pSource, bool includePrivateProperty, bool isTemplate , bool needRecurVFL )
+void Actor::CopyFrom( const GPtr<Actor>& pSource,const ActorPropertySet& actorPropertySet, bool includePrivateProperty, bool isTemplate , bool needRecurVFL )
 {
 //#ifdef _DEBUG
 //	mCopyedActor = 1;
@@ -1437,7 +1461,7 @@ void Actor::CopyFrom( const GPtr<Actor>& pSource, bool includePrivateProperty, b
 				mChildren[i] = pNewChild;
 			}
 			n_assert( mChildren[i].isvalid() );
-			mChildren[i]->CopyFrom( pSourceChild, true , isTemplate , needRecurVFL);	//	Dest Child is just Create, Copy All from Source Child
+			mChildren[i]->CopyFrom( pSourceChild,ActorPropertySet::s_defaultVal, true , isTemplate , needRecurVFL);	//	Dest Child is just Create, Copy All from Source Child
 		}
 	}
 	
@@ -1455,52 +1479,85 @@ void Actor::CopyFrom( const GPtr<Actor>& pSource, bool includePrivateProperty, b
 			AttachComponent( pDestCom );
 		}
 	}
-	//更新 新加入的Component的显示属性
-	SetVisible(pSource->GetVisible(), needRecurVFL);
-#ifdef __GENESIS_EDITOR__
-	SetFrozen(pSource->GetFrozen(), needRecurVFL);
-	SetLocked(pSource->GetLocked(), needRecurVFL);
-#endif
-	SetLocalBoundingBox(pSource->GetLocalBoundingBox());
-	SetTemplateName( pSource->GetTemplateName() );
 
+	_CopyFrom_MustProperty(pSource,needRecurVFL);
 	if ( includePrivateProperty )
 	{
 		// copy actor property, just serialization's property need copy
 		//SetVisible(pSource->GetVisible());
+		_CopyFrom_IncludeProperty(pSource,actorPropertySet);
 
-		if (  pSource->GetActiveControl() )
-			Active();
-		else
-			Deactive();
 
-		SetName( pSource->GetName() );
-		SetLinkTemplate( pSource->IsLinkTemplate() );
-		SetLayerID( pSource->GetLayerID() );
-		SetTagID( pSource->GetTagID() );
-		SetTransform( pSource->GetPosition(), pSource->GetRotation(), pSource->GetScale() );
-		// for templatedActors
-		SetTmpActiveState( pSource->IsActive() );
-#ifdef __GENESIS_EDITOR__
-		SetQueryMask(pSource->GetQueryMask());		
-#endif
-		SetEditorFlag( pSource->GetEditorFlag() );
 	}
 
 	if (isTemplate)
 	{
-		SetLayerID( pSource->GetLayerID() );
-		SetTagID( pSource->GetTagID() );
-		SetTransform( this->GetPosition(), this->GetRotation(), this->GetScale() );
-		SetTmpActiveState( pSource->IsActive() );
-#ifdef __GENESIS_EDITOR__
-		SetQueryMask(pSource->GetQueryMask());
-#endif
-		SetEditorFlag( pSource->GetEditorFlag() );
+		_CopyFrom_CommonProperty(pSource,actorPropertySet);
 	}
 
 }
+//------------------------------------------------------------------------
+void Actor::_CopyFrom_MustProperty( const GPtr<Actor>& pSource, bool needRecurVFL)
+{
+	//更新 新加入的Component的显示属性
+	SetVisible(pSource->GetVisible(), needRecurVFL);
+#ifdef __GENESIS_EDITOR__
+	SetFrozen(pSource->GetFrozen(), needRecurVFL);
+#endif
+	SetLocalBoundingBox(pSource->GetLocalBoundingBox());
+	SetTemplateName( pSource->GetTemplateName() );
 
+	SetModelName(pSource->GetModelName());
+}
+//------------------------------------------------------------------------
+void Actor::_CopyFrom_IncludeProperty( const GPtr<Actor>& pSource,const ActorPropertySet& actorPropertySet)
+{
+	if (  pSource->GetActiveControl() )
+		Active();
+	else
+		Deactive();
+
+	bool bRootTemplateActor = actorPropertySet.TestFlag(ActorPropertySet::logic_exclusive_RootActorName) &&
+		this->GetTemplateName().IsValid() &&
+		(!this->GetParent() || this->GetParent() && !this->GetParent()->GetTemplateName().IsValid());
+
+	if ( !bRootTemplateActor )
+	{
+		SetName( pSource->GetName() );
+	} 
+	
+	
+	SetLinkTemplate( pSource->IsLinkTemplate() );
+	_CopyFrom_CommonProperty(pSource,actorPropertySet);
+	if ( actorPropertySet.TestFlag(ActorPropertySet::logic_exclusive_pos_rot) )
+	{
+		SetTransform( this->GetPosition(), this->GetRotation(), pSource->GetScale() );
+	}
+	else
+	{
+		SetTransform( pSource->GetPosition(), pSource->GetRotation(), pSource->GetScale() );
+	}
+	SetPriority(pSource->GetPriority());
+}
+//------------------------------------------------------------------------
+void Actor::_CopyFrom_TemplateProperty( const GPtr<Actor>& pSource,const ActorPropertySet& actorPropertySet)
+{
+	_CopyFrom_CommonProperty(pSource,actorPropertySet);
+	SetTransform( this->GetPosition(), this->GetRotation(), this->GetScale() );
+}
+
+//------------------------------------------------------------------------
+void Actor::_CopyFrom_CommonProperty( const GPtr<Actor>& pSource,const ActorPropertySet& actorPropertySet)
+{
+	SetLayerID( pSource->GetLayerID() );
+	SetTagID( pSource->GetTagID() );
+	
+	SetTmpActiveState( pSource->IsActive() );
+#ifdef __GENESIS_EDITOR__
+	SetQueryMask(pSource->GetQueryMask());
+#endif
+	SetEditorFlag( pSource->GetEditorFlag() );	
+}
 //------------------------------------------------------------------------
 void 
 Actor::SetPriority( const Resources::Priority priority )
@@ -1632,15 +1689,33 @@ Actor::FindChildIndex(FastId id) const
 }
 //------------------------------------------------------------------------
 const GPtr<Actor>& 
-Actor::FindChild(FastId id) const
+Actor::FindChild(FastId id, bool includeGrandson) const
 {
-	IndexT findIndex = FindChildIndex(id);
-	return GetChild( findIndex );
+	SizeT count = mChildren.Size();
+	for ( IndexT index = 0; index < count; ++index )
+	{
+		if ( mChildren[index]->GetFastId() == id )
+		{
+			return mChildren[index];
+		}
+	}
+	if (includeGrandson)
+	{
+		for ( IndexT index = 0; index < count; ++index )
+		{
+			const GPtr<Actor>& result = mChildren[index]->FindChild(id, includeGrandson);
+			if (result.isvalid())
+			{
+				return result;
+			}
+		}
+	}
+	return NullActor;
 }
 
 //------------------------------------------------------------------------
 const GPtr<Actor>&
-Actor::FindChildByTag(App::TagID id) const
+Actor::FindChildByTag(App::TagID id, bool includeGrandson) const
 {
 	// @todo may be need optimize, eg. Binary Search
 	SizeT count = mChildren.Size();
@@ -1651,10 +1726,21 @@ Actor::FindChildByTag(App::TagID id) const
 			return mChildren[index];
 		}
 	}
+	if (includeGrandson)
+	{
+		for ( IndexT index = 0; index < count; ++index )
+		{
+			const GPtr<Actor>& result = mChildren[index]->FindChildByTag(id, includeGrandson);
+			if (result.isvalid())
+			{
+				return result;
+			}
+		}
+	}
 	return NullActor;
 }
 //------------------------------------------------------------------------
-void Actor::FindChildrenByTag(const App::TagID id,Util::Array< GPtr<Actor> >& actors) const
+void Actor::FindChildrenByTag(const App::TagID id,Util::Array< GPtr<Actor> >& actors, bool includeGrandson) const
 {
 	SizeT count = mChildren.Size();
 	for ( IndexT index = 0; index < count; ++index )
@@ -1663,10 +1749,14 @@ void Actor::FindChildrenByTag(const App::TagID id,Util::Array< GPtr<Actor> >& ac
 		{
 			actors.Append(mChildren[index]);
 		}
+		if (includeGrandson)
+		{
+			mChildren[index]->FindChildrenByTag(id, actors, includeGrandson);
+		}
 	}
 }
 const GPtr<Actor>& 
-	Actor::FindChild(const Util::String& name) const
+	Actor::FindChild(const Util::String& name, bool includeGrandson) const
 {
 	// @todo may be need optimize, eg. Binary Search
 	SizeT count = mChildren.Size();
@@ -1677,12 +1767,24 @@ const GPtr<Actor>&
 			return mChildren[index];
 		}
 	}
+
+	if (includeGrandson)
+	{
+		for ( IndexT index = 0; index < count; ++index )
+		{
+			const GPtr<Actor>& result = mChildren[index]->FindChild(name, includeGrandson);
+			if (result.isvalid())
+			{
+				return result;
+			}
+		}
+	}
 	return NullActor;
 }
 
 //------------------------------------------------------------------------
 const GPtr<Actor>& 
-Actor::FindChild(const Util::Guid& guid) const
+Actor::FindChild(const Util::Guid& guid, bool includeGrandson) const
 {
 	// @todo may be need optimize, eg. Binary Search
 	SizeT count = mChildren.Size();
@@ -1691,6 +1793,18 @@ Actor::FindChild(const Util::Guid& guid) const
 		if ( mChildren[index]->GetGUID() == guid )
 		{
 			return mChildren[index];
+		}
+	}
+
+	if (includeGrandson)
+	{
+		for ( IndexT index = 0; index < count; ++index )
+		{
+			const GPtr<Actor>& result = mChildren[index]->FindChild(guid, includeGrandson);
+			if (result.isvalid())
+			{
+				return result;
+			}
 		}
 	}
 	return NullActor;
@@ -1784,27 +1898,12 @@ Actor::_DirtyWorldTransform()
 	// dirty child
 	GPtr<Actor> children;
 
-#ifdef __GENESIS_EDITOR__
-	bool bLocked = false;
-#endif
+
 
 	SizeT numActor = mChildren.Size();
 	for ( IndexT i = 0; i < numActor; ++i )
 	{
 		children = mChildren[i];
-
-#ifdef __GENESIS_EDITOR__
-		/*子actor处于锁定状态时，其世界坐标不应该跟着父actor的变换而变换，
-		但其局部坐标发生了变化，所以要更新局部坐标*/
-		bLocked = children->GetLocked();
-		if ( bLocked )
-		{
-			const Actor *parent = children->GetParent();
-			children->SetLockedActorLocalTransform(parent);
-			continue;
-		}
-#endif
-
 		children->_DirtyWorldTransform();
 	}
 }
@@ -1884,29 +1983,8 @@ Actor::SaveTerrainFile(void) const
 }
 //------------------------------------------------------------------------------
 #ifdef __GENESIS_EDITOR__
-void Actor::SetLocked(bool bLocked , bool needRecursive/* = true*/)
-{
-	mLocked = bLocked;
-	if (needRecursive)
-	{
-		SizeT count = mChildren.Size();
-		for ( IndexT index = 0; index < count; ++index )
-		{
-			mChildren[index]->SetLocked(bLocked);
-		}
-	}	
-}
-//------------------------------------------------------------------------------
-void Actor::SetLockedActorTransformRecursive(const GPtr<App::Actor>& pSource)
-{
-	n_assert(pSource);
-	SetTransform(pSource->GetPosition(),pSource->GetRotation(),pSource->GetScale());
-	SizeT count = mChildren.Size();
-	for ( IndexT index = 0; index < count; ++index )
-	{
-		mChildren[index]->SetLockedActorTransformRecursive(pSource->GetChild(index));
-	}
-}
+
+
 //------------------------------------------------------------------------------
 void Actor::SetFrozen(bool bFrozen , bool needRecursive/* = true*/)
 {
@@ -1923,7 +2001,7 @@ void Actor::SetFrozen(bool bFrozen , bool needRecursive/* = true*/)
 #endif
 //------------------------------------------------------------------------------
 void Actor::SetVisible( bool bVisible , bool needRecursive /*= true*/ )
-{
+{	
 	mVisible = bVisible;
 
 	if ( NULL != FindComponent<RenderComponent>() )
@@ -1934,8 +2012,12 @@ void Actor::SetVisible( bool bVisible , bool needRecursive /*= true*/ )
 		{
 			GPtr<RenderComponent> renderCom = coms[i].downcast<RenderComponent>();
 			n_assert(renderCom.isvalid());
-
+#ifdef __GENESIS_EDITOR__
+			renderCom->SetEditorVisible(bVisible);
+#else
 			renderCom->SetVisible(bVisible);
+#endif
+			
 		}
 	}
 
@@ -1950,7 +2032,11 @@ void Actor::SetVisible( bool bVisible , bool needRecursive /*= true*/ )
 			{
 				continue;
 			}
+#ifdef __GENESIS_EDITOR__
+			vegeRenderCom->SetEditorVisible(bVisible);
+#else
 			vegeRenderCom->SetVisible(bVisible);
+#endif
 		}
 	}
 	if (needRecursive)
@@ -1963,6 +2049,7 @@ void Actor::SetVisible( bool bVisible , bool needRecursive /*= true*/ )
 	}	
 	//暂未处理其它component对显示隐藏属性的响应，如相机、灯光、声音、粒子
 	return;
+
 }
 //------------------------------------------------------------------------------
 bool Actor::GetVisible() const
@@ -1985,32 +2072,7 @@ bool Actor::IsChildOfAnimationActor()
 	}
 	return false;
 }
-//------------------------------------------------------------------------
-/*设置锁定actor的局部坐标时是不需要调_DirtyWorldTransform()函数的，因为
-锁定物体的局部坐标是因为父物体位置改变造成的，其本身的空间方位根本没有发生变化。*/
-#ifdef __GENESIS_EDITOR__
-void Actor::SetLockedActorLocalTransform( const Actor *parent )
-{
 
-	if ( parent )
-	{
-		const Math::matrix44 &parentWT = parent->GetWorldTransform();
-		Math::matrix44 inversepw = Math::matrix44::inverse(parentWT);
-		const Math::matrix44 &worldTransform = GetWorldTransform();
-		mLocaTrans = Math::matrix44::multiply( inversepw , worldTransform );
-		mLocaTrans.setrow3( Math::float4(0.0f,0.0f,0.0f,1.0f));
-		mLocaTrans.decompose( mLocalScale, mLocalRotation, mLocalPosition );
-		return;
-	} 
-	else
-	{
-		mLocalPosition = mWorldPosition;
-		mLocalRotation = mWorldRotation;
-		mLocalScale = mWorldScale;
-		mLocaTrans = mWorldTrans;
-	}
-}
-#endif
 //------------------------------------------------------------------------------
 #if NEBULA3_ENABLE_PROFILING
 //------------------------------------------------------------------------

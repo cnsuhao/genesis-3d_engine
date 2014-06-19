@@ -52,6 +52,9 @@ namespace Sound
 	//------------------------------------------------------------------------------
 	bool SoundSystemDSPOpenAL::setParameter( int index, float value , bool integer)
 	{
+        if(!CheckDspSupport())
+            return false;
+        
 		if ( m_type != AL_FILTER_LOWPASS )
 		{
 			if (integer)
@@ -75,6 +78,9 @@ namespace Sound
 	//------------------------------------------------------------------------------
 	bool SoundSystemDSPOpenAL::setParameters( int index, float* pan)
 	{
+        if(!CheckDspSupport())
+            return false;
+        
 		alEffectfv( m_uiFilter, index, pan);
 		return true;
 	}
@@ -82,11 +88,15 @@ namespace Sound
 	//------------------------------------------------------------------------------
 	bool SoundSystemDSPOpenAL::init(ALuint type)
 	{
+        if(!CheckDspSupport())
+            return false;
+        
 		// Clear AL Error State
 		alGetError();
 
 		ALboolean result = ALFWIsEFXSupported();
-		n_assert(result == AL_TRUE);
+		if( result == AL_FALSE )
+			return false;
 
 		alGenAuxiliaryEffectSlots(1, &m_uiEffectSlot);
 		if ( alGetError() != AL_NO_ERROR )
@@ -143,6 +153,9 @@ namespace Sound
 	//------------------------------------------------------------------------------
 	bool SoundSystemDSPOpenAL::uninit()
 	{
+        if(!CheckDspSupport())
+            return false;
+        
 		if ( alIsFilter(m_uiFilter) )
 			alDeleteFilters( 1, &m_uiFilter );
 
@@ -159,6 +172,9 @@ namespace Sound
 
 	bool SoundSystemDSPOpenAL::apply( SoundSystemSource* sss, int sendIndex)
 	{
+        if(!CheckDspSupport())
+            return false;
+        
 		m_sendIndex = sendIndex;
 
 		if(sss)
@@ -204,6 +220,9 @@ namespace Sound
 
 	bool SoundSystemDSPOpenAL::unapply( SoundSystemSource* sss )
 	{
+        if(!CheckDspSupport())
+            return false;
+        
 		if(sss)
 		{
 			ALuint uiSource = NULL;
@@ -222,5 +241,16 @@ namespace Sound
 
 		return false;
 	}
+    
+    bool SoundSystemDSPOpenAL::CheckDspSupport()
+    {
+        ALCcontext* pContext = alcGetCurrentContext();
+        ALCdevice* pDevice = alcGetContextsDevice(pContext);
+        
+        if(!alcIsExtensionPresent(pDevice, (ALCchar*)ALC_EXT_EFX_NAME))
+            return false;
+        
+        return true;
+    }
 }
 #endif // __USE_AUDIO__ || __GENESIS_EDITOR__

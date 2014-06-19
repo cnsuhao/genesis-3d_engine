@@ -35,7 +35,7 @@ namespace Win32Input
 	__ImplementClass(Win32Input::Win32InputWebWindowSource, 'WWWI', Input::InputSource );
 
 
-	int _virtualKeyToText(UINT _virtualKey)
+	int Win32InputWebWindowSource::VirtualKeyToText(UINT _virtualKey)
 	{
 		static WCHAR deadKey = 0;
 
@@ -212,7 +212,7 @@ namespace Win32Input
 					//inputEvent.SetType(InputEvent::KeyDown);
 					//inputEvent.SetKey(keyCode);
 					//mInputEventList.Append(inputEvent);
-					SetKeyDown(mInputEventList, inputEvent, keyCode, _virtualKeyToText((UINT)wParam));
+					SetKeyDown(mInputEventList, inputEvent, keyCode, VirtualKeyToText((UINT)wParam));
 					return 0;
 				}
 			}
@@ -573,6 +573,8 @@ namespace Win32Input
 			case VK_OEM_5:					return Input::InputKey::BackSlash;
 			case VK_OEM_6:					return Input::InputKey::RightBracket;
 			case VK_OEM_7:					return Input::InputKey::Quote;
+
+			case VK_PROCESSKEY:				return Input::InputKey::InvalidKey; //输入法消息。
 
 			case '0':                       return Input::InputKey::Key0;
 			case '1':                       return Input::InputKey::Key1;

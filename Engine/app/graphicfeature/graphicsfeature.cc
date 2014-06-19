@@ -207,30 +207,12 @@ namespace App
 		Camera* camera = mGraphicSystem->GetSceneDefaultCamera();
 		if(camera)
 		{
-			CameraComponent* cc = static_cast<CameraComponent*>(camera->GetOwner());
+			CameraComponent* cc = dynamic_cast<CameraComponent*>(camera->GetOwner());
 			if (cc)
 			{
 				return GPtr<App::Actor>(cc->GetActor());
 			}
 		}
-
-		/*const Graphic::CameraList& list = mGraphicSystem->GetCameraList();
-		for (SizeT i = list.Size() - 1; i >= 0; --i)
-		{
-			Camera* camera = list[i];
-			if (camera && (NULL == camera->GetTargetWindow() || Graphic::VPT_MAIN == camera->GetTargetWindow()->GetType()))
-			{
-				CameraComponent* cc = static_cast<CameraComponent*>(camera->GetOwner());
-				if (cc)
-				{
-					Actor* a = cc->GetActor();
-					if (a->GetLayerID() != eSL_Debug)
-					{
-						return GPtr<App::Actor>(a);
-					}
-				}
-			}
-		}*/
 		return GPtr<App::Actor>();
 	}
 

@@ -72,6 +72,11 @@ namespace App
 				Load_7(pReader);
 				return;
 			}
+			else if( 8 == ver)
+			{
+				Load_8(pReader);
+				return;
+			}
 			n_error(" SceneSerialization::Load unknonw version " );
 		}
 
@@ -82,6 +87,7 @@ namespace App
 		void Load_5( AppReader* pReader );
 		void Load_6( AppReader* pReader);
 		void Load_7( AppReader* pReader);
+		void Load_8( AppReader* pReader);
 		void Save( AppWriter* pWriter );
 	protected:
 		const Actor* mObject;
@@ -104,6 +110,7 @@ namespace App
 	const char* s_ActorResourcePriority = "ActorResourcePriority";
 	const char* s_ActorEditorStaticFlag = "ActorEditorStaticFlag";
 	const char* s_ActorVisable = "ActorVisable";
+	const char* s_ActorModelName = "ActorModelName";
 	//------------------------------------------------------------------------
 	void ActorSerialization::Load_1(AppReader* pSerialize)
 	{
@@ -689,7 +696,7 @@ namespace App
 			pSerialize->SerializeInt(    s_ActorLayerID,     pActor->GetLayerID() );
 			pSerialize->SerializeInt(    s_ActorTagID,     pActor->GetTagID() );
 			pSerialize->SerializeInt(    s_ActorEditorStaticFlag,  pActor->GetEditorFlag() );
-			pSerialize->SerializeBool(	 s_ActorVisable, pActor->GetVisible() );
+			pSerialize->SerializeBool(	 s_ActorVisable, true );
 
 			pSerialize->SerializeFloat4(  s_ActorPosition, pActor->mLocalPosition);
 			Math::quaternion qRot = pActor->GetRotation();
@@ -733,7 +740,20 @@ namespace App
 		{
 			// do nothing. we can deSerialization from actor template
 		}
+
+		pSerialize->SerializeString(s_ActorModelName, pActor->GetModelName());
 	}
+
+	void ActorSerialization::Load_8(AppReader* pReader)
+	{
+		Load_7(pReader);
+
+		Actor* pActor = const_cast<Actor*>( mObject );
+		Util::String modelName; 
+		pReader->SerializeString( s_ActorModelName,   modelName );
+		pActor->SetModelName( modelName );
+	}
+
 }
 
 namespace App
@@ -742,7 +762,7 @@ namespace App
 	// @ISerialization::GetVersion. when change storage, must add SerializeVersion count
 	Version Actor::GetVersion() const
 	{
-		return 7; //当前版本号为7
+		return 8; //当前版本号为8
 	}
 
 	//------------------------------------------------------------------------

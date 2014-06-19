@@ -173,7 +173,10 @@ namespace App
 			GPtr<IO::Stream> srcStream = IO::IoServer::Instance()->ReadFile( sPath ); 
 #endif
 			if (!srcStream.isvalid())
+			{
+				n_warning("Assemblie is no found: %s.", sPath.AsCharPtr());
 				continue;
+			}
 
 			srcStream->SetAccessMode( IO::Stream::ReadAccess ); 
 

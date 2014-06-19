@@ -236,7 +236,18 @@ namespace Graphic
 		IndexT index = m_graphicMaterialInstanceMap.FindIndex(matID);
 		if(InvalidIndex == index )
 		{
-			n_assert(0);
+			IndexT nMissing = m_graphicMaterialInstanceMap.FindIndex("sys:Missing_Material.material");
+			if (nMissing != InvalidIndex)
+			{
+				aMat = m_graphicMaterialInstanceMap.ValueAtIndex(nMissing);
+			}
+			else
+			{
+				aMat = _CreateNewMaterialInstance("sys:Missing_Material.material");
+				aMat->SetMaterialID(aMat->GetMaterialID());
+				m_graphicMaterialInstanceMap.Add("sys:Missing_Material.material",aMat);
+				n_warning("Material Missing, use default material instead!");
+			}
 			return aMat;			
 		}
 		aMat = m_graphicMaterialInstanceMap.ValueAtIndex(index);

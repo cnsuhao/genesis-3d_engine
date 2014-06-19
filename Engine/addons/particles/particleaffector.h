@@ -38,9 +38,17 @@ namespace Particles
 
 		enum AffectType
 		{
-			AT_DEFAULT,
-			AT_INCREASE,
-			AT_DECREASE
+			AT_Color,
+			AT_Gravity,
+			AT_Limit,
+			AT_Force,
+			AT_Movement,
+			AT_Scale,
+			AT_Texture,
+			AT_Rotation,
+			AT_Vortex,
+
+			UnKnown
 		};
 
 
@@ -90,10 +98,9 @@ namespace Particles
 		virtual void InitShaderParam();
 		virtual void SetShaderMask(const GPtr<ShaderProgramCompiler::ShaderMarcro>& pMarcro);
 
-		Math::scalar _calculateAffectSpecialisationFactor (Particle* particle);
-
 		virtual Math::MinMaxCurve* getMinMaxCurve(ParticleCurveType pct);
 		virtual void _switchParticleType(bool _isMobile);
+		virtual const Math::float3 _getEndPos(const Math::float3& pos,const Math::float3 speed,float time);
 	protected:
 		ParticleSystem* mParentSystem;
 		Util::String mName;
@@ -184,6 +191,11 @@ namespace Particles
 	inline void ParticleAffector::_initParticleForEmission(Particle* particle)
 	{
 		//empty
+	}
+	//------------------------------------------------------------------------
+	inline const Math::float3 ParticleAffector::_getEndPos(const Math::float3& pos,const Math::float3 speed,float time)
+	{
+		return pos;
 	}
 }
 

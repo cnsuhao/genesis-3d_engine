@@ -52,6 +52,8 @@ namespace Sound
 		int GetSendIndex() { return m_sendIndex; }
 
 	protected:
+        bool CheckDspSupport();
+        
 		ALuint m_type;
 		ALuint m_uiEffectSlot;	// effect slot
 		ALuint m_uiFilter;		// filter

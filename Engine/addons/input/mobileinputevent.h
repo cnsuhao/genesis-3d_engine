@@ -27,7 +27,7 @@ THE SOFTWARE.
 
 namespace Input
 {
-	class MoibleInputEvent
+class MoibleInputEvent
 {
 public:
 
@@ -43,6 +43,7 @@ public:
 	};
 
 	MoibleInputEvent();
+	virtual ~MoibleInputEvent();
 
 	/// set event type
 	void SetType(Type t);
@@ -59,6 +60,10 @@ inline MoibleInputEvent::MoibleInputEvent()
 : m_Type(InvalidType)
 {
 	
+}
+inline MoibleInputEvent::~MoibleInputEvent()
+{
+
 }
 
 inline void MoibleInputEvent::SetType(Type t)

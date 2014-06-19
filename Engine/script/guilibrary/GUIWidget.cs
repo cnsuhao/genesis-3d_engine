@@ -1930,6 +1930,77 @@ namespace ScriptGUI
 
         public static partial class UIItemBox
         {
+
+            /// <summary>
+            /// 设置水平滚动条是否可见
+            /// </summary>
+            /// <param name="layout_name">界面名称</param>
+            /// <param name="widget_name">控件名称</param>
+            /// <param name="value">值</param>
+            /// <returns>结果</returns>
+            public static ExecuteResult SetHScrollVisible(FString layout_name, FString widget_name, bool value)
+            {
+                ItemBox ib = null;
+                ExecuteResult ret = FindUI(layout_name, widget_name, out ib);
+                if (ExecuteResult.Success == ret)
+                {
+                    ib.HScrollVisible = value;
+                }
+                return ret;
+            }
+            /// <summary>
+            /// 水平滚动条是否可见
+            /// </summary>
+            /// <param name="layout_name">界面名称</param>
+            /// <param name="widget_name">控件名称</param>
+            /// <returns>返回值</returns>
+            public static bool GetHScrollVisible(FString layout_name, FString widget_name)
+            {
+                ItemBox ib = null;
+                ExecuteResult ret = FindUI(layout_name, widget_name, out ib);
+                if (ExecuteResult.Success == ret)
+                {
+                    return ib.HScrollVisible;
+                }
+                return false;
+            }
+
+            /// <summary>
+            /// 设置垂直滚动条是否可见
+            /// </summary>
+            /// <param name="layout_name">界面名称</param>
+            /// <param name="widget_name">控件名称</param>
+            /// <param name="value">值</param>
+            /// <returns>结果</returns>
+            public static ExecuteResult SetVScrollVisible(FString layout_name, FString widget_name, bool value)
+            {
+                ItemBox ib = null;
+                ExecuteResult ret = FindUI(layout_name, widget_name, out ib);
+                if (ExecuteResult.Success == ret)
+                {
+                    ib.VScrollVisible = value;
+                }
+                return ret;
+            }
+
+            /// <summary>
+            /// 垂直滚动条是否可见
+            /// </summary>
+            /// <param name="layout_name">界面名称</param>
+            /// <param name="widget_name">控件名称</param>
+            /// <returns>返回值</returns>
+            public static bool GetVScrollVisible(FString layout_name, FString widget_name)
+            {
+                ItemBox ib = null;
+                ExecuteResult ret = FindUI(layout_name, widget_name, out ib);
+                if (ExecuteResult.Success == ret)
+                {
+                    return ib.VScrollVisible;
+                }
+                return false;
+            }
+
+
             /// <summary>
             /// 添加项目
             /// </summary>

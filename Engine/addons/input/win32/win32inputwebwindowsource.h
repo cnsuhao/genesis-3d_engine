@@ -101,7 +101,7 @@ namespace Win32Input
 		{
 			return mInputEventList;
 		}
-
+		static int VirtualKeyToText(UINT _virtualKey);
 	protected:
 
 		void mouseMove(const Math::float2& absMousePos);

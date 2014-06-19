@@ -182,6 +182,16 @@ n_dbgout(const char *msg, ...)
     IO::Console::Instance()->DebugOut(msg, argList);
     va_end(argList);
 }
+#if defined( DEBUG ) || defined( _DEBUG )
+void __cdecl
+n_debuglog(const char *msg, ...)
+{
+	va_list argList;
+	va_start(argList, msg);
+	IO::Console::Instance()->Print(msg, argList);
+	va_end(argList);
+}
+#endif
 #endif
 
 //------------------------------------------------------------------------------

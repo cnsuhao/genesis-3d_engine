@@ -111,6 +111,7 @@ namespace Particles
 
 		float GetGPUParticleRate();    //for gpu particles;
 		float GetGPUParticleLife();
+		void Reset();
 	private:
 		bool mShapeVisible;
 	public:
@@ -331,6 +332,10 @@ namespace Particles
 	inline float ParticleEmitter::GetGPUParticleLife()
 	{
 		return mMinMaxLiveTime.Calculate(0,Math::n_rand(0.0f,1.0f));
+	}
+	inline void ParticleEmitter::Reset()
+	{
+		mRemainder = 0;
 	}
 }
 

@@ -45,7 +45,8 @@ namespace MyGUI
 		mScrollViewPage(0),
 		mMinTrackSize(0),
 		mMoveToClick(false),
-		mVerticalAlignment(true)
+		mVerticalAlignment(true),
+		mLimitRange(true)
 	{
 	}
 
@@ -147,7 +148,13 @@ namespace MyGUI
 				mWidgetTrack->setVisible(true);
 
 			// и обновляем позицию
-			pos = (int)(((size_t)(pos - getTrackSize()) * mScrollPosition) / (mScrollRange - 1) + mSkinRangeStart);
+			//pos = (int)(((size_t)(pos - getTrackSize()) * mScrollPosition) / (mScrollRange - 1) + mSkinRangeStart); old code
+
+			// expand by genesis-3d
+			int bias = (pos - getTrackSize()) * mScrollPosition;
+			int result = (int)(bias / (float)(mScrollRange - 1));
+			pos = result + mSkinRangeStart;
+			// ---------------------------------------------------------------------------------
 
 			mWidgetTrack->setPosition(mWidgetTrack->getLeft(), pos);
 			if (nullptr != mWidgetFirstPart)
@@ -179,7 +186,13 @@ namespace MyGUI
 				mWidgetTrack->setVisible(true);
 
 			// и обновляем позицию
-			pos = (int)(((size_t)(pos - getTrackSize()) * mScrollPosition) / (mScrollRange - 1) + mSkinRangeStart);
+			//pos = (int)(((size_t)(pos - getTrackSize()) * mScrollPosition) / (mScrollRange - 1) + mSkinRangeStart); old code
+
+			// expand by genesis-3d
+			int bias = (pos - getTrackSize()) * mScrollPosition;
+			int result = (int)(bias / (float)(mScrollRange - 1));
+			pos = result + mSkinRangeStart;
+			// ---------------------------------------------------------------------------------
 
 			mWidgetTrack->setPosition(pos, mWidgetTrack->getTop());
 			if (nullptr != mWidgetFirstPart)
@@ -196,7 +209,27 @@ namespace MyGUI
 		}
 	}
 
-	void ScrollBar::TrackMove(int _left, int _top)
+	void ScrollBar::updatePreActionOffset()
+	{
+		mPreActionOffset.left = mWidgetTrack->getLeft();
+		mPreActionOffset.top = mWidgetTrack->getTop();
+	}
+
+	void ScrollBar::setLimitRange(bool _value)
+	{
+		mLimitRange = _value;
+	}
+
+	bool ScrollBar::getLimitRange() const
+	{
+		return mLimitRange;
+	}
+
+	// ----------------------------------------------------------------------
+
+
+
+	void ScrollBar::TrackMove(int _left, int _top)// expand by genesis-3d
 	{
 		if (mWidgetTrack == nullptr)
 			return;
@@ -206,11 +239,19 @@ namespace MyGUI
 		if (mVerticalAlignment)
 		{
 			// расчитываем позицию виджета
-			int start = mPreActionOffset.top + (_top - point.top);
-			if (start < (int)mSkinRangeStart)
-				start = (int)mSkinRangeStart;
-			else if (start > (getTrackPlaceLength() - (int)mSkinRangeEnd - mWidgetTrack->getHeight()))
-				start = (getTrackPlaceLength() - (int)mSkinRangeEnd - mWidgetTrack->getHeight());
+			//int start = mPreActionOffset.top + (_top - point.top); // old code.
+
+			// expand by genesis-3d
+			int bias = (_top - point.top);
+			int start = (mPreActionOffset.top + bias);
+			// -----------------------------------
+			if (mLimitRange)// expand by genesis-3d
+			{
+				if (start < (int)mSkinRangeStart)
+					start = (int)mSkinRangeStart;
+				else if (start > (getTrackPlaceLength() - (int)mSkinRangeEnd - mWidgetTrack->getHeight()))
+					start = (getTrackPlaceLength() - (int)mSkinRangeEnd - mWidgetTrack->getHeight());
+			}
 			if (mWidgetTrack->getTop() != start)
 				mWidgetTrack->setPosition(mWidgetTrack->getLeft(), start);
 
@@ -221,23 +262,34 @@ namespace MyGUI
 			pos = pos * (int)(mScrollRange - 1) / (getLineSize() - getTrackSize());
 
 			// проверяем на выходы и изменения
-			if (pos < 0)
-				pos = 0;
-			else if (pos >= (int)mScrollRange)
-				pos = (int)mScrollRange - 1;
-			if (pos == (int)mScrollPosition)
-				return;
+			if (mLimitRange)// expand by genesis-3d
+			{
+				if (pos < 0)
+					pos = 0;
+				else if (pos >= (int)mScrollRange)
+					pos = (int)mScrollRange - 1;
+				if (pos == (int)mScrollPosition)
+					return;
+			}
 
 			mScrollPosition = pos;
 		}
 		else
 		{
 			// расчитываем позицию виджета
-			int start = mPreActionOffset.left + (_left - point.left);
-			if (start < (int)mSkinRangeStart)
-				start = (int)mSkinRangeStart;
-			else if (start > (getTrackPlaceLength() - (int)mSkinRangeEnd - mWidgetTrack->getWidth()))
-				start = (getTrackPlaceLength() - (int)mSkinRangeEnd - mWidgetTrack->getWidth());
+			//int start = mPreActionOffset.left + (_left - point.left);// old code.
+
+			// expand by genesis-3d
+			int bias = (_left - point.left);
+			int start = (mPreActionOffset.left + bias);
+			// -----------------------------------
+			if (mLimitRange)// expand by genesis-3d
+			{
+				if (start < (int)mSkinRangeStart)
+					start = (int)mSkinRangeStart;
+				else if (start > (getTrackPlaceLength() - (int)mSkinRangeEnd - mWidgetTrack->getWidth()))
+					start = (getTrackPlaceLength() - (int)mSkinRangeEnd - mWidgetTrack->getWidth());
+			}
 			if (mWidgetTrack->getLeft() != start)
 				mWidgetTrack->setPosition(IntPoint(start, mWidgetTrack->getTop()));
 
@@ -248,12 +300,16 @@ namespace MyGUI
 			pos = pos * (int)(mScrollRange - 1) / (getLineSize() - getTrackSize());
 
 			// проверяем на выходы и изменения
-			if (pos < 0)
-				pos = 0;
-			else if (pos >= (int)mScrollRange)
-				pos = (int)mScrollRange - 1;
-			if (pos == (int)mScrollPosition)
-				return;
+
+			if (mLimitRange)// expand by genesis-3d
+			{
+				if (pos < 0)
+					pos = 0;
+				else if (pos >= (int)mScrollRange)
+					pos = (int)mScrollRange - 1;
+				if (pos == (int)mScrollPosition)
+					return;
+			}
 
 			mScrollPosition = pos;
 		}
@@ -354,8 +410,7 @@ namespace MyGUI
 		}
 		else if (_sender == mWidgetTrack)
 		{
-			mPreActionOffset.left = _sender->getLeft();
-			mPreActionOffset.top = _sender->getTop();
+			updatePreActionOffset();// expand by genesis-3d
 		}
 	}
 
@@ -380,13 +435,19 @@ namespace MyGUI
 		updateTrack();
 	}
 
-	void ScrollBar::setScrollPosition(size_t _position)
+	void ScrollBar::setScrollPosition(int _position, bool _force)
 	{
 		if (_position == mScrollPosition)
 			return;
+		if (mLimitRange && !_force)
+		{
+			if (_position < 0)
+				_position = 0;
 
-		if (_position >= mScrollRange)
-			_position = 0;
+			if (_position >= mScrollRange)
+				_position = 0;
+		}
+
 
 		mScrollPosition = _position;
 		updateTrack();
@@ -500,7 +561,7 @@ namespace MyGUI
 		return mScrollRange;
 	}
 
-	size_t ScrollBar::getScrollPosition() const
+	int ScrollBar::getScrollPosition() const
 	{
 		return mScrollPosition;
 	}

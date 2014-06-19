@@ -45,7 +45,7 @@ namespace ScriptGUI
             }
         }
         private static ExecuteResult mExecuteResult;
-        private static ExecuteResult setResult(ExecuteResult ret)
+        internal static ExecuteResult setResult(ExecuteResult ret)
         {
             mExecuteResult = ret;
             return ret;

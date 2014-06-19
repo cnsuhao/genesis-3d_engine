@@ -149,6 +149,13 @@ namespace App
 		// 将某个Actor保存为模板，*.template. 
 		bool SaveSingleTemplate( const Util::String& actorTemplateName, GPtr<Actor>& pSource, int iFileType ,bool updateSource = false );
 
+		void SetTemplateActorProperty(GPtr<Actor>& pTemplate,GPtr<Actor>& pSource, const ActorPropertySet& actorPropertySet);
+		bool WriteTemplateFile( const Util::String& actorTemplateName, GPtr<Actor>& pTemplate,int iFileType );
+		bool CheckSaveTemplate(GPtr<Actor>& pSource, int iFileType);
+		void CopyFrom_PositionRotation(const GPtr<Actor>& pDest,const GPtr<Actor>& pSource);
+
+		void UpdateTemplateCache(const Util::String& templateName, GPtr<Actor>& pTemplate,int iFileType);
+
 		// 读取单个模板文件。 *.template
 		GPtr<Actor> LoadSingleTemplate( const Util::String& actorTemplateName ,Serialization::FileType& fileType);
 
@@ -157,9 +164,9 @@ namespace App
 		void RecursionUnLinkTemplate( const GPtr<Actor>& pActor);
 
 		//更新templatedactors
-		void UpdateTemplatedActors( GPtr<Actor>& pActor );
+		void UpdateTemplatedActors( GPtr<Actor>& pActor , const ActorPropertySet& actorPropertySet);
 		//迭代更新templatedactors
-		void RecursionUpdateTemplate(const GPtr<Actor>&  sourceActor,const GPtr<Actor>&  destActor, const Util::String& actorTemplateName);
+		void RecursionUpdateTemplate(const GPtr<Actor>&  sourceActor,const GPtr<Actor>&  destActor, const Util::String& actorTemplateName, const ActorPropertySet& actorPropertySet);
 
 		bool GetTemplateActiveFlag(const Util::String& actorTemplateName, bool& bActiveFlag);
 
@@ -178,6 +185,9 @@ namespace App
 
 		// find active actor by Name
 		Actor* FindActiveActorByName(const Util::String& name) const;
+
+		// find active actor by Model name
+		const Util::Array< GPtr<App::Actor> > FindActiveActorByModelName(const Util::String& modelName) const;
 
 		// find actor index in active list
 		IndexT FindActiveActorIndex(App::Actor::FastId fastID) const;

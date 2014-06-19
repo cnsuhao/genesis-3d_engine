@@ -128,6 +128,11 @@ namespace App
 
 		bool CreateInstanceMap(const GPtr<Vegetation::VegetationObject>& obj);
 
+#ifdef __GENESIS_EDITOR__
+		virtual void SetEditorVisible(bool bVis);
+#endif
+
+
 	protected:
 		/// @Component::OnActivate  called from Actor::ActivateComponents()
 		virtual void OnActivate();
@@ -175,6 +180,11 @@ namespace App
 		Util::Array<Vegetation::VegetationObjectPtr> mRenderDates;
 		bool mIsTrans;
 		bool mVisible;
+		bool mAttached;
+
+#ifdef __GENESIS_EDITOR__
+		bool m_bEditorVis;
+#endif
 	};
 
 

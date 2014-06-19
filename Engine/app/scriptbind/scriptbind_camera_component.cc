@@ -146,9 +146,8 @@ namespace App
 	static void ICall_CameraComponent_SetRenderToTexture(MonoObject* pMonoObj ,MonoObject* pRenderToTexture)
 	{
 		ScriptObjWrapper<CameraComponent> self( pMonoObj );
-		ScriptObjWrapper<Graphic::RenderToTexture> renderToTexture( pRenderToTexture );
-
-		self->SetRenderToTexture( renderToTexture.GetCppObjPtr() );
+		Graphic::RenderToTexture* renderToTexture = ScriptObjToCppPointer<Graphic::RenderToTexture>(pRenderToTexture);
+		self->SetRenderToTexture( renderToTexture );
 	}
 
 	static void ICall_CameraComponent_SetRenderDepth( MonoObject* pMonoObj,mono_bool bRenderDepth)
@@ -231,10 +230,9 @@ namespace App
 
 	static void ICall_CameraComponent_SetLightLitTexture(MonoObject* pMonoObj ,MonoObject* pRenderToTexture)
 	{
-			ScriptObjWrapper<CameraComponent> self( pMonoObj );
-			ScriptObjWrapper<Graphic::RenderToTexture> renderToTexture( pRenderToTexture );
-
-			self->SetLightLitTexture( renderToTexture.GetCppObjPtr() );
+		ScriptObjWrapper<CameraComponent> self( pMonoObj );
+		Graphic::RenderToTexture* renderToTexture = ScriptObjToCppPointer<Graphic::RenderToTexture>(pRenderToTexture);
+		self->SetLightLitTexture( renderToTexture );
 	}
 
 }

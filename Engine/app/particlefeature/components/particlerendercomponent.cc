@@ -76,6 +76,7 @@ namespace App
 		, mShowSimpleShape(false)
 		, mSelectTech(0)
 		, mTemplateName("sys:Mesh.template")
+		, mCurCamera(NULL)
 	{
 		mMeshInfo.dirty = false;
 		mMeshInfo.meshID = "sys:box.mesh";
@@ -252,7 +253,7 @@ namespace App
 
 		LoadEmitterMesh();
 		BuildRenderData();
-
+		mParticleSystem->SetParticleFPS(_fpsControl());
 		Super::_OnBeginFrame();
 
 	}
@@ -458,6 +459,10 @@ namespace App
 
 	void ParticleRenderComponent::SetVisible(bool bVis)
 	{
+		if ( bVis == mVisible )
+		{
+			return;
+		}
 		mVisible = bVis;
 		if (IsActive())
 		{
@@ -471,6 +476,16 @@ namespace App
 			}
 		}
 	}
+#ifdef __GENESIS_EDITOR__
+	 void ParticleRenderComponent::SetEditorVisible(bool bVis)
+	 {
+		 Super::SetEditorVisible(bVis);
+		 if (IsActive())
+		 {
+			 mRenderObject->SetEditorVisible(bVis);
+		 }
+	 }
+#endif
 
 	void ParticleRenderComponent::OnRenderSceneChanged()
 	{
@@ -482,7 +497,8 @@ namespace App
 
 	void ParticleRenderComponent::_AttachRenderObject()
 	{
-		if(!mVisible)
+
+		if(!mVisible)		
 			return;
 		if (mRenderObject.isvalid())
 		{
@@ -622,13 +638,7 @@ namespace App
 		}//end: for ( IndexT index = 0; index < mRenderDates.Size(); ++index )
 		if(mParticleSystem->_NeedUpdateBox())
 		{
-			Math::bbox box;	
-			box.begin_extend();
-			Math::bbox particleBox = mParticleSystem->GetBoundingBox();
-			box.extend(particleBox);
-			box.end_extend();
-
-			mRenderObject->SetBoundingBox(box);
+			mRenderObject->SetBoundingBox(mParticleSystem->GetBoundingBox());
 		}
 	}
 	//------------------------------------------------------------------------
@@ -677,6 +687,8 @@ namespace App
 
 		if ( partType == ParticleTarget::Mesh )
 		{
+			if(mMeshInfo.dirty || !mIsBuild)
+				return;
 			GPtr<Particles::ParticleEntityTarget> entityTar = pTarget.downcast<ParticleEntityTarget>();
 
 			mMats.AppendArray( entityTar->GetMatrixList());
@@ -809,7 +821,7 @@ namespace App
 	//------------------------------------------------------------------------
 	void ParticleRenderComponent::SetMeshID(const Resources::ResourceId& meshID, Resources::Priority priority )
 	{
-		if( mMeshInfo.meshID != meshID )
+		//if( mMeshInfo.meshID != meshID )  //ÈÈ¼ÓÔØ
 		{
 			if (mActor && mActor->PriorityDefinition())
 			{
@@ -819,6 +831,7 @@ namespace App
 			mMeshInfo.priority = priority;
 			mMeshInfo.dirty = true;
 		}
+		
 	}
 	//------------------------------------------------------------------------
 	void ParticleRenderComponent::SetTemplateID( const Resources::ResourceId& templateID )
@@ -830,5 +843,49 @@ namespace App
 	{
 		return mTemplateName;
 	}
+	//-------------------------------------------------------------------------
+	SizeT ParticleRenderComponent::_fpsControl()
+	{
+		Math::bbox box = mParticleSystem->GetBoundingBox();
+		Math::float4 boxSizeVec = box.pmax - box.pmin;
+		float boxSize = boxSizeVec.x()*boxSizeVec.x()+boxSizeVec.y()*boxSizeVec.y()+boxSizeVec.z()*boxSizeVec.z();
 
+		float minViewSize = 400000000;
+
+		if(!mActor)
+		{
+			return (SizeT)(minViewSize);
+		}
+
+		const Graphic::RenderScene* renderScene = mActor->GetRenderScene();
+		if(!renderScene)
+		{
+			return (SizeT)(minViewSize);
+		}
+
+		const Graphic::RenderScene::CameraList& cameraList = renderScene->GetCameraList();
+		for(IndexT cameraIndex = 0; cameraIndex < cameraList.Size(); cameraIndex++)
+		{
+			if(cameraList[cameraIndex])
+			{
+				Math::vector cameraLocalPos = cameraList[cameraIndex]->GetTransform().get_position() - mActor->GetWorldPosition();
+				float dis = cameraLocalPos.x()*cameraLocalPos.x()+cameraLocalPos.y()*cameraLocalPos.y()+cameraLocalPos.z()*cameraLocalPos.z();
+
+				float zNear = cameraList[cameraIndex]->GetCameraSetting().GetZNear();
+				float zFar = cameraList[cameraIndex]->GetCameraSetting().GetZFar();
+				float farWidth = cameraList[cameraIndex]->GetCameraSetting().GetFarWidth();
+				float farHeight = cameraList[cameraIndex]->GetCameraSetting().GetFarHeight();
+				float viewSize = dis/((zFar-zNear)*(zFar-zNear))*(farWidth*farWidth + farHeight*farHeight);
+
+				minViewSize = Math::n_min(viewSize,minViewSize);
+			}
+		}
+		float ratioInView = minViewSize/boxSize;
+		float MINTIME = 0.033f;
+		float MAXTIME = 0.33f;
+		float updateTime = MINTIME + (MAXTIME-MINTIME) * ratioInView * ParticleSystem::UpdateFactor;
+		updateTime = updateTime>MAXTIME?MAXTIME:updateTime;
+
+		return (SizeT)(1.0/updateTime);
+	}
 }

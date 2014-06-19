@@ -79,7 +79,6 @@
     <Compile Include="Debug.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="ExceptionConverter.cs" />
-    <Compile Include="GlobalShaderParam.cs" />
     <Compile Include="GraphicSystem.cs" />
     <Compile Include="ImagePath.cs" />
     <Compile Include="InputEvent.cs" />

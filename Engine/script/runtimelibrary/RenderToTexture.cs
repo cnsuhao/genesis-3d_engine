@@ -88,7 +88,7 @@ namespace ScriptRuntime
         R32F = _PixelFormat.R32F,
         G32R32F = _PixelFormat.G32R32F,
         A32B32G32R32F = _PixelFormat.A32B32G32R32F,
-
+        A8R8G8B8 = _PixelFormat.A8R8G8B8,
     }
 
     public enum ClearFlag

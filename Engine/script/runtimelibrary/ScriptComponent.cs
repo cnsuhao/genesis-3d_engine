@@ -49,7 +49,68 @@ namespace ScriptRuntime
         {
             return ICall_ScriptComponent_GetScriptByName(this, name);
         }
+        
+        /// <summary>
+        /// 通过类名获得脚本实例
+        /// </summary>
+        /// <typeparam name="TScript">类名</typeparam>
+        /// <returns>返回脚本实例</returns>
+        public TScript GetScriptObject<TScript>()
+            where TScript : ScriptableClass
+        {
+            int count = ICall_ScriptComponent_GetScriptInstanceCount(this);
+            for (int i = 0; i < count; ++i)
+            {
+                ScriptableClass sc = ICall_ScriptComponent_GetScriptObject(this, i);
+                if (null != sc)
+                {
+                    if (sc is TScript)
+                    {
+                        return sc as TScript;
+                    }
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 是否挂载了某个类型的脚本
+        /// </summary>
+        /// <typeparam name="TScript">类名</typeparam>
+        /// <returns>结果</returns>
+        public bool ContainScript<TScript>()
+        {
+            int count = ICall_ScriptComponent_GetScriptInstanceCount(this);
+            for (int i = 0; i < count; ++i)
+            {
+                ScriptableClass sc = ICall_ScriptComponent_GetScriptObject(this, i);
+                if (null != sc)
+                {
+                    if (sc is TScript)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public int GetScriptObjectCount()
+        {
+            return ICall_ScriptComponent_GetScriptInstanceCount(this);
+        }
+
+        public ScriptableClass GetScriptObject(int index)
+        {
+            return ICall_ScriptComponent_GetScriptObject(this, index);
+        }
+
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         extern private static ScriptableClass ICall_ScriptComponent_GetScriptByName(ScriptComponent self, String name);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        extern private static  int ICall_ScriptComponent_GetScriptInstanceCount(ScriptComponent self);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        extern private static ScriptableClass ICall_ScriptComponent_GetScriptObject(ScriptComponent self, int index);
     }
 }

@@ -46,7 +46,12 @@ namespace ScriptGUI
         /// <param name="visible">加载后是否可见</param>
         public ExecuteResult AddLayout(String file_name, bool delay_load, bool visible)
         {
-            return GUI.RegisterLayout(mParent.ParentLayout.Name, mItem.Name, mLayoutName, file_name, delay_load, visible);//sender
+            if (!mInit)
+            {
+                mInit = true;
+                return GUI.RegisterLayout(mParent.ParentLayout.Name, mItem.Name, mLayoutName, file_name, delay_load, visible);//sender
+            }
+            return GUI.setResult(ExecuteResult.False);
         }
 
         internal void Clear()
@@ -90,6 +95,7 @@ namespace ScriptGUI
         private Widget mParent;
         private Widget mItem;
         private FString mLayoutName;
+        private bool mInit = false;
     }
     internal class ItemBox : DDContainer
     {
@@ -427,6 +433,31 @@ namespace ScriptGUI
         {
             ICall_resetDrag(mInstance.Ptr);
         }
+
+        internal bool VScrollVisible
+        {
+            get
+            {
+                return ICall_isVisibleVScroll(mInstance.Ptr);
+            }
+            set
+            {
+                ICall_setVisibleVScroll(mInstance.Ptr, value);
+            }
+        }
+
+        internal bool HScrollVisible
+        {
+            get
+            {
+                return ICall_isVisibleHScroll(mInstance.Ptr);
+            }
+            set
+            {
+                ICall_setVisibleHScroll(mInstance.Ptr, value);
+            }
+        }
+
         protected ItemInfo findItem(Instance inst)
         {
             ItemInfo info = null;
@@ -531,7 +562,6 @@ namespace ScriptGUI
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         extern private static uint ICall_getIndexByWidget(IntPtr itembox_ptr, IntPtr widget_ptr);
 
-
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         extern private static IntPtr ICall_getWidgetDrag(IntPtr itembox_ptr);
 
@@ -542,7 +572,13 @@ namespace ScriptGUI
         extern private static new void ICall_resetDrag(IntPtr itembox_ptr);
 
 
-        //[MethodImplAttribute(MethodImplOptions.InternalCall)]
-        //extern private static void ICall_(IntPtr itembox_ptr, uint index);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        extern private static void ICall_setVisibleVScroll(IntPtr itembox_ptr, bool _value);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        extern private static bool ICall_isVisibleVScroll(IntPtr itembox_ptr);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        extern private static void ICall_setVisibleHScroll(IntPtr itembox_ptr, bool _value);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        extern private static bool ICall_isVisibleHScroll(IntPtr itembox_ptr);
     }
 }

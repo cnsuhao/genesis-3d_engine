@@ -46,26 +46,32 @@ THE SOFTWARE.
 
 
 #if defined( DEBUG ) || defined( _DEBUG ) || defined( __WIN32__ )
-#if __ANDROID__
-#define n_printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "ProjectName", __VA_ARGS__)
-#define n_error(...)  __android_log_print(ANDROID_LOG_ERROR, "ProjectName", __VA_ARGS__)
-#define n_dbgout(...) __android_log_print(ANDROID_LOG_DEBUG, "ProjectName", __VA_ARGS__)
-#define n_warning(...)  __android_log_print(ANDROID_LOG_WARN, "ProjectName", __VA_ARGS__)
-#define n_confirm(...)  __android_log_print(ANDROID_LOG_INFO, "ProjectName", __VA_ARGS__)
+	#if __ANDROID__
+		#define n_printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "ProjectName", __VA_ARGS__)
+		#define n_error(...)  __android_log_print(ANDROID_LOG_ERROR, "ProjectName", __VA_ARGS__)
+		#define n_dbgout(...) __android_log_print(ANDROID_LOG_DEBUG, "ProjectName", __VA_ARGS__)
+		#define n_warning(...)  __android_log_print(ANDROID_LOG_WARN, "ProjectName", __VA_ARGS__)
+		#define n_confirm(...)  __android_log_print(ANDROID_LOG_INFO, "ProjectName", __VA_ARGS__)
+		#define n_debuglog(...)  __android_log_print(ANDROID_LOG_INFO, "ProjectName", __VA_ARGS__)
+	#else
+		void n_printf(const char *, ...) __attribute__((format(printf,1,2)));
+		void n_error(const char*, ...) __attribute__((format(printf,1,2)));
+		void n_dbgout(const char*, ...) __attribute__((format(printf,1,2)));
+		void n_warning(const char*, ...) __attribute__((format(printf,1,2)));
+		void n_confirm(const char*, ...) __attribute__((format(printf,1,2)));
+		#if defined( DEBUG ) || defined( _DEBUG )
+			void n_debuglog(const char*, ...) __attribute__((format(printf,1,2)));
+		#else
+			#define n_debuglog(...)
+		#endif // _DEBUG
+	#endif
 #else
-void n_printf(const char *, ...) __attribute__((format(printf,1,2)));
-void n_error(const char*, ...) __attribute__((format(printf,1,2)));
-void n_dbgout(const char*, ...) __attribute__((format(printf,1,2)));
-void n_warning(const char*, ...) __attribute__((format(printf,1,2)));
-void n_confirm(const char*, ...) __attribute__((format(printf,1,2)));
-#endif
-#else
-
-#define  n_printf(...) 
-#define  n_error(...) 
-#define  n_dbgout(...)
-#define  n_warning(...) 
-#define  n_confirm( ...)
+	#define  n_printf(...) 
+	#define  n_error(...) 
+	#define  n_dbgout(...)
+	#define  n_warning(...) 
+	#define  n_confirm( ...)
+	#define	 n_debuglog(...)
 #endif
 
 

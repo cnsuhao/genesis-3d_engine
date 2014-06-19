@@ -63,6 +63,8 @@ namespace App
 		/// @Feature::OnEndFrame called at the end of the feature trigger cycle
 		virtual void OnEndFrame();
 
+		void OnResetEvent();
+
 		void AttachInputSource(GPtr<Input::InputSource> input);
 
 		void RemoveInputSource(GPtr<Input::InputSource> input);

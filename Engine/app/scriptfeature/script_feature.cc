@@ -201,7 +201,10 @@ namespace App
 			ScriptInstances::Iterator end = scriptInstances.End();
 			while(it != end)
 			{
-				(*it)->OnLoad();
+				if ((*it).isvalid())
+				{
+					(*it)->OnLoad();
+				}
 				++it;
 			}
 		}
@@ -233,7 +236,10 @@ namespace App
 			ScriptInstances::Iterator end = scriptInstances.End();
 			while(it != end)
 			{
-				(*it)->OnExit();
+				if ((*it).isvalid())
+				{
+					(*it)->OnExit();
+				}
 				++it;
 			}
 		}

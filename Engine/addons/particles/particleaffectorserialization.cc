@@ -48,6 +48,11 @@ namespace Particles
 				Load_2(obj,pReader);
 				return;
 			}
+			else if(3 == ver)
+			{
+				Load_3(obj,pReader);
+				return;
+			}
 			n_error(" %s Load unknown version.\n", obj->GetClassName().AsCharPtr() );
 		}
 		//------------------------------------------------------------------------
@@ -59,7 +64,7 @@ namespace Particles
 
 			int specialisation;
 			pReader->SerializeInt( s_AffectSpecialisation , specialisation);
-			obj->SetAffectType((ParticleAffector::AffectType)specialisation);
+			//obj->SetAffectType((ParticleAffector::AffectType)specialisation);
 		}
 		void Load_2(ParticleAffector* obj, SerializeReader* pReader)
 		{
@@ -68,12 +73,21 @@ namespace Particles
 			obj->SetEnable(active);
 			Load_1(obj,pReader);
 		}
+		void Load_3(ParticleAffector* obj, SerializeReader* pReader)
+		{
+			bool active;
+			pReader->SerializeBool(s_AffectorEnable,active);
+			obj->SetEnable(active);
+			
+			Util::String name;
+			pReader->SerializeString( s_AffectorName, name );
+			obj->SetName( name );
+		}
 		//------------------------------------------------------------------------
 		void Save( const ParticleAffector* obj, SerializeWriter* pWriter )
 		{
 			pWriter->SerializeBool(s_AffectorEnable,obj->GetEnable());
 			pWriter->SerializeString( s_AffectorName, obj->GetName() );	
-			pWriter->SerializeInt( s_AffectSpecialisation, (int)obj->GetAffectType());
 		}
 	};
 
@@ -81,7 +95,7 @@ namespace Particles
 	// @ISerialization::GetVersion. when change storage, must add SerializeVersion count
 	SVersion ParticleAffector::GetVersion() const
 	{
-		return 2;	
+		return 3;	
 	}
 
 	//------------------------------------------------------------------------

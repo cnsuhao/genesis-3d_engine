@@ -30,7 +30,7 @@ THE SOFTWARE.
 #include "serialization/serializeserver.h"
 #include "vegetationfeature/vegetationfeature.h"
 #include "appframework/actormanager.h"
-#include "lightmap/lightmapSetting.h"
+#include "Lightmap/lightmapSetting.h"
 #include "profilesystem/ProfileSystem.h"
 
 namespace App
@@ -246,7 +246,7 @@ namespace App
 				{
 					mMainScene = NULL;
 				}
-				mScenesDelayDel.Append(*it);
+				mScenesDelayDel.Append(*it);//只为了拿着智能指针的引用，防止触发析构，析构应该在下一帧再开始。
 				mScenes.Erase(it);
 				return true;
 			}

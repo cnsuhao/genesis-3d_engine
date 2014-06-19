@@ -27,18 +27,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 #include "stdneb.h"
+#include "graphicsystem/GraphicSystem.h"
+#include "rendersystem/RenderSystem.h"
+#include "materialmaker/parser/GenesisShaderParser.h"
+#include "foundation/io/ioserver.h"
+
 #include "MyGUI_GenesisDataManager.h"
 #include "MyGUI_GenesisRenderManager.h"
 #include "MyGUI_GenesisTexture.h"
 #include "MyGUI_GenesisVertexBuffer.h"
 #include "MyGUI_LogManager.h"
 #include "MyGUI_GenesisDiagnostic.h"
-#include "MyGUI_Timer.h"
 #include "MyGUI_Gui.h"
 #include "MyGUI_GenesisInput.h"
 
-#include "materialmaker/parser/GenesisShaderParser.h"
-#include "foundation/io/ioserver.h"
+
 
 #include "MyGUI_GenesisVertexBufferManager.h"
 #include "MyGUI_GenesisTexture.h"
@@ -81,14 +84,14 @@ namespace MyGUI
 		m_shader = NULL;
 	}
 
-	void GenesisRenderManager::initialise()
+	void GenesisRenderManager::initialise(int width, int height, int bufferWidth, int bufferHeight)
 	{
 		mIsInitialise = true;
-		windowResized();
 		_checkShader();
 
 		m_VertexMgr  = MyGUI::GenesisVertexBufferMgr::Create();
 		m_TextureMgr = MyGUI::GenesisTextureMgr::Create();
+		setResolution(width, height, bufferWidth, bufferHeight);
 	}
 
 	void GenesisRenderManager::shutdown()
@@ -124,11 +127,11 @@ namespace MyGUI
 		delete _buffer;
 	}
 
-	void GenesisRenderManager::resetViewSize(int w, int h)
+	void GenesisRenderManager::resetViewSize(int bufferWidth, int bufferHeight)
 	{
 		if (0 == mResolutionConfig.width)
 		{
-			mCurrentResolution.width = w;
+			mCurrentResolution.width = bufferWidth;
 		}
 		else
 		{
@@ -137,7 +140,7 @@ namespace MyGUI
 
 		if (0 == mResolutionConfig.height)
 		{
-			mCurrentResolution.height = h;
+			mCurrentResolution.height = bufferHeight;
 		}
 		else
 		{
@@ -146,36 +149,22 @@ namespace MyGUI
 		GenesisInputManager::getInstancePtr()->_setScreenSize((float)mCurrentResolution.width, (float)mCurrentResolution.height);
 	}
 
-	void GenesisRenderManager::setResolution(int width, int height)
+	void GenesisRenderManager::setResolution(int width, int height, int bufferWidth, int bufferHeight)
 	{
 		mResolutionConfig.set(width, height);
-		windowResized();
+		windowResized(bufferWidth, bufferHeight);
 	}
 
-	void GenesisRenderManager::setResolution(const IntSize& size)
+	void GenesisRenderManager::windowResized(int bufferWidth, int bufferHeight)
 	{
-		mResolutionConfig = size;
-		windowResized();
-	}
-
-	void GenesisRenderManager::windowResized()
-	{
-		const RenderBase::DisplayMode& dm = GraphicSystem::Instance()->GetMainViewPortWindow()->GetDisplayMode();
-		resetViewSize(dm.GetWidth(), dm.GetHeight());
+		resetViewSize(bufferWidth, bufferHeight);
 		updateRenderInfo();
 		onResizeView(mCurrentResolution);
 	}
 
-	void GenesisRenderManager::windowResized(int w, int h)
+	void GenesisRenderManager::deviceReseted(int bufferWidth, int bufferHeigh)
 	{
-		resetViewSize(w, h);
-		updateRenderInfo();
-		onResizeView(mCurrentResolution);
-	}
-
-	void GenesisRenderManager::deviceReseted()
-	{
-		windowResized();
+		windowResized(bufferWidth, bufferHeigh);
 
 		m_VertexMgr->ResetAllBuffers();
 		m_TextureMgr->ReLoadManualTextures();
@@ -327,20 +316,13 @@ namespace MyGUI
 		return mCountBatch;
 	}
 
-	void GenesisRenderManager::renderGUI()
+	void GenesisRenderManager::renderGUI(float time)
 	{
 		Gui* gui = Gui::getInstancePtr();
 		if (gui == nullptr || nullptr == m_shaderHandle)
 			return;
 
-		static Timer timer;
-		static unsigned long last_time = timer.getMilliseconds();
-		unsigned long now_time = timer.getMilliseconds();
-		unsigned long time = now_time - last_time;
-
-		onFrameEvent((float)((double)(time) / (double)1000));
-
-		last_time = now_time;
+		onFrameEvent(time);
 
 		_beforeDraw();
 

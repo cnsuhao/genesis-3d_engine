@@ -130,7 +130,7 @@ namespace MyGUI
 		virtual void updateDropItems();
 		virtual void updateDropItemsState(const DDWidgetState& _state);
 
-		void mouseDrag(MouseButton _id);
+		bool mouseDrag(MouseButton _id);// expand by genesis-3d
 		void mouseButtonReleased(MouseButton _id);
 		void mouseButtonPressed(MouseButton _id);
 

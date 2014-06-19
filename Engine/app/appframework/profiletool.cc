@@ -246,7 +246,7 @@ namespace App
 		mStatTexts[Stat_Explain].textID = mgr->AppendDrawText(0, 0,"Control: F9", mStatVisArray[SV_Base]);
 #endif		
 
-		mStatTexts[Stat_Fps].textID = mgr->AppendDrawText(0, 0,"Fps:", mStatVisArray[SV_Base]);
+		mStatTexts[Stat_Fps].textID = mgr->AppendDrawText(0, 0,"FPS:", mStatVisArray[SV_Base]);
 		mStatTexts[Stat_Triangles].textID = mgr->AppendDrawText(0, 0,"Triangles:", mStatVisArray[SV_Base]);
 		mStatTexts[Stat_Vertices].textID = mgr->AppendDrawText(0, 0,"Vertices:", mStatVisArray[SV_Base]);
 

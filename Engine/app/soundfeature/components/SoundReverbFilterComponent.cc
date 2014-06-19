@@ -218,7 +218,7 @@ namespace App
 	{
 		bool result = false;
 
-		if ( pEFXEAXReverb )
+		if ( pEFXEAXReverb 		)
 		{
 			mDSP->setParameter(AL_EAXREVERB_DENSITY,pEFXEAXReverb->flDensity);
 			mDSP->setParameter(AL_EAXREVERB_DIFFUSION,pEFXEAXReverb->flDiffusion);

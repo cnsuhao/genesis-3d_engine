@@ -143,6 +143,7 @@ namespace MyGUI
 
 		/*internal:*/
 		void _resetMouseFocusWidget();
+		void _forceChangeMouseFocus(Widget* _focusNew, int _absx, int _absy, int _absz);// expand by genesis-3d
 
 	private:
 		// удаляем данный виджет из всех возможных мест
@@ -157,6 +158,8 @@ namespace MyGUI
 
 		// сбрасывает клавишу повторения
 		void resetKey();
+
+		bool changeMouseFocus(Widget* item, Widget* old_mouse_focus, int _absx, int _absy, int _absz);// expand by genesis-3d
 
 	private:
 		// виджеты которым принадлежит фокус

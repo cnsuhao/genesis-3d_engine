@@ -47,6 +47,20 @@ namespace MyGUI
 
 	public:
 		ItemBox();
+		//------------------------------------------------------------------------------//
+		// expand by genesis-3d
+		/** Show VScroll when text size larger than EditBox */
+		void setVScrollVisible(bool _value);
+		/** Get Show VScroll flag */
+		bool isVScrollVisible() const;
+
+		/** Show HScroll when text size larger than EditBox */
+		void setHScrollVisible(bool _value);
+		/** Get Show HScroll flag */
+		bool isHScrollVisible() const;
+		//------------------------------------------------------------------------------//
+
+
 
 		//------------------------------------------------------------------------------//
 		// манипуляции айтемами
@@ -202,6 +216,10 @@ namespace MyGUI
 		virtual void _resetContainer(bool _update);
 
 	protected:
+		virtual void onClientDragBegin(Widget* _sender, int _left, int _top, MouseButton _id);// expand by genesis-3d
+		virtual void onClientDragEnd(Widget* _sender);// expand by genesis-3d
+		virtual void onClientDrag(Widget* _sender, int _left, int _top, MouseButton _id);// expand by genesis-3d
+
 		virtual void initialiseOverride();
 		virtual void shutdownOverride();
 
@@ -223,7 +241,7 @@ namespace MyGUI
 
 		void notifyKeyButtonPressed(Widget* _sender, KeyCode _key, Char _char);
 		void notifyKeyButtonReleased(Widget* _sender, KeyCode _key);
-		void notifyScrollChangePosition(ScrollBar* _sender, size_t _index);
+		void notifyScrollChangePosition(ScrollBar* _sender, int _index);// expand by genesis-3d
 		void notifyMouseWheel(Widget* _sender, int _rel);
 		void notifyRootMouseChangeFocus(Widget* _sender, bool _focus);
 		void notifyMouseButtonDoubleClick(Widget* _sender);
@@ -263,7 +281,28 @@ namespace MyGUI
 
 	private:
 		size_t calcIndexByWidget(Widget* _widget);
-
+		// -------------------------------------------------------------------------
+		// expand by genesis-3d
+		float defualtSpeed() const;
+		void notifyScrollBarPress(Widget* _sender, int _left, int _top, MouseButton _id);// expand by genesis-3d
+		void pushContentPosition();
+		bool headEmpty() const;
+		bool tailEmpty() const;
+		void checkScrollState();
+		void scrollStop();
+		void scrollOverflow(float time);
+		void scrollForceOverflow(float time);
+		void scrollInertia(float time);
+		void notifyTick(float time);
+		void preDrag();
+		int dragOperator(int _current, int _length, int _sizeItem);
+		int getStartIndex() const;
+		void updateContentPosition(const IntPoint& _point);
+		void testSpeed();
+		void resetCounter();
+		void dragMove(float move);
+		void finalSpeed();
+		// -------------------------------------------------------------------------
 		void requestItemSize();
 
 		virtual IntSize getContentSize();
@@ -318,6 +357,20 @@ namespace MyGUI
 
 		Widget* mItemDrag;
 		IntPoint mPointDragOffset;
+		float mPreCoord;// expand by genesis-3d
+		int mPreMouse;// expand by genesis-3d
+
+		float mTimeCounter;// expand by genesis-3d
+		float mMoveCounter;// expand by genesis-3d
+		float mScrollSpeed;// expand by genesis-3d
+		enum 
+		{
+			ScrollStop,
+			ScrollOverflow,
+			ScrollForceOverflow,
+			ScrollInertia,
+		} mScrollState;// expand by genesis-3d
+
 
 		bool mAlignVert;
 

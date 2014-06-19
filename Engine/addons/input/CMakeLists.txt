@@ -115,6 +115,7 @@ SET ( _HEADER_FILES
 	inputmobileconfig.h
 	mobileinputevent.h
 	mobiletouchevent.h
+	mobilekeyboardevent.h
 )
 
 # folder

@@ -264,42 +264,10 @@ namespace App
 
 	static void ICall_PhysicsBodyComponent_AddForce(MonoObject* pMonoObj, Math::float3& force, PhysicsDynamic::ForceType forcetype, mono_bool bWakeUp)
 	{
- 		ScriptObjWrapper<PhysicsBodyComponent> self( pMonoObj );
+		ScriptObjWrapper<PhysicsBodyComponent> self( pMonoObj );
 		GPtr<PhysicsEntity> pEntity = self->GetEntity();
 		if(pEntity->IsA(PhysicsDynamic::RTTI))
 			pEntity.downcast<PhysicsDynamic>()->AddForce(force,forcetype,Utility_MonoBool(bWakeUp));
-	}
-
-	static void ICall_PhysicsBodyComponent_AddForceAtPos(MonoObject* pMonoObj, Math::float3& force, Math::float3& pos,PhysicsDynamic::ForceType forcetype, mono_bool bWakeUp)
-	{
-		ScriptObjWrapper<PhysicsBodyComponent> self( pMonoObj );
-		GPtr<PhysicsEntity> pEntity = self->GetEntity();
-		if(pEntity->IsA(PhysicsDynamic::RTTI))
-			pEntity.downcast<PhysicsDynamic>()->AddForceAtPos(force,pos,forcetype,Utility_MonoBool(bWakeUp));
-	}
-
-	static void ICall_PhysicsBodyComponent_AddForceAtLocalPos(MonoObject* pMonoObj, Math::float3& force, Math::float3& pos, PhysicsDynamic::ForceType forcetype, mono_bool bWakeUp)
-	{
-		ScriptObjWrapper<PhysicsBodyComponent> self( pMonoObj );
-		GPtr<PhysicsEntity> pEntity = self->GetEntity();
-		if(pEntity->IsA(PhysicsDynamic::RTTI))
-			pEntity.downcast<PhysicsDynamic>()->AddForceAtLocalPos(force,pos,forcetype,Utility_MonoBool(bWakeUp));
-	}
-
-	static void ICall_PhysicsBodyComponent_AddLocalForceAtPos(MonoObject* pMonoObj, Math::float3& force, Math::float3& pos,PhysicsDynamic::ForceType forcetype, mono_bool bWakeUp)
-	{
-		ScriptObjWrapper<PhysicsBodyComponent> self( pMonoObj );
-		GPtr<PhysicsEntity> pEntity = self->GetEntity();
-		if(pEntity->IsA(PhysicsDynamic::RTTI))
-			pEntity.downcast<PhysicsDynamic>()->AddLocalForceAtPos(force,pos,forcetype,Utility_MonoBool(bWakeUp));
-	}
-
-	static void ICall_PhysicsBodyComponent_AddLocalForceAtLocalPos(MonoObject* pMonoObj, Math::float3& force, Math::float3& pos,PhysicsDynamic::ForceType forcetype, mono_bool bWakeUp)
-	{
-		ScriptObjWrapper<PhysicsBodyComponent> self( pMonoObj );
-		GPtr<PhysicsEntity> pEntity = self->GetEntity();
-		if(pEntity->IsA(PhysicsDynamic::RTTI))
-			pEntity.downcast<PhysicsDynamic>()->AddLocalForceAtLocalPos(force,pos,forcetype,Utility_MonoBool(bWakeUp));
 	}
 
 	static MonoObject* ICall_PhysicsEntity_GetShapeAt( MonoObject* pMonoObj,int index)

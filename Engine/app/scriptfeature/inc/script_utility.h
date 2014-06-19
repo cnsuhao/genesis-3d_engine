@@ -500,11 +500,11 @@ namespace App
 	template<typename T>
 	MonoObject* CppObjectToScriptObj( T& rCppObj )
 	{
-		const Core::Rtti* pRtti = rCppObj.GetRtti(); 
-		n_assert( NULL != pRtti );
 		MonoObject* pMonoObj = rCppObj.GetMonoObject();
 		if ( NULL == pMonoObj )
 		{
+			const Core::Rtti* pRtti = rCppObj.GetRtti(); 
+			n_assert( NULL != pRtti );
 			// - create a script object
 			MonoClass* pMonoClass = NULL;
 
@@ -537,6 +537,17 @@ namespace App
 			return CppObjectToScriptObj( *pCppObj );
 		}
 	}
+
+	template<typename T>
+	T* ScriptObjToCppPointer(MonoObject* pScriptObj)
+	{
+		if (pScriptObj)
+		{
+			return (T*)Utility_GetCppObjectPtr( pScriptObj );
+		}
+		return NULL;
+	}
+
 
 	template<typename T>
 	MonoArray* Utility_CppArrToMonoArr( const Util::Array<T>& cppArr )
@@ -588,13 +599,15 @@ namespace App
 			: m_pMonoObj( pMonoObj )
 			, m_pCppObj( NULL )
 		{
-			void* pObj = Utility_GetCppObjectPtr( pMonoObj );
-			m_pCppObj  = static_cast<T*>( pObj );
-			n_assert( NULL!=m_pCppObj );
+			if( NULL!=m_pMonoObj )
+			{
+				void* pObj = Utility_GetCppObjectPtr( pMonoObj );
+				m_pCppObj  = static_cast<T*>( pObj );
+				n_assert( NULL!=m_pCppObj );
+			}
 		}
 
 		T* GetCppObjPtr( void ) { return m_pCppObj; }
-		T& operator * () const	{ return *m_pCppObj; }
 		T* operator -> () const	{ return m_pCppObj;	}
 		bool IsValid( void ) const	{ return m_pMonoObj!=NULL;}
 

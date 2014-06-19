@@ -58,6 +58,7 @@ public class GenesisGLSurfaceView extends GLSurfaceView {
 	private static Handler sHandler;
 	private GenesisActivity mActivity;
 	private static GenesisGLSurfaceView mGenesisGLSurfaceView;
+	private static GenesisTextInputWraper sGenesisTextInputWraper;
 	
 	private String gamedir;
 	private String scenename;
@@ -69,10 +70,23 @@ public class GenesisGLSurfaceView extends GLSurfaceView {
 	private boolean usePrecompilerShader;
 	
 	private GenesisRenderer mGenesisRenderer;
+	private GenesisEditText mGenesisEditText;
 
 	private ContextFactory mContextFactory;
 	
 	private AssetManager mMgr;
+	//get set methods=====================================================================================
+	public GenesisEditText getGenesisEditText() {
+		return this.mGenesisEditText;
+	}
+	public void setGenesisEditText(final GenesisEditText pGenesisEditText) {
+		this.mGenesisEditText = pGenesisEditText;
+		if (null != this.mGenesisEditText && null != GenesisGLSurfaceView.sGenesisTextInputWraper) {
+			this.mGenesisEditText.setOnEditorActionListener(GenesisGLSurfaceView.sGenesisTextInputWraper);
+			this.mGenesisEditText.setGenesisGLSurfaceView(this);
+			this.requestFocus();
+		}
+	}
 	private void GetStorageType(final Context context)
 	{
 		String sgamedir = gamedir;
@@ -134,6 +148,7 @@ public class GenesisGLSurfaceView extends GLSurfaceView {
 		
 		 return availableSize/(1024*1024);
 	}
+	
 	
 	private  void copyAllResFiles(final Context context,String Data,String Dest)
 	{
@@ -430,17 +445,40 @@ public class GenesisGLSurfaceView extends GLSurfaceView {
 		this.setFocusableInTouchMode(true);
 
 		GenesisGLSurfaceView.mGenesisGLSurfaceView = this;
+		GenesisGLSurfaceView.sGenesisTextInputWraper = new GenesisTextInputWraper(this);
 	
 		GenesisGLSurfaceView.sHandler = new Handler() {
 			@Override
 			public void handleMessage(final Message msg) {
 				switch (msg.what) {
 					case HANDLER_OPEN_IME_KEYBOARD:
-						
+						{
+							
+							
+							if (null != GenesisGLSurfaceView.this.mGenesisEditText && GenesisGLSurfaceView.this.mGenesisEditText.requestFocus()) {
+								GenesisGLSurfaceView.this.mGenesisEditText.removeTextChangedListener(GenesisGLSurfaceView.sGenesisTextInputWraper);
+								GenesisGLSurfaceView.this.mGenesisEditText.setText("");
+								final String text = (String) msg.obj;
+								GenesisGLSurfaceView.this.mGenesisEditText.append(text);
+								GenesisGLSurfaceView.sGenesisTextInputWraper.setOriginText(text);
+								GenesisGLSurfaceView.this.mGenesisEditText.addTextChangedListener(GenesisGLSurfaceView.sGenesisTextInputWraper);
+								final InputMethodManager imm = (InputMethodManager) GenesisGLSurfaceView.mGenesisGLSurfaceView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+								imm.showSoftInput(GenesisGLSurfaceView.this.mGenesisEditText, 0);
+								Log.d("GLSurfaceView", "showSoftInput");
+							}
+						}
 						break;
 
 					case HANDLER_CLOSE_IME_KEYBOARD:
-						
+						{
+							if (null != GenesisGLSurfaceView.this.mGenesisEditText) {
+								GenesisGLSurfaceView.this.mGenesisEditText.removeTextChangedListener(GenesisGLSurfaceView.sGenesisTextInputWraper);
+								final InputMethodManager imm = (InputMethodManager) GenesisGLSurfaceView.mGenesisGLSurfaceView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+								imm.hideSoftInputFromWindow(GenesisGLSurfaceView.this.mGenesisEditText.getWindowToken(), 0);
+								GenesisGLSurfaceView.this.requestFocus();
+								Log.d("GLSurfaceView", "HideSoftInput");
+							}
+						}
 						break;
 				}
 			}
@@ -545,7 +583,7 @@ public class GenesisGLSurfaceView extends GLSurfaceView {
 	}
 
 	/*
-	 * This function is called before Cocos2dxRenderer.nativeInit(), so the
+	 * This function is called before GenesisRenderer.nativeInit(), so the
 	 * width and height is correct.
 	 */
 	@Override
@@ -794,5 +832,34 @@ public class GenesisGLSurfaceView extends GLSurfaceView {
 	        private int[] mValue = new int[1];
 	    }
 
-	
+	// called by c++==========================================================================
+	    public static void openIMEKeyboard() {
+			final Message msg = new Message();
+			msg.what = GenesisGLSurfaceView.HANDLER_OPEN_IME_KEYBOARD;
+			msg.obj = GenesisGLSurfaceView.mGenesisGLSurfaceView.mGenesisRenderer.getContentText();
+			GenesisGLSurfaceView.sHandler.sendMessage(msg);
+		}
+
+		public static void closeIMEKeyboard() {
+			final Message msg = new Message();
+			msg.what = GenesisGLSurfaceView.HANDLER_CLOSE_IME_KEYBOARD;
+			GenesisGLSurfaceView.sHandler.sendMessage(msg);
+		}
+		//text input methods===================================================================================
+		public void insertText(final String pText) {
+			this.queueEvent(new Runnable() {
+				@Override
+				public void run() {
+					GenesisGLSurfaceView.this.mGenesisRenderer.handleInsertText(pText);
+				}
+			});
+		}
+		public void deleteBackward() {
+			this.queueEvent(new Runnable() {
+				@Override
+				public void run() {
+					GenesisGLSurfaceView.this.mGenesisRenderer.handleDeleteBackward();
+				}
+			});
+		}
 }

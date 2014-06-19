@@ -157,8 +157,9 @@ namespace App
 	}
 
 	void Mesh2dRenderComponent::OnActivate()
-	{		
-		if (mVisible)
+	{	
+
+		if (mVisible)		
 		{
 			_AttachRenderObject();
 		};
@@ -168,7 +169,8 @@ namespace App
 
 	void Mesh2dRenderComponent::OnDeactivate()
 	{
-		if (IsActive() && mVisible)
+
+		if (IsActive() && mVisible)		
 		{
 			_DeattachRenderObject();
 		}
@@ -177,6 +179,10 @@ namespace App
 
 	void Mesh2dRenderComponent::SetVisible(bool bVis)
 	{
+		if ( bVis == mVisible )
+		{
+			return;
+		}
 		mVisible = bVis;
 		if (IsActive())
 		{
@@ -190,13 +196,29 @@ namespace App
 			}
 		}
 	}
+
+#ifdef __GENESIS_EDITOR__
+	void Mesh2dRenderComponent::SetEditorVisible(bool bVis)
+	{
+		Super::SetEditorVisible(bVis);
+		if (IsActive())
+		{
+			mScreenObject->SetEditorVisible(bVis);
+
+		}
+	}
+#endif
+
 	void Mesh2dRenderComponent::SetTargetCamera(CameraComponent* camera)
 	{
-		if (IsActive() && mVisible)
+
+		if (IsActive() && mVisible)		
 		{
 			_DeattachRenderObject();
 		}		
 		mTargetCamera = camera;//必须在中间
+
+
 		if (IsActive() && mVisible)
 		{
 			_AttachRenderObject();
@@ -333,7 +355,8 @@ namespace App
 
 	void Mesh2dRenderComponent::OnDestroy()
 	{
-		if (IsActive() && mVisible)
+
+		if (IsActive() && mVisible)	
 		{
 			_DeattachRenderObject();
 		}
@@ -427,7 +450,8 @@ namespace App
 		}
 		mMeshType = meshInfo.mMeshType;
 		SetMaterialByShaderID(0, sDefaultShaderID, false);
-		if (IsActive() && mVisible)
+
+		if (IsActive() && mVisible)	
 		{
 			_DeattachRenderObject();
 		}
@@ -454,7 +478,8 @@ namespace App
 		//SetShaderID(0, sDefaultShaderID);
 
 		n_assert( GraphicSystem::HasInstance() );
-		if (IsActive() && mVisible)
+
+		if (IsActive() && mVisible)	
 		{
 			_DeattachRenderObject();
 		}

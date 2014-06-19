@@ -298,7 +298,18 @@ namespace MyGUI
 	void Canvas::_setUVSet(const FloatRect& _rect)
 	{
 		if (nullptr != getSubWidgetMain())
-			getSubWidgetMain()->_setUVSet(_rect);
+		{
+			if (VertexColourType::ColourABGR == RenderManager::getInstancePtr()->getVertexFormat())
+			{
+				FloatRect glrect(_rect.left, 1.0f - _rect.top, _rect.right, 1.0f - _rect.bottom);
+				getSubWidgetMain()->_setUVSet(glrect);
+			}
+			else
+			{
+				getSubWidgetMain()->_setUVSet(_rect);
+			}
+
+		}
 	}
 
 	bool Canvas::isLocked() const

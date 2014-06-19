@@ -49,10 +49,14 @@ namespace Graphic
 		const RenderData& lhs = data[lIndrex];
 		const RenderData& rhs = data[rIndex];
 
-		if (lhs.renderable->GetMaterial()->GetRenderQueue().GetQueueIndex() != rhs.renderable->GetMaterial()->GetRenderQueue().GetQueueIndex())
+		const MaterialInstance* lmat = lhs.renderable->GetMaterial();
+		const MaterialInstance* rmat = rhs.renderable->GetMaterial();
+
+		if (lmat->GetRenderQueue().GetQueueIndex() != rmat->GetRenderQueue().GetQueueIndex())
 		{
-			return lhs.renderable->GetMaterial()->GetRenderQueue().GetQueueIndex() < rhs.renderable->GetMaterial()->GetRenderQueue().GetQueueIndex();
+			return lmat->GetRenderQueue().GetQueueIndex() < rmat->GetRenderQueue().GetQueueIndex();
 		}
+
 
 		if (!opaque)
 		{
@@ -65,13 +69,17 @@ namespace Graphic
 			}
 		}
 
-		if (lhs.renderable->GetMaterial()->GetSort() != rhs.renderable->GetMaterial()->GetSort())
+		if (lmat->GetSort() != rmat->GetSort())
 		{
-			return lhs.renderable->GetMaterial()->GetSort() < rhs.renderable->GetMaterial()->GetSort();
+			return lmat->GetSort() < rmat->GetSort();
 		}
-		if (lhs.renderable->GetMaterial()->GetShaderInstanceID() != rhs.renderable->GetMaterial()->GetShaderInstanceID())
+		if (lmat->GetShaderInstanceID() != rmat->GetShaderInstanceID())
 		{
-			return lhs.renderable->GetMaterial()->GetShaderInstanceID() < rhs.renderable->GetMaterial()->GetShaderInstanceID();
+			return lmat->GetShaderInstanceID() < rmat->GetShaderInstanceID();
+		}
+		if (lmat->GetInstanceID() != rmat->GetInstanceID())
+		{
+			return lmat->GetInstanceID() < rmat->GetInstanceID();
 		}
 		
 		if (opaque)
@@ -115,13 +123,16 @@ namespace Graphic
 		const RenderData& lhs = data[lIndrex];
 		const RenderData& rhs = data[rIndex];
 		
-		if (lhs.renderable->GetMaterial()->GetSort() != rhs.renderable->GetMaterial()->GetSort())
+		const MaterialInstance* lmat = lhs.renderable->GetMaterial();
+		const MaterialInstance* rmat = rhs.renderable->GetMaterial();
+
+		if (lmat->GetShaderInstanceID() != rmat->GetShaderInstanceID())
 		{
-			return lhs.renderable->GetMaterial()->GetSort() < rhs.renderable->GetMaterial()->GetSort();
+			return lmat->GetShaderInstanceID() < rmat->GetShaderInstanceID();
 		}
-		if (lhs.renderable->GetMaterial()->GetShaderInstanceID() != rhs.renderable->GetMaterial()->GetShaderInstanceID())
+		if (lmat->GetInstanceID() != rmat->GetInstanceID())
 		{
-			return lhs.renderable->GetMaterial()->GetShaderInstanceID() < rhs.renderable->GetMaterial()->GetShaderInstanceID();
+			return lmat->GetInstanceID() < rmat->GetInstanceID();
 		}
 
 		return lhs.onwer->distance < rhs.onwer->distance;

@@ -240,18 +240,25 @@ namespace App
 		int keyValuePairIndex_Anim = m_UsedBonesIndex.FindIndex(m_CurrentAnimName);
 		int keyValuePairIndex_Actor = 0;;
 
-		if(keyValuePairIndex_Anim != -1)
+		if(keyValuePairIndex_Anim != InvalidIndex)
 		{
 			keyValuePairIndex_Actor = m_UsedBonesIndex[m_CurrentAnimName].FindIndex(pActor);
 		}
 
-		if(keyValuePairIndex_Actor == -1 || keyValuePairIndex_Anim == -1)
+		if(keyValuePairIndex_Actor == InvalidIndex || keyValuePairIndex_Anim == InvalidIndex)
 		{
 			bool ret = true;
 			for (IndexT iClip = 0; iClip < m_Animation->GetAnimClipCount(); ++iClip)
 			{
 				ret &= FindUsedBones(m_Animation->GetAnimClips()[iClip], NULL, pActor);
 			}
+
+			IndexT animIndex = m_UsedBonesIndex.FindIndex(m_CurrentAnimName);
+			if( InvalidIndex == animIndex )
+				return false;
+			IndexT actorIndex = m_UsedBonesIndex[m_CurrentAnimName].FindIndex(pActor);
+			if( InvalidIndex == actorIndex )
+				return false;
 
 			return ret;
 		}
@@ -287,31 +294,39 @@ namespace App
 		}
 	}
 
-	float GetRatioInView(Math::vector objWorldPos, Math::bbox box)
+	float GetRatioInView(Math::vector objWorldPos, Math::bbox box, const App::Actor* actor)
 	{
 		Math::float4 boxSizeVec = box.pmax - box.pmin;
 		float boxSize = boxSizeVec.x()*boxSizeVec.x()+boxSizeVec.y()*boxSizeVec.y()+boxSizeVec.z()*boxSizeVec.z();
 
 		float minViewSize = 400000000;
-		const Graphic::RenderSceneList& sceneList = Graphic::GraphicSystem::Instance()->GetRenderSceneList();
-		for(IndexT i = 0; i < sceneList.Size() ; i++)
+
+		if(!actor)
 		{
-			const Graphic::RenderScene::CameraList& cameraList = sceneList[i]->GetCameraList();
-			for(IndexT cameraIndex = 0; cameraIndex < cameraList.Size(); cameraIndex++)
+			return boxSize/minViewSize;
+		}
+
+		const Graphic::RenderScene* renderScene = actor->GetRenderScene();
+		if(!renderScene)
+		{
+			return boxSize/minViewSize;
+		}
+
+		const Graphic::RenderScene::CameraList& cameraList = renderScene->GetCameraList();
+		for(IndexT cameraIndex = 0; cameraIndex < cameraList.Size(); cameraIndex++)
+		{
+			if(cameraList[cameraIndex])
 			{
-				if(cameraList[cameraIndex])
-				{
-					Math::vector cameraLocalPos = cameraList[cameraIndex]->GetTransform().get_position() - objWorldPos;
-					float dis = cameraLocalPos.x()*cameraLocalPos.x()+cameraLocalPos.y()*cameraLocalPos.y()+cameraLocalPos.z()*cameraLocalPos.z();
+				Math::vector cameraLocalPos = cameraList[cameraIndex]->GetTransform().get_position() - objWorldPos;
+				float dis = cameraLocalPos.x()*cameraLocalPos.x()+cameraLocalPos.y()*cameraLocalPos.y()+cameraLocalPos.z()*cameraLocalPos.z();
 
-					float zNear = cameraList[cameraIndex]->GetCameraSetting().GetZNear();
-					float zFar = cameraList[cameraIndex]->GetCameraSetting().GetZFar();
-					float farWidth = cameraList[cameraIndex]->GetCameraSetting().GetFarWidth();
-					float farHeight = cameraList[cameraIndex]->GetCameraSetting().GetFarHeight();
-					float viewSize = dis/((zFar-zNear)*(zFar-zNear))*(farWidth*farWidth + farHeight*farHeight);
+				float zNear = cameraList[cameraIndex]->GetCameraSetting().GetZNear();
+				float zFar = cameraList[cameraIndex]->GetCameraSetting().GetZFar();
+				float farWidth = cameraList[cameraIndex]->GetCameraSetting().GetFarWidth();
+				float farHeight = cameraList[cameraIndex]->GetCameraSetting().GetFarHeight();
+				float viewSize = dis/((zFar-zNear)*(zFar-zNear))*(farWidth*farWidth + farHeight*farHeight);
 
-					minViewSize = Math::n_min(viewSize,minViewSize);
-				}
+				minViewSize = Math::n_min(viewSize,minViewSize);
 			}
 		}
 
@@ -433,15 +448,15 @@ namespace App
 		//Use bbox size and camera distance to change animation's update rate
 		bool bNeedLimitRate = true;
 
-//#ifdef __GENESIS_EDITOR__	//	edtior didn`t use
+#ifdef __GENESIS_EDITOR__	//	edtior didn`t use
 		bNeedLimitRate = false;
-//#endif
+#endif
 		if(!bNeedLimitRate)
 			return;
 
 		Math::bbox box = mActor->GetWorldBoundingBoxWithChild();
 		
-		float ratioInView = GetRatioInView(mActor->GetWorldPosition(), box);
+		float ratioInView = GetRatioInView(mActor->GetWorldPosition(), box, mActor);
 
 		float MINTIME = 0.033f;
 		float MAXTIME = 0.33f;
@@ -541,8 +556,6 @@ namespace App
 		else
 		{
 			n_warning("there is no '%s' animation! \n", name.Value());
-
-			m_bHasAnyErrors = true;
 
 			return false;
 		}
@@ -686,8 +699,6 @@ namespace App
 		{
 			n_warning("there is no '%s' animation! \n", name.Value());
 
-			m_bHasAnyErrors = true;
-
 			return;
 		}
 
@@ -741,8 +752,6 @@ namespace App
 		else
 		{
 			n_warning("there is no '%s' animation! \n", animName.Value());
-
-			m_bHasAnyErrors = true;
 
 			return;
 		}
@@ -898,8 +907,6 @@ namespace App
 		{
 			n_warning("there is no '%s' animation! \n", name.Value());
 
-			m_bHasAnyErrors = true;
-
 			return false;
 		}
 	}
@@ -941,8 +948,6 @@ namespace App
 		else
 		{
 			n_warning("there is no '%s' animation! \n", name.Value());
-
-			m_bHasAnyErrors = true;
 
 			return false;
 		}
@@ -1074,8 +1079,6 @@ namespace App
 		{
 			n_warning("there is no '%s' animation! \n", name.Value());
 
-			m_bHasAnyErrors = true;
-
 			return false;
 		}
 	}
@@ -1156,8 +1159,6 @@ namespace App
 		{
 			n_warning("there is no '%s' animation! \n", name.Value());
 
-			m_bHasAnyErrors = true;
-
 			return false;
 		}
 	}
@@ -1202,8 +1203,6 @@ namespace App
 		{
 			n_warning("there is no '%s' animation! \n", name.Value());
 
-			m_bHasAnyErrors = true;
-
 			return false;
 		}
 	}
@@ -1245,8 +1244,6 @@ namespace App
 		else
 		{
 			n_warning("there is no '%s' animation! \n", name.Value());
-
-			m_bHasAnyErrors = true;
 
 			return;
 		}
@@ -1320,8 +1317,6 @@ namespace App
 		{
 			n_warning("there is no '%s' animation! \n", name.Value());
 
-			m_bHasAnyErrors = true;
-
 			return;
 		}
 	}
@@ -1362,8 +1357,6 @@ namespace App
 		else
 		{
 			n_warning("there is no '%s' animation! \n", name.Value());
-
-			m_bHasAnyErrors = true;
 
 			return;
 		}
@@ -1454,8 +1447,6 @@ namespace App
 		{
 			n_warning("there is no '%s' animation! \n", name.Value());
 
-			m_bHasAnyErrors = true;
-
 			return;
 		}
 	}
@@ -1498,8 +1489,6 @@ namespace App
 		else
 		{
 			n_warning("there is no '%s' animation! \n", name.Value());
-
-			m_bHasAnyErrors = true;
 
 			return;
 		}
@@ -1566,8 +1555,6 @@ namespace App
 		{
 			n_warning("there is no '%s' animation! \n", name.Value());
 
-			m_bHasAnyErrors = true;
-
 			return;
 		}
 	}
@@ -1608,8 +1595,6 @@ namespace App
 		else
 		{
 			n_warning("there is no '%s' animation! \n", name.Value());
-
-			m_bHasAnyErrors = true;
 
 			return;
 		}
@@ -1956,6 +1941,9 @@ namespace App
 		}
 
 		this->SetDefaultAnimName(pSource->GetDefaultAnimName());
+
+		Util::Array< GPtr<SkelTreeData> > skelTree = pSource->GetSkelTreeData();
+		this->SetSkelTree(skelTree);
 	}
 
 	bool AnimationComponent::IsAllResourceLoaded()
@@ -2099,8 +2087,16 @@ namespace App
 
 					if (index != InvalidIndex)
 					{
-						usedboneIndex.Add(iNode, index);
-						SkelPairs.Erase(index);
+						
+						if(SkelPairs.Contains(index))
+						{
+							usedboneIndex.Add(iNode, index);
+							SkelPairs.Erase(index);
+						}
+						else
+						{
+							n_warning("Skeleton has error, may contains duplicate name");
+						}
 					}
 				}
 

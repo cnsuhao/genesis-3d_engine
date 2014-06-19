@@ -39,7 +39,7 @@ namespace Particles
 		, mSpaceCoord(SCT_LOCAL)
 	{
 		mName = "LinearForceAffector";
-		mAffectType = AT_INCREASE;
+		mAffectType = AT_Force;
 	}
 	//-----------------------------------------------------------------------
 	void LinearForceAffector::_preProcessParticles()
@@ -54,8 +54,7 @@ namespace Particles
 		if (mTimeSinceLastUpdate >= mTimeStep)
 		{
 
-			float percent = (particle->mTotalTimeToLive - particle->mTimeToLive)/particle->mTotalTimeToLive;
-
+			float percent = particle->mTimeFraction;
 
 			Math::float3 forceVec(mForceVectorX.Calculate(percent,particle->mRandom0) ,
 				mForceVectorY.Calculate(percent,particle->mRandom1),
@@ -63,7 +62,6 @@ namespace Particles
 
 			if  ( mSpaceCoord == SCT_WORLD  )
 			{
-
 				forceVec = forceVec.transformVector(Math::matrix44::inverse(mParentSystem->GetWorldMatrix()));
 			}
 
@@ -104,6 +102,13 @@ namespace Particles
 		if(!GetEnable())
 			return;
 		pMarcro->TurnOn(ShaderProgramCompiler::ShaderMarcro::m_sParticleForce);
+	}
+	//--------------------------------------------------------------------------------
+	const Math::float3 LinearForceAffector::_getEndPos(const Math::float3& pos,const Math::float3 speed,float time)
+	{
+		Math::float3 endPos;
+		endPos = pos + speed*time + 0.5*mShaderParam*time*time;
+		return endPos;
 	}
 	//--------------------------------------------------------------------------------
 	Math::MinMaxCurve* LinearForceAffector::getMinMaxCurve(ParticleCurveType pct)

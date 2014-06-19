@@ -36,6 +36,7 @@ namespace Particles
 	//-----------------------------------------------------------------------
 	MovementAffector::MovementAffector() : ParticleAffector()
 	{
+		mAffectType = AT_Movement;
 		mMinMaxSpeed.SetScalar( 1.0f );
 		mName = "MovementAffector";
 	}
@@ -44,7 +45,7 @@ namespace Particles
 	{		
 		if(!GetEnable())
 			return;
-		float percent = (particle->mTotalTimeToLive - particle->mTimeToLive)/particle->mTotalTimeToLive;		
+		float percent = particle->mTimeFraction;
 
 		Math::float3	GravityPos(mMinMaxPosX.Calculate(percent,particle->mRandom0)
 			, mMinMaxPosY.Calculate(percent,particle->mRandom1)
@@ -77,6 +78,19 @@ namespace Particles
 		if(!GetEnable())
 			return;
 		pMarcro->TurnOn(ShaderProgramCompiler::ShaderMarcro::m_sParticleMovement);
+	}
+	//--------------------------------------------------------------------------------
+	const Math::float3 MovementAffector::_getEndPos(const Math::float3& pos,const Math::float3 speed,float time)
+	{
+		Math::float3 endPos = pos;
+		Math::float3 aimPos;
+		aimPos.setFromFloat4(mShaderParam);
+		Math::float3 dir = aimPos - pos;
+		dir.normalise();
+		dir *= mShaderParam.w();
+		endPos += dir*time;
+
+		return endPos;
 	}
 	//--------------------------------------------------------------------------------
 	Math::MinMaxCurve* MovementAffector::getMinMaxCurve(ParticleCurveType pct)

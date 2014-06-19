@@ -81,6 +81,12 @@ namespace App
 		bool GetVisible();
 		void SetVisible(bool visible);
 
+		void SetResolution(const MyGUI::IntSize& size);//0 means auto.
+		const MyGUI::IntSize& GetResolution();
+		bool AutoResolutionWidth();
+		bool AutoResolutionHeight();
+
+
 		EventHandle_BeforeDrawVoid eventBeforeDrawUI;
 
 		static MyGUI::KeyCode KeyCodeWJtoMyGUI(Input::InputKey::Code key);

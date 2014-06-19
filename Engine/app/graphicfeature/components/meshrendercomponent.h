@@ -125,6 +125,12 @@ namespace App
 
 		virtual void SetReceiveShadow( bool bReceiveShadow );
 		virtual bool GetReceiveShadow();
+
+#ifdef __GENESIS_EDITOR__
+		virtual void SetEditorVisible(bool bVis);
+#endif
+
+
 	protected:
 		typedef MeshRenderObject RenderObjectType;
 		typedef GPtr<RenderObjectType> MeshRenderObjectPtr;
@@ -193,6 +199,7 @@ namespace App
 
 		bool m_bUsedForResHotLoad;
 		Util::Dictionary<IndexT, Resources::ResourceId> mDeattachedMatList;
+
 
 	};
 

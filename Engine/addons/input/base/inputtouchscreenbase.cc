@@ -117,7 +117,7 @@ bool InputTouchScreenBase::OnEvent(const Input::InputEvent& inputEvent)
 				const IndexT id = inputEvent.GetPointerId(i);
 				m_FingerStates[id].pressed = true;
 				UpdateFingerPositions(inputEvent.GetAbsTouchPos(id), inputEvent.GetNormTouchPos(id), id);
-				m_CurrentEvents.Append(TouchEvent(id, inputEvent.GetType()));
+				m_CurrentEvents.Append(TouchEvent(id, inputEvent.GetType(),inputEvent.GetAbsTouchPos(id), inputEvent.GetNormTouchPos(id) ));
 			}
 		}
 		
@@ -132,7 +132,7 @@ bool InputTouchScreenBase::OnEvent(const Input::InputEvent& inputEvent)
 				const IndexT id = inputEvent.GetPointerId(i);
 				m_FingerStates[id].down    = true;
 				UpdateFingerPositions(inputEvent.GetAbsTouchPos(id), inputEvent.GetNormTouchPos(id), id);
-				m_CurrentEvents.Append(TouchEvent(id, inputEvent.GetType()));
+				m_CurrentEvents.Append(TouchEvent(id, inputEvent.GetType(),inputEvent.GetAbsTouchPos(id), inputEvent.GetNormTouchPos(id) ));
 			}
 		}
 		break;
@@ -146,7 +146,7 @@ bool InputTouchScreenBase::OnEvent(const Input::InputEvent& inputEvent)
 				const IndexT id = inputEvent.GetPointerId(i);
 				m_FingerStates[id].up = true;
 				UpdateFingerPositions(inputEvent.GetAbsTouchPos(id), inputEvent.GetNormTouchPos(id), id);
-				m_CurrentEvents.Append(TouchEvent(id, inputEvent.GetType()));
+				m_CurrentEvents.Append(TouchEvent(id, inputEvent.GetType(),inputEvent.GetAbsTouchPos(id), inputEvent.GetNormTouchPos(id) ));
 			}
 		}
 		break;
@@ -161,7 +161,7 @@ bool InputTouchScreenBase::OnEvent(const Input::InputEvent& inputEvent)
 				m_FingerStates[id].down    = false;
 				m_FingerStates[id].pressed = false;
 				m_FingerStates[id].up = true;
-				m_CurrentEvents.Append(TouchEvent(id, inputEvent.GetType()));
+				m_CurrentEvents.Append(TouchEvent(id, inputEvent.GetType(),inputEvent.GetAbsTouchPos(id), inputEvent.GetNormTouchPos(id) ));
 			}
 		}
 	}

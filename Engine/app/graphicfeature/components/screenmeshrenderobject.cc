@@ -40,6 +40,10 @@ namespace App
 	}
 	void ScreenMeshRenderObject::Render(const Renderable* renderable, RenderPassType passType, const Material* customizedMaterial)
 	{
+#ifdef __GENESIS_EDITOR__
+		if (!IsEditorVisible())
+			return;
+#endif
 		n_assert(renderable);
 
 		Mesh2dRenderComponent* mesh2dRC = getOwner();

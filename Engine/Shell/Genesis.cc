@@ -34,7 +34,12 @@
 #include "input/inputwindowsource.h"
 #include "input/osx/osxinputsource.h"
 #include "input/osx/osxtouchevent.h"
+#include "input/mobilekeyboardevent.h"
+
 #include "addons/shadercompiler/ShadercompilerConfig.h"
+#include "addons/myguiengine/include/MyGUI_UString.h"
+
+#include "app/guifeature/scriptgui.h"
 
 
 using namespace RenderBase;
@@ -119,6 +124,51 @@ void OnStopped()
 {
     g_pApp->OnStopped();
 }
+    
+void UIInsertText(const char* wstr)
+{
+#if __OSX__
+    MyGUI::UString uiStr(wstr);
+    
+    App::ScriptGui::SetFocusedEditboxCaption(uiStr);
+    MyGUI::InputManager::getInstance().setKeyFocusWidget(nullptr);
+#elif __ANDROID__
+        std::wstring stdWstr = uiStr.asWStr();
+       for ( IndexT i = 0; i < stdWstr.length(); i++ )
+    	{
+    		Input::MobileKeyboardEvent keyboardEvent;
+    		keyboardEvent.SetType(Input::MoibleInputEvent::INPUT_EVENT_TYPE_KEY);
+    		keyboardEvent.SetMotionType(Input::MobileKeyboardEvent::MOTION_EVENT_CHAR);
+    		Input::Char characterCode = (Input::Char)stdWstr.at(i);
+    		keyboardEvent.SetChar(characterCode);
+    
+    		const GPtr<Input::InputSource>& pInputSource = g_pApp->GetInputSource();
+    		if (pInputSource.isvalid())
+    		{
+    			pInputSource.downcast<OSXInput::OSXInputSource>()->OnOSXProc(&keyboardEvent);
+    		}
+    	}
+#endif
+
+}
+void UIDeleteBackward()
+{
+    Input::MobileKeyboardEvent keyboardEvent;
+	keyboardEvent.SetType(Input::MoibleInputEvent::INPUT_EVENT_TYPE_KEY);
+	keyboardEvent.SetMotionType(Input::MobileKeyboardEvent::MOTION_EVENT_KEY_DOWN);
+	keyboardEvent.SetKeycode(Input::InputKey::Back);
+    
+	const GPtr<Input::InputSource>& pInputSource = g_pApp->GetInputSource();
+	if (pInputSource.isvalid())
+	{
+		pInputSource.downcast<OSXInput::OSXInputSource>()->OnOSXProc(&keyboardEvent);
+        
+		//send keyrelease
+		keyboardEvent.SetMotionType(Input::MobileKeyboardEvent::MOTION_EVENT_KEY_UP);
+		pInputSource.downcast<OSXInput::OSXInputSource>()->OnOSXProc(&keyboardEvent);
+	}
+}
+    
     
 }
 

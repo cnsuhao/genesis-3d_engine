@@ -485,8 +485,8 @@ namespace Sound
 	bool SoundSystemOpenAL::createDSPByType( ALuint type, GPtr<SoundSystemDSP>& dsp )
 	{
 		dsp = SoundSystemDSPOpenAL::Create();
-		dsp->init(type);
-		return true;
+		bool result = dsp->init(type);
+		return result;
 	}
 }
 

@@ -52,6 +52,7 @@ void GraphicCardCapability::DetectGraphicCardCapsGLES20()
 	mSeparateAplhaBlend = true;
 	mStencilTwoSize =  GLESImpl::Instance()->CheckExtension("GL_OES_packed_depth_stencil");
 
+	mS3TC = GLESImpl::Instance()->CheckExtension("GL_EXT_texture_compression_s3tc");
 }
 #endif
 }

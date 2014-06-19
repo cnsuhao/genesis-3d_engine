@@ -33,8 +33,11 @@ THE SOFTWARE.
 #include "MyGUI_IVertexBuffer.h"
 #include "MyGUI_RenderManager.h"
 
-#include "graphicsystem/GraphicSystem.h"
-#include "RenderSystem.h"
+
+namespace Graphic
+{
+	class Material;
+}
 
 namespace MyGUI
 {
@@ -48,7 +51,7 @@ namespace MyGUI
 	public:
 		GenesisRenderManager();
 		virtual ~GenesisRenderManager();
-		void initialise();
+		void initialise(int width, int height, int bufferWidth, int bufferHeight);
 		void shutdown();
 
 		static GenesisRenderManager& getInstance();
@@ -89,20 +92,17 @@ namespace MyGUI
 		virtual bool checkTexture(ITexture* _texture);
 #endif
 
-		void setResolution(int width, int height);//0 means auto.
-
-		void setResolution(const IntSize& size);//0 means auto.
+		void setResolution(int width, int height, int bufferWidth, int bufferHeight);//0 means auto.
 
 		const IntSize& getResolution() const;
 
 		bool autoResolutionWidth() const;
 		bool autoResolutionHeight() const;
 
-		void windowResized();
-		void windowResized(int w, int h);
-		void deviceReseted();
+		void windowResized(int bufferWidth, int bufferHeight);
+		void deviceReseted(int bufferWidth, int bufferHeight);
 
-		void renderGUI();
+		void renderGUI(float time);
 
 		bool getManualRender();
 
@@ -116,7 +116,7 @@ namespace MyGUI
 
 	private:
 
-		void resetViewSize(int w, int h);
+		void resetViewSize(int bufferWidth, int bufferHeight);
 		void destroyAllResources();
 		void updateRenderInfo();
 
@@ -140,7 +140,6 @@ namespace MyGUI
 		void _checkShader();
 		void _beforeDraw();
 		GPtr<Graphic::Material> m_shader;
-		//GPtr<RenderBase::RenderStateObject> m_renderState;
 		RenderBase::GPUProgramHandle* m_shaderHandle;
 		static Util::String s_resourcePath;
 

@@ -25,6 +25,7 @@ THE SOFTWARE.
 #include "particles/particlesystem.h"
 #include "particles/particletechnique.h"
 
+
 namespace Particles
 {
 	using namespace Serialization;
@@ -183,7 +184,6 @@ namespace Particles
 			pReader->SerializeBool(s_PlayOnAwake, playOnAwake );
 #if __EDIT_STATUS__
 			obj->SetPlayOnAwake( playOnAwake, EditStatus::IsPlayingGame() );
-
 #else
 			obj->SetPlayOnAwake( playOnAwake);
 #endif
@@ -207,8 +207,8 @@ namespace Particles
 
 			bool playOnAwake;
 			pReader->SerializeBool(s_PlayOnAwake, playOnAwake );
-#ifdef __GENESIS_EDITOR__
-			obj->SetPlayOnAwake( playOnAwake);
+#if __EDIT_STATUS__
+			obj->SetPlayOnAwake( playOnAwake, EditStatus::IsPlayingGame() );
 #else
 			obj->SetPlayOnAwake( playOnAwake, true );
 #endif
@@ -277,8 +277,8 @@ namespace Particles
 
 			bool playOnAwake;
 			pReader->SerializeBool(s_PlayOnAwake, playOnAwake );
-#ifdef __GENESIS_EDITOR__
-			obj->SetPlayOnAwake( playOnAwake);
+#if __EDIT_STATUS__
+			obj->SetPlayOnAwake( playOnAwake, EditStatus::IsPlayingGame() );
 #else
 			obj->SetPlayOnAwake( playOnAwake, true );
 #endif
@@ -350,8 +350,8 @@ namespace Particles
 
 			bool playOnAwake;
 			pReader->SerializeBool(s_PlayOnAwake, playOnAwake );
-#ifdef __GENESIS_EDITOR__
-			obj->SetPlayOnAwake( playOnAwake);
+#if __EDIT_STATUS__
+			obj->SetPlayOnAwake( playOnAwake, EditStatus::IsPlayingGame() );
 #else
 			obj->SetPlayOnAwake( playOnAwake, true );
 #endif
@@ -518,8 +518,8 @@ namespace Particles
 
 		bool playOnAwake = parSystem->GetPlayOnAwake();
 
-#ifdef __GENESIS_EDITOR__
-		SetPlayOnAwake(playOnAwake);
+#if __EDIT_STATUS__
+		SetPlayOnAwake( playOnAwake, EditStatus::IsPlayingGame() );
 #else
 		SetPlayOnAwake(playOnAwake, true);
 #endif

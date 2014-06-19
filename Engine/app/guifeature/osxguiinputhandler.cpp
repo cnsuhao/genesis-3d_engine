@@ -112,6 +112,21 @@ namespace Input
 				}
 			}
                 break;
+            case InputEvent::KeyUp:
+			{
+				ret |= gui_input->injectKeyRelease(App::GUIServer::KeyCodeWJtoMyGUI(inputEvent.GetKey()));
+			}
+                break;
+            case InputEvent::KeyDown:
+			{
+				ret |= gui_input->injectKeyPress(App::GUIServer::KeyCodeWJtoMyGUI(inputEvent.GetKey()), inputEvent.GetChar());
+			}
+                break;
+            case InputEvent::Character:
+			{
+				ret |= gui_input->injectKeyPress(MyGUI::KeyCode::None, (MyGUI::Char)inputEvent.GetChar());
+			}
+                break;
             default:
                 break;
 		}

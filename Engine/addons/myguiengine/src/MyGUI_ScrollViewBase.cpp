@@ -23,6 +23,7 @@
 #include "MyGUI_Precompiled.h"
 #include "MyGUI_ScrollViewBase.h"
 #include "MyGUI_ScrollBar.h"
+#include "MyGUI_InputManager.h"
 
 namespace MyGUI
 {
@@ -35,7 +36,8 @@ namespace MyGUI
 		mVisibleVScroll(true),
 		mVRange(0),
 		mHRange(0),
-		mChangeContentByResize(false)
+		mChangeContentByResize(false),
+		mDraging(false)
 	{
 	}
 
@@ -53,7 +55,8 @@ namespace MyGUI
 		IntSize viewSize = getViewSize();
 
 		// вертикальный контент не помещается
-		if (contentSize.height > viewSize.height)
+		//if (contentSize.height > viewSize.height) old code.
+		if (contentSize.height > viewSize.height && mVisibleVScroll) // expand by genesis-3d
 		{
 			if (mVScroll != nullptr)
 			{
@@ -141,7 +144,8 @@ namespace MyGUI
 
 
 		// горизонтальный контент не помещается
-		if (contentSize.width > viewSize.width)
+		//if (contentSize.width > viewSize.width) old code.
+		if (contentSize.width > viewSize.width && mVisibleHScroll) // expand by genesis-3d
 		{
 			if (mHScroll != nullptr)
 			{
@@ -362,6 +366,79 @@ namespace MyGUI
 
 	void ScrollViewBase::eraseContent()
 	{
+	}
+
+
+	void ScrollViewBase::bindDrag()
+	{
+		if (mClient != nullptr)
+		{
+			mClient->eventMouseDrag += newDelegate(this, &ScrollViewBase::notifyClentDrag);
+			mClient->eventMouseButtonPressed += newDelegate(this, &ScrollViewBase::notifyClentPress);
+			mClient->eventMouseButtonReleased += newDelegate(this, &ScrollViewBase::notifyClentRelease);
+			mClient->eventMouseLostFocus += newDelegate(this, &ScrollViewBase::notifyClentLostFocus);
+		}
+	}
+
+
+	bool ScrollViewBase::dragClent(int _left, int _top, MouseButton _id)
+	{
+		if (MouseButton::Left == _id)
+		{				
+			if (mClient)
+			{
+				InputManager::getInstancePtr()->_forceChangeMouseFocus(mClient, _left, _top, 0);
+				mClient->eventMouseButtonPressed(mClient, _left, _top, _id);
+				return true;
+			} 
+		}
+		return false;
+	}
+
+	bool ScrollViewBase::isDraging() const 
+	{
+		return mDraging;
+	}
+
+	void ScrollViewBase::notifyClentPress(Widget* _sender, int _left, int _top, MouseButton _id)
+	{
+		onClientDragBegin(_sender, _left, _top, _id);
+	}
+
+	void ScrollViewBase::notifyClentDrag(Widget* _sender, int _left, int _top, MouseButton _id)
+	{
+		onClientDrag(_sender, _left, _top, _id);
+	}
+
+	void ScrollViewBase::notifyClentLostFocus(Widget* _sender, Widget* _newFocus)
+	{
+		if (mDraging)
+		{
+			onClientDragEnd(_sender);
+		}
+	}
+
+	void ScrollViewBase::notifyClentRelease(Widget* _sender, int _left, int _top, MouseButton _id)
+	{
+		if (mDraging)
+		{
+			onClientDragEnd(_sender);
+		}
+	}
+
+	void ScrollViewBase::onClientDrag(Widget* _sender, int _left, int _top, MouseButton _id)
+	{
+
+	}
+
+	void ScrollViewBase::onClientDragBegin(Widget* _sender, int _left, int _top, MouseButton _id)
+	{
+		mDraging = true;
+	}
+
+	void ScrollViewBase::onClientDragEnd(Widget* _sender)
+	{
+		mDraging = false;
 	}
 
 } // namespace MyGUI

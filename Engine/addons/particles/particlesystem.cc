@@ -45,7 +45,7 @@ namespace Particles
 	const Timing::Time ParticleSystem::MinFrameTime(0.000001);
 	const float		   ParticleSystem::MinUpdateTime(0.033f);
 	const float		   ParticleSystem::MaxUpdateTime(0.33f);
-	const float		   ParticleSystem::UpdateFactor(0.5f);
+	const float		   ParticleSystem::UpdateFactor(0.002f);
 	//------------------------------------------------------------------------
 	ParticleSystem::ParticleSystem()
 		: mIsActive(false)
@@ -199,9 +199,10 @@ namespace Particles
 		mNeedUpdate = false;
 		mUpdateTarget = true;
 		Timing::Time time = App::GameTime::Instance()->GetFrameTime();
-		double curFrame = GameTime::Instance()->GetTime();
 		if(mIsPlaying)
-			mMobileTime = curFrame;
+		{
+			mMobileTime += time;
+		}
 
 		Timing::Time total = time;
 		//====================================================================================
@@ -212,7 +213,7 @@ namespace Particles
 #endif
 		if(bNeedLimitRate)
 		{
-			_fpsControl();
+			//_fpsControl();
 			mCurrentTimeForFps += time;
 			if(mCurrentTimeForFps < mspf)
 			{
@@ -306,7 +307,7 @@ namespace Particles
 	{
 		mIsPlaying = false;
 		mIsStop = true;
-
+		
 
 		Reset();
 	}
@@ -375,6 +376,7 @@ namespace Particles
 		mLastUpdateFrameIndex = -1;
 		ParticleSystemDataChanged();
 		_resetPool(mQuota);
+		mEmitter->Reset();
 	}
 
 	//------------------------------------------------------------------------
@@ -865,7 +867,7 @@ namespace Particles
 		}
 		return delayTime;
 	}
-	void ParticleSystem::SetupGPUParticles(SimpleGPUParticleVertex* particleVertex,int quato)
+	void ParticleSystem::SetupSpriteGPUParticles(SpriteGPUParticleVertex* particleVertex,int quato)
 	{
 		float rate = mEmitter->GetGPUParticleRate();
 		float life = mEmitter->GetGPUParticleLife();
@@ -877,6 +879,8 @@ namespace Particles
 		if(mIsPreLoop && mIsPlaying)
 			_time -= life;
 		Math::Color32 _color;
+		Math::bbox _box;
+		_box.begin_extend();
 		while (totalPar < quato)
 		{
 			mEmitter->_emit(particle,(float)mDuration*totalPar/quato);
@@ -887,7 +891,80 @@ namespace Particles
 			particleVertex[totalPar].mTexCoord.set(_time,particle->mTotalTimeToLive);
 			_time += rateFps;
 			totalPar ++;
+
+			_box.extend(Math::point(
+				particle->mPosition.x(),particle->mPosition.y(),particle->mPosition.z()));
+			Math::float3 endPos;
+			endPos = _getEndPos(particle->mPosition,particle->mDirection,life);
+			_box.extend(Math::point(
+				endPos.x(),endPos.y(),endPos.z()));
 		}
+		_box.end_extend();
+		_box.pmax += Math::point(
+			particle->mSize.x()*0.5f,particle->mSize.y()*0.5f,particle->mSize.z()*0.5f);
+		_box.pmin -= Math::point(
+			particle->mSize.x()*0.5f,particle->mSize.y()*0.5f,particle->mSize.z()*0.5f);
+		SetLocalBoundingBox(_box);
+		delete particle;
+	}
+	void ParticleSystem::SetupBoardGPUParticles(BoardGPUParticleVertex* particleVertex,ushort* indicies,int quato)
+	{
+		float rate = mEmitter->GetGPUParticleRate();
+		float life = mEmitter->GetGPUParticleLife();
+		mDuration = life;
+		float rateFps = 1.0f/rate;
+		int totalPar = 0;
+		Particle* particle = new Particle();
+		float _time = (float)mDelayTime;
+		if(mIsPreLoop && mIsPlaying)
+			_time = -life;
+		mMobileTime = 0;
+		Math::Color32 _color;
+		Math::bbox _box;
+		float halfSize = 0;
+		_box.begin_extend();
+		while (totalPar < quato)
+		{
+			mEmitter->_emit(particle,(float)mDuration*totalPar/quato);
+			halfSize = 0.5f*particle->mSize.x();
+			particleVertex[4*totalPar].mColor = particle->mColor.HexARGB();
+			particleVertex[4*totalPar].mPosition = particle->mPosition;
+			particleVertex[4*totalPar].mTangent.set(-halfSize,halfSize,0,0);
+			particleVertex[4*totalPar].mNormal = particle->mDirection;
+			particleVertex[4*totalPar].mTexCoord.set(_time,particle->mTotalTimeToLive);
+
+			particleVertex[4*totalPar+1] = particleVertex[4*totalPar];
+			particleVertex[4*totalPar+1].mTangent.set(-halfSize,-halfSize,0,1);
+
+			particleVertex[4*totalPar+2] = particleVertex[4*totalPar];
+			particleVertex[4*totalPar+2].mTangent.set(halfSize,-halfSize,1,1);
+
+			particleVertex[4*totalPar+3] = particleVertex[4*totalPar];
+			particleVertex[4*totalPar+3].mTangent.set(halfSize,halfSize,1,0);
+
+			indicies[6*totalPar]   = 4*totalPar;
+			indicies[6*totalPar+1] = 4*totalPar + 1;
+			indicies[6*totalPar+2] = 4*totalPar + 2;
+			indicies[6*totalPar+3] = 4*totalPar + 2;
+			indicies[6*totalPar+4] = 4*totalPar + 3;
+			indicies[6*totalPar+5] = 4*totalPar ;
+
+			_time += rateFps;
+			totalPar ++;
+
+			_box.extend(Math::point(
+				particle->mPosition.x(),particle->mPosition.y(),particle->mPosition.z()));
+			Math::float3 endPos;
+			endPos = _getEndPos(particle->mPosition,particle->mDirection,life);
+			_box.extend(Math::point(
+				endPos.x(),endPos.y(),endPos.z()));
+		}
+		_box.end_extend();
+		_box.pmax += Math::point(
+			particle->mSize.x()*0.5f,particle->mSize.y()*0.5f,particle->mSize.z()*0.5f);
+		_box.pmin -= Math::point(
+			particle->mSize.x()*0.5f,particle->mSize.y()*0.5f,particle->mSize.z()*0.5f);
+		SetLocalBoundingBox(_box);
 		delete particle;
 	}
 	void ParticleSystem::ParticleSystemDataChanged()
@@ -910,7 +987,7 @@ namespace Particles
 		Math::bbox box = GetBoundingBox();
 		Math::float4 boxSizeVec = box.pmax - box.pmin;
 		float boxSize = boxSizeVec.x()*boxSizeVec.x()+boxSizeVec.y()*boxSizeVec.y()+boxSizeVec.z()*boxSizeVec.z();
-
+		
 		Graphic::Camera* pMainCam = Graphic::GraphicSystem::Instance()->GetSceneDefaultCamera();
 		if(pMainCam == NULL)
 			return;
@@ -963,6 +1040,18 @@ namespace Particles
 		{
 			mAffectors[index]->SetShaderMask(pMarcro);
 		}
+	}
+	//--------------------------------------------------------------------------------
+	const Math::float3 ParticleSystem::_getEndPos(const Math::float3& pos,const Math::float3 speed,float time)
+	{
+		ParticleAffectorPtr affector = NULL;
+		Math::float3 endPos = pos + speed*time;
+		for ( IndexT index = 0; index < mAffectors.Size(); ++index)
+		{
+			affector = mAffectors[index];
+			endPos = affector->_getEndPos(pos,speed,time);
+		}
+		return endPos;
 	}
 }
 

@@ -84,13 +84,17 @@ namespace App
 		/// get method
 		const Util::TStringArray& GetAssemblyNames() const ;
 		/// get method
-		int GetScriptCount();
+		int GetScriptCount() const;
+		/// get method
+		int GetScriptInstanceCount() const;
 		/// get a script instance by name
 		TScriptInstancePtr& GetScriptByName( const Util::String& name );
 		/// get a script instance by classname
 		TScriptInstancePtr& GetScriptByClassName(const Util::String& name);
 		/// get a ScriptInstance by index,a null pointer is return if the idx is invalid
 		TScriptInstancePtr& GetScriptInstance( int idx );
+
+		MonoObject* GetScriptObject(int idx);
 
 		TScriptInstancePtr& FindScriptWithEntryMethod(EEntryMethodIndex emIndex);
 
@@ -205,9 +209,14 @@ namespace App
 		return m_arrAssemblyNames;
 	}
 	//------------------------------------------------------------------------
-	inline int ScriptComponent::GetScriptCount() 
+	inline int ScriptComponent::GetScriptCount() const
 	{
 		return m_arrClassNames.Size();
+	}
+
+	inline int ScriptComponent::GetScriptInstanceCount() const
+	{
+		return m_arrScriptInstances.Size();
 	}
 	//------------------------------------------------------------------------
 	inline TScriptInstancePtr& ScriptComponent::GetScriptInstance( int idx )

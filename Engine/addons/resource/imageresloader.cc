@@ -27,6 +27,8 @@ THE SOFTWARE.
 #include "ETC_Header.h"
 #include "foundation/io/filestream.h"
 #include "foundation/io/memorystream.h"
+#include "rendersystem/base/GraphicCardCapability.h"
+#include "rendersystem/RenderSystem.h"
 
 // must define FREEIMAGE_LIB when use FreeImage as static lib
 #define FREEIMAGE_LIB
@@ -136,8 +138,8 @@ namespace Resources
 //#else
 		FreeImage_Initialise(false);
 
-		n_printf("FreeImage version: %s  Info: %s \n", FreeImage_GetVersion(), FreeImage_GetCopyrightMessage());
-		n_printf("FreeImage Supported formats:  \n");
+		n_debuglog("FreeImage version: %s  Info: %s \n", FreeImage_GetVersion(), FreeImage_GetCopyrightMessage());
+		n_debuglog("FreeImage Supported formats:  \n");
 
 		for (int iType = 0; iType < FreeImage_GetFIFCount(); ++iType)
 		{
@@ -159,7 +161,7 @@ namespace Resources
 
 				Util::String strType = strArray[index];
 				strType.ToUpper();
-				n_printf( " %s", strType.AsCharPtr() );
+				n_debuglog( " %s", strType.AsCharPtr() );
 
 				if ( InvalidIndex == mExtReg.FindIndex( strType ) )
 				{
@@ -167,7 +169,7 @@ namespace Resources
 				}
 			} 
 		}
-		n_printf("\n");
+		n_debuglog("\n");
 
 		// Set error handler
 		FreeImage_SetOutputMessage(FreeImageLoadErrorHandler);
@@ -261,6 +263,7 @@ namespace Resources
 	{
 		n_assert( mStream.isvalid() && pImage.isvalid() );
 
+#if RENDERDEVICE_D3D9
 		// check if dds
 		if ( stream->GetSize() >= 4 )
 		{
@@ -278,6 +281,33 @@ namespace Resources
 			// prepare check other
 			stream->Seek(0, IO::Stream::Begin );
 		}
+#endif
+		
+#if RENDERDEVICE_OPENGLES
+		const RenderBase::GraphicCardCapability& caps = RenderBase::RenderSystem::Instance()->GetGraphicCardCapability();
+		if (caps.mS3TC)
+		{
+			// check if dds
+			if ( stream->GetSize() >= 4 )
+			{
+				//Read first byte to identify format
+				uint32 magic;
+				stream->Read(&magic,sizeof(uint32) );
+				FlipEndian(&magic, sizeof(uint32), 1);
+
+				if ( DDS_MAGIC == magic )
+				{
+					stream->Seek(0, IO::Stream::Begin );
+					return LoadDXT(stream, pImage );
+				}
+
+				// prepare check other
+				stream->Seek(0, IO::Stream::Begin );
+			}
+		}
+
+#endif
+		
 
 		// check if PVRTC
 		if ( stream->GetSize() >= sizeof(PVRTCTexHeader) )

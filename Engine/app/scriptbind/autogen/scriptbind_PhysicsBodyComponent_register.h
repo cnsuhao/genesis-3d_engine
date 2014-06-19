@@ -32,7 +32,7 @@ namespace App
 
     static void ICall_PhysicsBodyComponent_GetAngularVelocity(MonoObject* self, Math::float3& velocity);
 
-    static void ICall_PhysicsBodyComponent_SetLinearDamping(MonoObject* self, float scalar);
+	 static void ICall_PhysicsBodyComponent_SetLinearDamping(MonoObject* self, float scalar);
 
     static float ICall_PhysicsBodyComponent_GetLinearDamping(MonoObject* pMonoObj);
 
@@ -81,14 +81,6 @@ namespace App
     static void ICall_PhysicsBodyComponent_RotateToRotation(MonoObject* self, Math::quaternion& qua);
 
 	static void ICall_PhysicsBodyComponent_AddForce(MonoObject* self, Math::float3& force, PhysicsDynamic::ForceType forcetype, mono_bool bWakeUp);
-
-	static void ICall_PhysicsBodyComponent_AddForceAtPos(MonoObject* self, Math::float3& force, Math::float3& pos,PhysicsDynamic::ForceType forcetype, mono_bool bWakeUp);
-
-	static void ICall_PhysicsBodyComponent_AddForceAtLocalPos(MonoObject* self, Math::float3& force, Math::float3& pos, PhysicsDynamic::ForceType forcetype, mono_bool bWakeUp);
-
-	static void ICall_PhysicsBodyComponent_AddLocalForceAtPos(MonoObject* self, Math::float3& force, Math::float3& pos,PhysicsDynamic::ForceType forcetype, mono_bool bWakeUp);
-
-	static void ICall_PhysicsBodyComponent_AddLocalForceAtLocalPos(MonoObject* self, Math::float3& force, Math::float3& pos,PhysicsDynamic::ForceType forcetype, mono_bool bWakeUp);
 
 	static MonoObject* ICall_PhysicsEntity_GetShapeAt(MonoObject* self, int index);
 
@@ -147,17 +139,13 @@ namespace App
 			 { "ScriptRuntime.PhysicsBodyComponent::ICall_PhysicsBodyComponent_GetConstLineVelocity",(void*)&ICall_PhysicsBodyComponent_GetConstLineVelocity},
              { "ScriptRuntime.PhysicsBodyComponent::ICall_PhysicsBodyComponent_SetConstTorque",     (void*)&ICall_PhysicsBodyComponent_SetConstTorque},
              { "ScriptRuntime.PhysicsBodyComponent::ICall_PhysicsBodyComponent_GetConstTorque",     (void*)&ICall_PhysicsBodyComponent_GetConstTorque},
-			 { "ScriptRuntime.PhysicsBodyComponent::ICall_PhysicsBodyComponent_SetAngularVelocity", (void*)&ICall_PhysicsBodyComponent_SetConstAngularVelocity},
-			 { "ScriptRuntime.PhysicsBodyComponent::ICall_PhysicsBodyComponent_GetAngularVelocity", (void*)&ICall_PhysicsBodyComponent_GetConstAngularVelocity},
+			 { "ScriptRuntime.PhysicsBodyComponent::ICall_PhysicsBodyComponent_SetConstAngularVelocity", (void*)&ICall_PhysicsBodyComponent_SetConstAngularVelocity},
+			 { "ScriptRuntime.PhysicsBodyComponent::ICall_PhysicsBodyComponent_GetConstAngularVelocity", (void*)&ICall_PhysicsBodyComponent_GetConstAngularVelocity},
              { "ScriptRuntime.PhysicsBodyComponent::ICall_PhysicsBodyComponent_MovePostion",        (void*)&ICall_PhysicsBodyComponent_MovePostion},
              { "ScriptRuntime.PhysicsBodyComponent::ICall_PhysicsBodyComponent_RotateRotation",     (void*)&ICall_PhysicsBodyComponent_RotateRotation},
              { "ScriptRuntime.PhysicsBodyComponent::ICall_PhysicsBodyComponent_MoveToPostion",      (void*)&ICall_PhysicsBodyComponent_MoveToPostion},
              { "ScriptRuntime.PhysicsBodyComponent::ICall_PhysicsBodyComponent_RotateToRotation",   (void*)&ICall_PhysicsBodyComponent_RotateToRotation},
 			 { "ScriptRuntime.PhysicsBodyComponent::ICall_PhysicsBodyComponent_AddForce",			(void*)&ICall_PhysicsBodyComponent_AddForce},
-			 { "ScriptRuntime.PhysicsBodyComponent::ICall_PhysicsBodyComponent_AddForceAtPos",		(void*)&ICall_PhysicsBodyComponent_AddForceAtPos},
-			 { "ScriptRuntime.PhysicsBodyComponent::ICall_PhysicsBodyComponent_AddForceAtLocalPos",	(void*)&ICall_PhysicsBodyComponent_AddForceAtLocalPos},
-			 { "ScriptRuntime.PhysicsBodyComponent::ICall_PhysicsBodyComponent_AddLocalForceAtPos",	(void*)&ICall_PhysicsBodyComponent_AddLocalForceAtPos},
-			 { "ScriptRuntime.PhysicsBodyComponent::ICall_PhysicsBodyComponent_AddLocalForceAtLocalPos",(void*)&ICall_PhysicsBodyComponent_AddLocalForceAtLocalPos},
 			 { "ScriptRuntime.PhysicsBodyComponent::ICall_PhysicsEntity_GetShapeAt",           (void*)&ICall_PhysicsEntity_GetShapeAt},
 			 { "ScriptRuntime.PhysicsBodyComponent::ICall_PhysicsEntity_GetShapeCount",        (void*)&ICall_PhysicsEntity_GetShapeCount},
 			 { "ScriptRuntime.PhysicsBodyComponent::ICall_PhysicsRole_IsOnGround", (void*)&ICall_PhysicsRole_IsOnGround },

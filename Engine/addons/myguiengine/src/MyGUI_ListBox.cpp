@@ -238,8 +238,12 @@ namespace MyGUI
 		_resetContainer(true);
 	}
 
-	void ListBox::notifyScrollChangePosition(ScrollBar* _sender, size_t _position)
+	void ListBox::notifyScrollChangePosition(ScrollBar* _sender, int _position)// expand by genesis-3d
 	{
+		if (_position < 0)// expand by genesis-3d
+		{
+			_position = 0;
+		}
 		_setScrollView(_position);
 		_sendEventChangeScroll(_position);
 	}

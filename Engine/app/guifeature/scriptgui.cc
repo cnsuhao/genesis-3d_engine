@@ -25,9 +25,98 @@ THE SOFTWARE.
 #include "scriptgui.h"
 #include "guiserver.h"
 #include "graphicsystem/GraphicSystem.h"
-#include "myguiplatforms/include/MyGUI_GenesisRenderManager.h"
+#include "guiutility.h"
+#include "Jni/imejni.h"
+#if __OSX__
+#include "OCAndCPlusInterface.h"
+#endif
 namespace App
 {
+	MyGUI::Widget* ScriptGui::s_pCurFocusEditBox = NULL;
+    void ScriptGui::SetFocusedEditboxCaption(const MyGUI::UString& data)
+    {
+        if (s_pCurFocusEditBox) {
+            MyGUI::EditBox* pEditBox = dynamic_cast<MyGUI::EditBox*>(s_pCurFocusEditBox);
+            pEditBox->setCaption(data);
+        }
+        
+    }
+	void ScriptGui::recursiveGetEditBoxWidget(MyGUI::VectorWidgetPtr& outVec,MyGUI::Widget* pWidget)
+	{
+		if ( !pWidget )
+		{
+			return;
+		}
+		//itself
+		if ( pWidget->isType<MyGUI::EditBox>() )
+		{
+			outVec.push_back(pWidget);
+		}
+		//children
+		size_t nSize = pWidget->getChildCount();
+		for ( size_t i = 0; i < nSize; i++ )
+		{
+			MyGUI::Widget* pChildWidget = pWidget->getChildAt(i);
+			recursiveGetEditBoxWidget(outVec,pChildWidget);
+		}
+	}
+	void ScriptGui::_ShowKeyboard(bool bShow)
+	{
+#if __ANDROID__
+		// call to java by the way jni
+		IMEJni::ShowKeyboardJNI(bShow);
+#elif __OSX__
+		// call to object c by the way ThirdLibIosSenderListener interface
+        if (bShow) {
+            MyGUI::EditBox* pEditBox = dynamic_cast<MyGUI::EditBox*>(s_pCurFocusEditBox);
+            MyGUI::UString ustr = pEditBox->getCaption();
+            pEditBox->setCaption("");
+            const char* cstr = ustr.asUTF8_c_str();
+            OCAndCPlusInterface::showKeyboard(bShow,cstr);
+        } else {
+            OCAndCPlusInterface::showKeyboard(bShow,NULL);
+        }
+        
+
+#else
+		n_warning("not implement this platform!");
+#endif
+	}
+	template<typename Delegate, typename Function>
+	void _reg_event(MyGUI::Widget* widget, EventType::_type event_type, bool advise, Delegate& _delegate, Function& _function);
+	void ScriptGui::_OnKeySetFocus(MyGUI::Widget* _sender, MyGUI::Widget* _new)
+	{
+		s_pCurFocusEditBox = _sender;
+		//show keyboard
+		//if ( _new && _new->isType<MyGUI::EditBox>() )
+		//{ //old focus is editbox,don't need show keyboard
+		//	return;
+		//}
+		_ShowKeyboard(true);
+	}
+	void ScriptGui::_OnKeyLostFocus(MyGUI::Widget* _sender, MyGUI::Widget* _old)
+	{
+		if ( _sender == s_pCurFocusEditBox )
+		{
+			s_pCurFocusEditBox = NULL;
+		}
+		//hide keyboard
+		//if ( _old && _old->isType<MyGUI::EditBox>() )
+		//{// new focus is editbox,don't need hide keyboard
+		//	return;
+		//}
+		_ShowKeyboard(false);
+	}
+	void ScriptGui::_InternalRegisterEditBoxGetLostFocus(MyGUI::Widget*pWidget)
+	{
+		if ( !pWidget )
+		{
+			return;
+		}
+		_reg_event(pWidget, EventType::KeySetFocus, true, pWidget->eventKeySetFocus, _OnKeySetFocus);
+		_reg_event(pWidget, EventType::KeyLostFocus, true, pWidget->eventKeyLostFocus, _OnKeyLostFocus);		
+
+	}
 	MyGUI::Widget* ScriptGui::loadLayout(MyGUI::Widget* parent, const std::string& file_name)
 	{
 		MyGUI::LayoutManager* lm = MyGUI::LayoutManager::getInstancePtr();
@@ -40,6 +129,20 @@ namespace App
 			file_name,
 			"",
 			static_cast<MyGUI::Widget*>(parent));
+
+		//interal register event
+#if __ANDROID__ || __OSX__
+		MyGUI::VectorWidgetPtr allEditBox;
+		for ( MyGUI::VectorWidgetPtr::iterator it = insts.begin(); it != insts.end(); it++ )
+		{
+			recursiveGetEditBoxWidget(allEditBox,*it);
+		}
+		for ( MyGUI::VectorWidgetPtr::iterator it = allEditBox.begin(); it != allEditBox.end(); it++ )
+		{
+			_InternalRegisterEditBoxGetLostFocus(*it);
+		}
+#endif
+		
 
 		if (1 == insts.size())
 		{
@@ -74,18 +177,18 @@ namespace App
 
 	void ScriptGui::setResolution(const MyGUI::IntSize& size)
 	{
-		MyGUI::GenesisRenderManager::getInstancePtr()->setResolution(size);
+		GUIServer::Instance()->SetResolution(size);
 	}
 	const MyGUI::IntSize& ScriptGui::getResolution()
 	{
-		return MyGUI::GenesisRenderManager::getInstancePtr()->getResolution();
+		return GUIServer::Instance()->GetResolution();
 	}
 	bool ScriptGui::autoResolutionWidth()
 	{
-		return MyGUI::GenesisRenderManager::getInstancePtr()->autoResolutionWidth();
+		return GUIServer::Instance()->AutoResolutionWidth();
 	}
 	bool ScriptGui::autoResolutionHeight()
 	{
-		return MyGUI::GenesisRenderManager::getInstancePtr()->autoResolutionHeight();
+		return GUIServer::Instance()->AutoResolutionHeight();
 	}
 }

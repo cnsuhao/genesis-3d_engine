@@ -93,8 +93,7 @@ namespace App
 	static mono_bool ICall_Scene_AddActor( MonoObject* pMonoObj, MonoObject* pActor )
 	{
 		ScriptObjWrapper<Scene> self( pMonoObj );
-		ScriptObjWrapper<Actor> add( pActor );
-		GPtr<Actor> actorPtr(add.GetCppObjPtr());
+		GPtr<Actor> actorPtr(ScriptObjToCppPointer<Actor>(pActor));
 		self->AddActor( actorPtr );
 		return c_iMonoBool_True;
 	}
@@ -102,8 +101,7 @@ namespace App
 	static mono_bool ICall_Scene_RemoveActor( MonoObject* pMonoObj, MonoObject* pActor )
 	{
 		ScriptObjWrapper<Scene> self( pMonoObj );
-		ScriptObjWrapper<Actor> sub( pActor );
-		GPtr<Actor> actorPtr(sub.GetCppObjPtr());
+		GPtr<Actor> actorPtr(ScriptObjToCppPointer<Actor>(pActor));
 		self->RemoveActor( actorPtr );
 		return c_iMonoBool_True;
 	}

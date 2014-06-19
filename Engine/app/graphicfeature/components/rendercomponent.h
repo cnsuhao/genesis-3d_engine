@@ -199,6 +199,12 @@ namespace App
 		/// modify shader parameters
 		void _AddTextureParam( IndexT iSubMesh, const ShaderParamString& paramName, const Resources::ResourceId& _texID, Resources::Priority priority = Resources::ResourcePriority::TextureDefault);
 		void _ClearTextureParam( IndexT iSubMesh );
+
+#ifdef __GENESIS_EDITOR__
+		virtual void SetEditorVisible(bool bVis);
+		virtual bool IsEditorVisible();
+#endif
+
 	protected:
 	friend class RenderComponentSerialization;
 		/// get shader constant param value,used for serialization
@@ -258,6 +264,11 @@ namespace App
 		bool mVisible;
 
 		bool m_bShaderMask;
+
+#ifdef __GENESIS_EDITOR__
+		bool m_bEidtorVis;
+#endif
+
 	};
 	//---------------------------------------------------------------------------
 	inline bool RenderComponent::IsAllTexLoaded()

@@ -950,29 +950,45 @@ namespace Terrain
 	}
 	void TerrainDataSource::GetColorMapData(Math::Color32* buffer,const int xStart /* = 0 */,const int yStart /* = 0 */,const int width /* = -1 */,const int height /* = -1 */)
 	{
-		if(GetImagesData(mColorMap,xStart,yStart,width,height,buffer,COLOR32))
-			return;
-		memset (buffer, 0, width * height * sizeof(Math::Color32));
+		if (mColorMap.isvalid())
+		{
+			if(GetImagesData(mColorMap,xStart,yStart,width,height,buffer,COLOR32))
+				return;
+		} 
+		else
+		{
+			memset (buffer, 0, width * height * sizeof(Math::Color32));
+		}
 	}
 	void TerrainDataSource::GetColorMapData(Math::ColorF* buffer,const int xStart /* = 0 */,const int yStart /* = 0 */,const int width /* = -1 */,const int height /* = -1 */)
 	{
-		if(GetImagesData(mColorMap,xStart,yStart,width,height,buffer,COLORF))
-			return;
-		memset (buffer, 0, width * height * sizeof(Math::ColorF));
+		if (mColorMap.isvalid())
+		{
+			if(GetImagesData(mColorMap,xStart,yStart,width,height,buffer,COLORF))
+				return;
+		} 
+		else
+		{
+			memset (buffer, 0, width * height * sizeof(Math::ColorF));
+		}	
 	}
 	void TerrainDataSource::SetColorMapData(Math::ColorF* buffer,const int xStart /* = 0 */,const int yStart /* = 0 */,const int width /* = -1 */,const int height /* = -1 */)
 	{
-		SetImagesData(mColorMap,xStart,yStart,width,height,buffer,COLORF);
-		if (mColorMap)
+		if (mColorMap.isvalid())
+		{
+			SetImagesData(mColorMap,xStart,yStart,width,height,buffer,COLORF);
+			
 			Graphic::GraphicSystem::Instance()->UpdateTexture(mColorMap->GetHandle(), &_UpdateTextureFunction, mColorMap);
-		//RefreshBasemap(xStart,yStart,width,height);
+		}
 	}
 	void TerrainDataSource::SetColorMapData(Math::Color32* buffer,const int xStart /* = 0 */,const int yStart /* = 0 */,const int width /* = -1 */,const int height /* = -1 */)
 	{
-		SetImagesData(mColorMap,xStart,yStart,width,height,buffer,COLOR32);
-		if (mColorMap)
+		if (mColorMap.isvalid())
+		{
+			SetImagesData(mColorMap,xStart,yStart,width,height,buffer,COLOR32);
+		
 			Graphic::GraphicSystem::Instance()->UpdateTexture(mColorMap->GetHandle(), &_UpdateTextureFunction, mColorMap);
-		//RefreshBasemap(xStart,yStart,width,height);
+		}
 	}
 	//------------------------------------------------------------------------------
 	//other unclassify methods
@@ -1053,10 +1069,29 @@ namespace Terrain
 			height = texture->GetHeight() - yStart;
 		}
 
-		n_assert( xStart >= 0 && xStart < texture->GetWidth() && "xStart is invalid" );
-		n_assert( yStart >= 0 && yStart < texture->GetHeight() && "yStart is invalid" );
-		n_assert( width >= 1 && width + xStart <=  texture->GetWidth() && "width is invalid");
-		n_assert( height >= 1 && height + yStart <= texture->GetHeight() && "height is invalid");
+		if( !(xStart >= 0 && xStart < texture->GetWidth()) )
+		{
+			n_warning("This operation is invalid");
+			return false;
+		}
+		
+		if( !(yStart >= 0 && yStart < texture->GetHeight()) )
+		{
+			n_warning("This operation is invalid");
+			return false;
+		}
+		
+		if( !(width >= 1 && width + xStart <=  texture->GetWidth()) )
+		{
+			n_warning("This operation is invalid");
+			return false;
+		}
+		
+		if( !(height >= 1 && height + yStart <= texture->GetHeight()) )
+		{
+			n_warning("This operation is invalid");
+			return false;
+		}
 
 		if (datatype == COLORF)
 		{

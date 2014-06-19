@@ -23,7 +23,7 @@ THE SOFTWARE.
 ****************************************************************************/
 
 #include "stdneb.h"
-#include "packageTool/PackageTool.h"
+#include "packagetool/PackageTool.h"
 
 namespace Pack
 {

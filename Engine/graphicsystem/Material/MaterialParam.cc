@@ -26,6 +26,7 @@ THE SOFTWARE.
 
 namespace Graphic
 {
+
 	MaterialParamMatrix::MaterialParamMatrix()
 	{
 		m_type = eMaterialParamMatrix;

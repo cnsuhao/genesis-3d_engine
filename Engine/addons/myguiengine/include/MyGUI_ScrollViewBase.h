@@ -54,8 +54,18 @@ namespace MyGUI
 		virtual Align getContentAlign();
 
 		virtual void eraseContent();
-
 	protected:
+		void bindDrag();// expand by genesis-3d
+		bool dragClent(int _left, int _top, MouseButton _id);// expand by genesis-3d
+		bool isDraging() const;// expand by genesis-3d
+		void notifyClentPress(Widget* _sender, int _left, int _top, MouseButton _id);// expand by genesis-3d
+		void notifyClentRelease(Widget* _sender, int _left, int _top, MouseButton _id);// expand by genesis-3d
+		void notifyClentDrag(Widget* _sender, int _left, int _top, MouseButton _id);// expand by genesis-3d
+		void notifyClentLostFocus(Widget* _sender, Widget* _newFocus);// expand by genesis-3d
+		virtual void onClientDragBegin(Widget* _sender, int _left, int _top, MouseButton _id);// expand by genesis-3d
+		virtual void onClientDragEnd(Widget* _sender);// expand by genesis-3d
+		virtual void onClientDrag(Widget* _sender, int _left, int _top, MouseButton _id);// expand by genesis-3d
+
 		ScrollBar* mVScroll;
 		ScrollBar* mHScroll;
 		Widget* mClient;
@@ -66,6 +76,9 @@ namespace MyGUI
 		size_t mVRange;
 		size_t mHRange;
 
+		// expand by genesis-3d
+		bool mDraging;
+		//----------------------------
 		// изменяется ли содержимое при ресайзе
 		bool mChangeContentByResize;
 	};

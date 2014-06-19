@@ -1558,7 +1558,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 72 "GenesisShaderBison.ycc"
-    { //n_printf("init genesisshader\n");
+    { //n_debuglog("init genesisshader\n");
 									  g_GenesisMaterial->SetName((yyvsp[(2) - (2)].str));
 										delete[] (yyvsp[(2) - (2)].str);
 									  ResetParserParams();
@@ -1570,7 +1570,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 78 "GenesisShaderBison.ycc"
-    { //n_printf("in genesisshader,left\n"); 
+    { //n_debuglog("in genesisshader,left\n"); 
 									}
     break;
 
@@ -1578,7 +1578,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 80 "GenesisShaderBison.ycc"
-    { //n_printf("from PropertySection to genesisshader\n"); 
+    { //n_debuglog("from PropertySection to genesisshader\n"); 
 									}
     break;
 
@@ -1586,7 +1586,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 82 "GenesisShaderBison.ycc"
-    { //n_printf("out genesisshader,right\n");
+    { //n_debuglog("out genesisshader,right\n");
 										g_GenesisMaterial->AddMaterial(*g_curGenesisMakeMaterial);
 										delete	g_curGenesisMakeMaterial;
 										g_curGenesisMakeMaterial = 0;
@@ -1597,7 +1597,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 87 "GenesisShaderBison.ycc"
-    {//n_printf("init PropertySection\n");
+    {//n_debuglog("init PropertySection\n");
 									}
     break;
 
@@ -1605,7 +1605,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 89 "GenesisShaderBison.ycc"
-    {//n_printf("in ParameterSection,left\n"); 
+    {//n_debuglog("in ParameterSection,left\n"); 
 														}
     break;
 
@@ -1613,7 +1613,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 91 "GenesisShaderBison.ycc"
-    {//n_printf("from ParameterSection to PropertySection\n");
+    {//n_debuglog("from ParameterSection to PropertySection\n");
 									}
     break;
 
@@ -1621,7 +1621,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 93 "GenesisShaderBison.ycc"
-    { //n_printf("out ParameterSection,right\n");
+    { //n_debuglog("out ParameterSection,right\n");
 									}
     break;
 
@@ -1630,7 +1630,7 @@ yyreduce:
 /* Line 1455 of yacc.c  */
 #line 95 "GenesisShaderBison.ycc"
     {	g_curGenesisMakeMaterial->SetRenderQueue(Graphic::RenderQueue::FromString((yyvsp[(3) - (3)].str)));
-															//n_printf("in PropertySection,setrenderqueue:%s\n", Util::String($3).AsCharPtr()); 
+															//n_debuglog("in PropertySection,setrenderqueue:%s\n", Util::String($3).AsCharPtr()); 
 														}
     break;
 
@@ -1638,7 +1638,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 98 "GenesisShaderBison.ycc"
-    {	//n_printf("in TechniqueSection,left\n");
+    {	//n_debuglog("in TechniqueSection,left\n");
 														g_curGenesisMakeTechnique = new GenesisMakeTechnique(); 
 													}
     break;
@@ -1647,7 +1647,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 101 "GenesisShaderBison.ycc"
-    {//n_printf("from TechniqueSection to PropertySection\n");
+    {//n_debuglog("from TechniqueSection to PropertySection\n");
 									}
     break;
 
@@ -1655,7 +1655,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 103 "GenesisShaderBison.ycc"
-    {	//n_printf("in TechniqueSection,left\n");
+    {	//n_debuglog("in TechniqueSection,left\n");
 														g_curGenesisMakeTechnique = new GenesisMakeTechnique();
 														g_curGenesisMakeTechnique->SetName((yyvsp[(3) - (4)].str)); 
 													}
@@ -1665,7 +1665,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 107 "GenesisShaderBison.ycc"
-    {//n_printf("from TechniqueSection to PropertySection\n");
+    {//n_debuglog("from TechniqueSection to PropertySection\n");
 									}
     break;
 
@@ -1673,7 +1673,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 109 "GenesisShaderBison.ycc"
-    {//n_printf("init ParameterSection\n");
+    {//n_debuglog("init ParameterSection\n");
 										}
     break;
 
@@ -1705,7 +1705,13 @@ yyreduce:
 																		g_curMatParam->SetName((yyvsp[(3) - (5)].str));
 																		g_curMatParam->SetDesc((yyvsp[(3) - (5)].str));
 																		g_curMatParam->SetStringValue((yyvsp[(5) - (5)].str));
-																		//n_printf("define texture\n");
+
+																		if ( g_curMatParam->GetStringValue() == "#UserDefTex")
+																		{
+																			g_curMatParam->SetHiddenInEditor(true);
+																		}
+
+																		//n_debuglog("define texture\n");
 																		g_curGenesisMakeMaterial->AddMatParam(g_curMatParam);
 																		g_curMatParam = NULL;
 
@@ -1755,7 +1761,13 @@ yyreduce:
 																		g_curMatParam->SetName((yyvsp[(3) - (6)].str));
 																		g_curMatParam->SetDesc((yyvsp[(4) - (6)].str));
 																		g_curMatParam->SetStringValue((yyvsp[(6) - (6)].str));
-																		//n_printf("define texture\n");
+
+																		if ( g_curMatParam->GetStringValue() == "#UserDefTex")
+																		{
+																			g_curMatParam->SetHiddenInEditor(true);
+																		}
+
+																		//n_debuglog("define texture\n");
 																		g_curGenesisMakeMaterial->AddMatParam(g_curMatParam);
 																		g_curMatParam = NULL;
 
@@ -1813,6 +1825,18 @@ yyreduce:
 																		g_curMatParam->SetName((yyvsp[(3) - (6)].str));
 																		g_curMatParam->SetDesc((yyvsp[(4) - (6)].str));
 																		g_curMatParam->SetStringValue((yyvsp[(6) - (6)].str));
+
+																		if (
+																			Util::String::MatchPattern(g_curMatParam->GetName(), "*Color*")
+																			|| Util::String::MatchPattern(g_curMatParam->GetName(), "*color*")
+																			|| Util::String::MatchPattern(g_curMatParam->GetName(), "*emissive*")
+																			|| Util::String::MatchPattern(g_curMatParam->GetName(), "*specular*")
+																			|| Util::String::MatchPattern(g_curMatParam->GetName(), "*diffuse*")
+																			)
+																		{
+																			g_curMatParam->SetUseForColor(true);
+																		}
+
 																		
 																		g_curGenesisMakeMaterial->AddMatParam(g_curMatParam);
 																		g_curMatParam = NULL;
@@ -1828,6 +1852,17 @@ yyreduce:
 																		g_curMatParam->SetDesc((yyvsp[(3) - (5)].str));
 																		g_curMatParam->SetStringValue((yyvsp[(5) - (5)].str));
 																		
+																		if (
+																			Util::String::MatchPattern(g_curMatParam->GetName(), "*Color*")
+																			|| Util::String::MatchPattern(g_curMatParam->GetName(), "*color*")
+																			|| Util::String::MatchPattern(g_curMatParam->GetName(), "*emissive*")
+																			|| Util::String::MatchPattern(g_curMatParam->GetName(), "*specular*")
+																			|| Util::String::MatchPattern(g_curMatParam->GetName(), "*diffuse*")
+																			)
+																		{
+																			g_curMatParam->SetUseForColor(true);
+																		}
+
 																		g_curGenesisMakeMaterial->AddMatParam(g_curMatParam);
 																		g_curMatParam = NULL;
 																		}
@@ -1865,7 +1900,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 248 "GenesisShaderBison.ycc"
-    { //n_printf("init TechniqueSection\n");
+    { //n_debuglog("init TechniqueSection\n");
 									 }
     break;
 
@@ -1873,7 +1908,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 250 "GenesisShaderBison.ycc"
-    { //n_printf("from PassSection to TechniqueSection\n"); 
+    { //n_debuglog("from PassSection to TechniqueSection\n"); 
 									}
     break;
 
@@ -1881,7 +1916,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 252 "GenesisShaderBison.ycc"
-    { //n_printf("out TechniqueSection,right\n");
+    { //n_debuglog("out TechniqueSection,right\n");
 									  g_curGenesisMakeMaterial->AddTechnique(*g_curGenesisMakeTechnique);
 										delete g_curGenesisMakeTechnique;
 										g_curGenesisMakeTechnique = 0; 
@@ -1892,7 +1927,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 258 "GenesisShaderBison.ycc"
-    { //n_printf("init PassSection\n");
+    { //n_debuglog("init PassSection\n");
 									}
     break;
 
@@ -1909,7 +1944,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 263 "GenesisShaderBison.ycc"
-    { //n_printf("init Pass\n");
+    { //n_debuglog("init Pass\n");
 												}
     break;
 
@@ -1917,7 +1952,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 265 "GenesisShaderBison.ycc"
-    { //n_printf("in PassSection,left\n");
+    { //n_debuglog("in PassSection,left\n");
 									  
 									}
     break;
@@ -1926,7 +1961,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 268 "GenesisShaderBison.ycc"
-    { //n_printf("from codeSection to PassSection\n");
+    { //n_debuglog("from codeSection to PassSection\n");
 									}
     break;
 
@@ -1935,7 +1970,7 @@ yyreduce:
 /* Line 1455 of yacc.c  */
 #line 270 "GenesisShaderBison.ycc"
     {
-										//n_printf("out PassSection,right\n");
+										//n_debuglog("out PassSection,right\n");
 										g_curGenesisMakeTechnique->AddPass(*g_curMakePass); 
 										delete g_curMakePass;
 										g_curMakePass = 0; 
@@ -1947,7 +1982,7 @@ yyreduce:
 /* Line 1455 of yacc.c  */
 #line 277 "GenesisShaderBison.ycc"
     {
-											n_printf("in PassSection,left\n");
+											n_debuglog("in PassSection,left\n");
 											g_curMakePass = new GenesisMakePass(); 
 											g_curMakePass->SetName("NoName");
 										}
@@ -1958,7 +1993,7 @@ yyreduce:
 /* Line 1455 of yacc.c  */
 #line 282 "GenesisShaderBison.ycc"
     {
-											n_printf("in PassSection,left\n");
+											n_debuglog("in PassSection,left\n");
 											g_curMakePass = new GenesisMakePass(); 
 											g_curMakePass->SetName((yyvsp[(2) - (2)].str));
 										}
@@ -1968,7 +2003,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 288 "GenesisShaderBison.ycc"
-    { //n_printf("in codeSection\n");
+    { //n_debuglog("in codeSection\n");
 									}
     break;
 
@@ -1976,7 +2011,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 290 "GenesisShaderBison.ycc"
-    { //n_printf("from shadertype,to StateSection\n"); 
+    { //n_debuglog("from shadertype,to StateSection\n"); 
 									}
     break;
 
@@ -1984,7 +2019,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 292 "GenesisShaderBison.ycc"
-    { //n_printf("from shadertype,to shadertype\n"); 
+    { //n_debuglog("from shadertype,to shadertype\n"); 
 									}
     break;
 
@@ -1994,7 +2029,7 @@ yyreduce:
 #line 294 "GenesisShaderBison.ycc"
     {
 																g_curMakePass->SetBuiltInMacro((yyvsp[(4) - (5)].str));
-																n_printf("set builtinMacro\n"); 
+																n_debuglog("set builtinMacro\n"); 
 															}
     break;
 
@@ -2004,7 +2039,7 @@ yyreduce:
 #line 298 "GenesisShaderBison.ycc"
     {
 																g_curMakePass->SetCustumMacro((yyvsp[(4) - (5)].str));
-																n_printf("set builtinMacro\n");
+																n_debuglog("set builtinMacro\n");
 															}
     break;
 
@@ -2012,7 +2047,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 303 "GenesisShaderBison.ycc"
-    { //n_printf("in StateSection\n");
+    { //n_debuglog("in StateSection\n");
 									}
     break;
 
@@ -2023,7 +2058,7 @@ yyreduce:
     { 
 												g_rsDesc = RenderBase::RenderStateDesc::Create();
 												g_rsDesc->Setup(); 
-												//n_printf("Create StateSection\n");//n_printf("init StateSection\n");
+												//n_debuglog("Create StateSection\n");//n_debuglog("init StateSection\n");
 											}
     break;
 
@@ -2041,7 +2076,7 @@ yyreduce:
     {
 												g_curMakePass->SetRenderStateDesc(g_rsDesc);
 												g_rsDesc = 0;
-												//n_printf("from RenderStateSetup,to shadertype\n");
+												//n_debuglog("from RenderStateSetup,to shadertype\n");
 											}
     break;
 
@@ -2049,7 +2084,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 317 "GenesisShaderBison.ycc"
-    { //n_printf("in RenderStateSetup\n");
+    { //n_debuglog("in RenderStateSetup\n");
 									}
     break;
 
@@ -2090,7 +2125,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 334 "GenesisShaderBison.ycc"
-    { //n_printf("set depthtest complete \n");
+    { //n_debuglog("set depthtest complete \n");
 														}
     break;
 
@@ -2109,7 +2144,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 341 "GenesisShaderBison.ycc"
-    {  //n_printf("set blendmode complete \n"); 
+    {  //n_debuglog("set blendmode complete \n"); 
 														}
     break;
 
@@ -2117,7 +2152,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 343 "GenesisShaderBison.ycc"
-    { //n_printf("set alphatest complete \n");
+    { //n_debuglog("set alphatest complete \n");
 														}
     break;
 
@@ -2125,7 +2160,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 345 "GenesisShaderBison.ycc"
-    { //n_printf("set samplerstate complete \n");
+    { //n_debuglog("set samplerstate complete \n");
 														}
     break;
 
@@ -2242,7 +2277,7 @@ yyreduce:
     {
 											g_curGenesisMakeGPUProgram = new GenesisMakeGPUProgram();
 											g_curGenesisMakeGPUProgram->SetShaderType((yyvsp[(2) - (2)].str));
-											//n_printf("in shaderType,SetShaderType\n");
+											//n_debuglog("in shaderType,SetShaderType\n");
 											delete[] (yyvsp[(2) - (2)].str);
 										}
     break;
@@ -2251,7 +2286,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 415 "GenesisShaderBison.ycc"
-    { //n_printf("in shaderType,left\n");
+    { //n_debuglog("in shaderType,left\n");
 										}
     break;
 
@@ -2259,7 +2294,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 417 "GenesisShaderBison.ycc"
-    { //n_printf("from DeviceTypeSetup to shaderType\n");
+    { //n_debuglog("from DeviceTypeSetup to shaderType\n");
 										}
     break;
 
@@ -2273,7 +2308,7 @@ yyreduce:
 												delete g_curGenesisMakeGPUProgram;
 												g_curGenesisMakeGPUProgram = NULL;
 											}
-											//n_printf("out shaderType,right\n");
+											//n_debuglog("out shaderType,right\n");
 										}
     break;
 
@@ -2281,7 +2316,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 428 "GenesisShaderBison.ycc"
-    {	n_printf("in DeviceTypeSetup\n");}
+    {	n_debuglog("in DeviceTypeSetup\n");}
     break;
 
   case 66:
@@ -2290,7 +2325,7 @@ yyreduce:
 #line 429 "GenesisShaderBison.ycc"
     { 
 											g_curGenesisMakeGPUProgram->SetDeviceType((yyvsp[(3) - (3)].str));
-											n_printf("in DeviceTypeSetup\n");
+											n_debuglog("in DeviceTypeSetup\n");
 											delete[] (yyvsp[(3) - (3)].str);
 											}
     break;
@@ -2299,7 +2334,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 434 "GenesisShaderBison.ycc"
-    { n_printf("in DeviceTypeSetup,left\n");
+    { n_debuglog("in DeviceTypeSetup,left\n");
 										}
     break;
 
@@ -2307,7 +2342,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 436 "GenesisShaderBison.ycc"
-    { n_printf("from SubGPUProgramSetup to DeviceTypeSetup\n");
+    { n_debuglog("from SubGPUProgramSetup to DeviceTypeSetup\n");
 										}
     break;
 
@@ -2315,7 +2350,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 438 "GenesisShaderBison.ycc"
-    { n_printf("out DeviceTypeSetup,right\n");
+    { n_debuglog("out DeviceTypeSetup,right\n");
 										  g_curMakePass->AddShaderProgram(*g_curGenesisMakeGPUProgram);
 										}
     break;
@@ -2324,14 +2359,14 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 441 "GenesisShaderBison.ycc"
-    {	n_printf("in empty SubGPUProgramSetup\n");}
+    {	n_debuglog("in empty SubGPUProgramSetup\n");}
     break;
 
   case 71:
 
 /* Line 1455 of yacc.c  */
 #line 442 "GenesisShaderBison.ycc"
-    { n_printf("in SubGPUProgramSetup\n");
+    { n_debuglog("in SubGPUProgramSetup\n");
 													}
     break;
 
@@ -2339,7 +2374,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 444 "GenesisShaderBison.ycc"
-    { n_printf("in SubGPUProgramSetup,left\n");
+    { n_debuglog("in SubGPUProgramSetup,left\n");
 										  g_curGenesisSubGPUProgram = new GenesisSubGPUProgram();
 										  g_curGenesisSubGPUProgram->SetShaderMask((yyvsp[(3) - (5)].str));
 										}
@@ -2349,7 +2384,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 448 "GenesisShaderBison.ycc"
-    { n_printf("from CodeBlock to SubGPUProgramSetup\n");
+    { n_debuglog("from CodeBlock to SubGPUProgramSetup\n");
 										}
     break;
 
@@ -2357,7 +2392,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 450 "GenesisShaderBison.ycc"
-    { n_printf("out SubGPUProgramSetup,right\n");
+    { n_debuglog("out SubGPUProgramSetup,right\n");
 										  g_curGenesisMakeGPUProgram->AddSubGpuProgram(*g_curGenesisSubGPUProgram);
 										  if(g_curGenesisSubGPUProgram != NULL)
 											{
@@ -2371,7 +2406,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 459 "GenesisShaderBison.ycc"
-    { n_printf("in CodeBlock\n");
+    { n_debuglog("in CodeBlock\n");
 										}
     break;
 
@@ -2381,7 +2416,7 @@ yyreduce:
 #line 461 "GenesisShaderBison.ycc"
     { 
 												g_curGenesisSubGPUProgram->SetShaderCode((yyvsp[(3) - (3)].str));
-												n_printf("in CodeBlock,AddGPUProgram\n");
+												n_debuglog("in CodeBlock,AddGPUProgram\n");
 												delete[] (yyvsp[(3) - (3)].str);
 											 }
     break;
@@ -2395,7 +2430,7 @@ yyreduce:
 																		  g_curShaderParameter->SetRegister((yyvsp[(3) - (5)].num));
 																		  g_curShaderParameter->SetName((yyvsp[(4) - (5)].str));
 																		  g_curGenesisSubGPUProgram->AddParam(*g_curShaderParameter);
-																		  n_printf("bind texture\n"); delete[] (yyvsp[(4) - (5)].str);
+																		  n_debuglog("bind texture\n"); delete[] (yyvsp[(4) - (5)].str);
 																		  delete g_curShaderParameter;
 																		  g_curShaderParameter = 0;
 																		 }
@@ -2410,7 +2445,7 @@ yyreduce:
 																			g_curShaderParameter->SetRegister((yyvsp[(3) - (5)].num));
 																			g_curShaderParameter->SetName((yyvsp[(4) - (5)].str));
 																			g_curGenesisSubGPUProgram->AddParam(*g_curShaderParameter);
-																			//n_printf("setparam matrix register\n"); delete[] $4;
+																			//n_debuglog("setparam matrix register\n"); delete[] $4;
 																			delete g_curShaderParameter;
 																			g_curShaderParameter = 0;
 																		}
@@ -2425,7 +2460,7 @@ yyreduce:
 																			g_curShaderParameter->SetRegister((yyvsp[(3) - (5)].num));
 																			g_curShaderParameter->SetName((yyvsp[(4) - (5)].str));
 																			g_curGenesisSubGPUProgram->AddParam(*g_curShaderParameter);
-																			//n_printf("setparam vector register\n"); delete[] $4;
+																			//n_debuglog("setparam vector register\n"); delete[] $4;
 																			delete g_curShaderParameter;
 																			g_curShaderParameter = 0;
 																		}
@@ -2440,7 +2475,7 @@ yyreduce:
 																			g_curShaderParameter->SetRegister((yyvsp[(3) - (5)].num));
 																			g_curShaderParameter->SetName((yyvsp[(4) - (5)].str));
 																			g_curGenesisSubGPUProgram->AddParam(*g_curShaderParameter);
-																			//n_printf("setparam float register\n"); delete[] $4;
+																			//n_debuglog("setparam float register\n"); delete[] $4;
 																			delete g_curShaderParameter;
 																			g_curShaderParameter = 0;
 																		}
@@ -2666,7 +2701,7 @@ yyreturn:
 
 int yyerror (const char *s)
 {
-	n_printf("GenesisShader Error: %s At line:%d\n",s,Genesislineno);
+	n_debuglog("GenesisShader Error: %s At line:%d\n",s,Genesislineno);
 	return 0;
 }
 

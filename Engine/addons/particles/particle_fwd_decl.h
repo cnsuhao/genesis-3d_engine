@@ -49,12 +49,20 @@ namespace Particles
 		Math::float3 mNormal;
 		Math::float2 mTexCoord;
 	};
-	struct SimpleGPUParticleVertex {
+	struct SpriteGPUParticleVertex {
 		Math::Color32 mColor;
 		Math::float3 mPosition;
 		Math::float3 mNormal;
 		Math::float2 mTexCoord;
 		float		 mSize;
+	};
+
+	struct BoardGPUParticleVertex {
+		Math::Color32 mColor;
+		Math::float4 mTangent;
+		Math::float3 mPosition;
+		Math::float3 mNormal;
+		Math::float2 mTexCoord;
 	};
 
 	enum	ColorContrlType{CCT_CONST, CCT_RND_CONST, CCT_GRADCURVE, CCT_RND_GRADCURVE};
@@ -192,7 +200,7 @@ namespace Particles
 
 	inline IndexT GenerateRandomSeed(void* p)
 	{
-		return ( (IndexT)p ) & 0xFFFF;
+        return ( (intptr_t)p ) & 0xFFFF;
 	}
 
 	// From Ogre: rotation of a vector by a quaternion

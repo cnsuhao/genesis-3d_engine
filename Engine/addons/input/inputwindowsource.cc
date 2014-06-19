@@ -27,7 +27,7 @@ THE SOFTWARE.
 #if __WIN32__
 namespace Input
 {
-	__ImplementClass(Input::InputWindowSource, 'WDIS', Win32Input::Win32InputWindowSource);
+	__ImplementClass(Input::InputWindowSource, 'WDIS', Win32Input::Win32InputWebWindowSource);
 }
 #elif __ANDROID__
 namespace Input

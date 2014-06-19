@@ -80,6 +80,19 @@ namespace App
 	{
 		Super::_OnBeginFrame();
 
+		
+	}
+
+
+	void LocaterComponent::_OnFrame()
+	{
+		Super::_OnFrame();	
+	}
+
+	void LocaterComponent::_OnEndFrame()
+	{
+		Super::_OnEndFrame();
+
 		GPtr<App::Actor> parentActor = mActor->GetParent();
 
 		if(!parentActor.isvalid())
@@ -109,6 +122,15 @@ namespace App
 				mAttachedSkelIndex = animationComponent->GetNodeIndex(mAttachedSkelName);
 			}
 
+			//If both name and index cannot find, just return
+			if( mAttachedSkelIndex == InvalidIndex)
+			{
+				Math::matrix44 tempNodeTrans = Math::matrix44::identity();
+				bool ret = animationComponent->GetNodeTransform(mAttachedSkelName, tempNodeTrans);
+				if(!ret)
+					return;
+			}
+
 			if(m_bNeedSetup)
 			{
 				mLastAnimTrans = Math::matrix44::identity();
@@ -130,7 +152,7 @@ namespace App
 			Math::matrix44 actorTrans = mActor->GetTransform();
 
 
-			if(!firstLoaded)
+			if(!firstLoaded && !animationComponent->IsAnyAnimationPlaying())
 			{
 				Math::matrix44 NodeTransInv = Math::matrix44::inverse(mLastAnimTrans);
 				mRelativeTrans = Math::matrix44::multiply(NodeTransInv,actorTrans);	
@@ -143,17 +165,7 @@ namespace App
 
 			mLastAnimTrans = NodeTrans;
 		}
-	}
 
-
-	void LocaterComponent::_OnFrame()
-	{
-		Super::_OnFrame();	
-	}
-
-	void LocaterComponent::_OnEndFrame()
-	{
-		Super::_OnEndFrame();
 	}
 
 	void LocaterComponent::SetupLocater()

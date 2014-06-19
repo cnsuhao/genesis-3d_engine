@@ -139,7 +139,7 @@ namespace App
 		GPtr<Graphic::MaterialInstanceManager> mMaterialInstanceManager;
 
 	public:
-		uint32 m_MainThreadID;
+		intptr_t m_MainThreadID;
 	};
 	inline GPtr<Graphic::MaterialInstanceManager>& GraphicObjectManager::GetMaterialInstanceManager()
 	{

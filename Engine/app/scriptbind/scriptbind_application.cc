@@ -43,7 +43,7 @@ namespace App
 	{
 		String scence_name;
 		Utility_MonoStringToCppString(sceneResID, scence_name);
-		return Utility_MonoBool(GameApplication::Instance()->OpenScene(scence_name) );
+		return Utility_MonoBool(GameApplication::Instance()->OpenScene(scence_name, false) );
 
 	}
 
@@ -53,7 +53,7 @@ namespace App
 		Utility_MonoStringToCppString(sceneResID, scence_name);
 
 		return Utility_MonoBool( 
-			GameApplication::Instance()->CloseScene(scence_name) );
+			GameApplication::Instance()->CloseScene(scence_name,false) );
 	}
 
 	static void ICall_Application_Quit()
@@ -72,7 +72,7 @@ namespace App
 		const GPtr<Scene>& pScene = GameApplication::Instance()->GetCurrentScene();
 		if ( pScene.isvalid() )
 		{
-			return CppObjectToScriptObj<Scene>( *pScene );
+			return CppPointerToScriptObj<Scene>( pScene.get_unsafe() );
 		}
 		else
 		{

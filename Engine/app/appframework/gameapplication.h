@@ -95,9 +95,10 @@ public:
 
 	virtual bool IsQuit();
 	/// open a scence
-	virtual bool OpenScene(const Util::String& sSceneName, bool create = false);
+	virtual bool OpenScene(const Util::String& sceneName, bool force = true);
 	/// close a scence
-	virtual bool CloseScene(const Util::String& sSceneName);
+	virtual bool CloseScene(const Util::String& sceneName, bool force = true);
+
 	/// called when the game stopped
 	virtual void OnStopped();
 	/// called when the game resumed
@@ -180,6 +181,8 @@ protected:
 
 	void exitGui();
 
+	bool openScene(const Util::String& sceneName);
+	bool closeScene(const Util::String& sceneName);
 	/// loading scene logo
 	virtual void displayLOGO();
 
@@ -248,6 +251,11 @@ protected:
 	Util::String mFileServicePath;
 	//Packet Pipe
 	Util::String mPipeName;
+
+	Util::String mOpenSceneName;
+
+	Util::String mCloseSceneName;
+
 	////是否使用本地资源 
 	bool mUseLocalRes;
 	//是否调试脚本
@@ -258,6 +266,8 @@ protected:
 	bool mbUseFileService;
 	bool mQuit;
 	bool mUseWeb;
+	bool mOpenSceneDirty;
+	bool mCloseSceneDirty;
 	void* mWinHandle;
 
 	IO::AssignRegistry* mAssignRegistry;

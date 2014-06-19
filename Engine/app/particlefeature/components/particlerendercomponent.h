@@ -122,6 +122,11 @@ namespace App
 		void NeedUpdate();
 		Graphic::Camera* _getCurrentCamera() const;
 		void SetShaderMask();
+
+#ifdef __GENESIS_EDITOR__
+		virtual void SetEditorVisible(bool bVis);
+#endif
+
 	protected:		
 		typedef ParticleRenderObject RenderObjectType;
 		typedef GPtr<RenderObjectType> ParticleRenderObjectPtr;
@@ -168,6 +173,7 @@ namespace App
 		void _DeattachRenderObject();
 
 		void _updateTarget(Graphic::Camera* camera);
+		SizeT _fpsControl();
 		
 	protected:	
 		Graphic::Camera*						mCurCamera;
@@ -239,6 +245,9 @@ namespace App
 		const Resources::ResourceId& 
 		ParticleRenderComponent::GetEmitMeshID( void ) const
 	{
+		const Resources::ResourceId& resID = "";
+		if(!mEmitMeshRes.isvalid())
+			return resID;
 		return mEmitMeshRes->GetResID();
 	}
 	//------------------------------------------------------------------------
