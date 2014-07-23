@@ -30,12 +30,13 @@ THE SOFTWARE.
 #include "util/string.h"
 #include "input/base/inputkeyboardbase.h"
 #include "input/base/inputmousebase.h"
-#include "guiroot.h"
-#include "guievent.h"
+#include "guifeature/guiroot.h"
+#include "guifeature/guievent.h"
 #include "foundation/delegates/delegatetype.h"
 
 
 #define GUI_ROOT_CONFIG "gui_core.xml"
+#define GUI_DEFAULT_LOCATION "asset:UIMedia/"
 namespace MyGUI
 {
 	class GenesisPlatform;
@@ -43,11 +44,12 @@ namespace MyGUI
 namespace Graphic
 {
 	class ViewPortWindow;
+	class MaterialInstance;
 }
 
 namespace App
 {
-	//typedef MyGUI::delegates::CMultiDelegate1<void*> EventHandle_BeforeDrawVoid;
+	class GuiScene;
 
 	typedef Delegates::delegates::CMultiDelegate1<void*> EventHandle_BeforeDrawVoid;
 
@@ -57,12 +59,13 @@ namespace App
 		__DeclareImageSingleton(GUIServer);
 	public:
 		virtual ~GUIServer();
-		void SetCoreFile(const char* core);
-		void SetEngineDir(const Util::String& dir);
-		void SetCoreFile(const Util::String& core = GUI_ROOT_CONFIG);
-		bool Open();
+		void SetLogDir(const Util::String& dir);
+		void AddMediaLocaltion(const Util::String& path);
+		void SetCoreFile(const Util::String& core);
+		void Open();
 		bool IsOpen();
 		void Close();
+		void OnFrame();
 		void OnWindowResized();
 		void OnDeviceReseted();
 
@@ -70,12 +73,14 @@ namespace App
 		Graphic::ViewPortWindow* GetTargetWindow() const;
 
 		MyGUI::Gui* GetGui() const;	
+	MyGUI::GenesisPlatform* GetPlatform() const;
 		GuiEvent& GetGuiEvent();
 
 		MyGUI::IntSize GetScreenSize() const;
 
 		void InitGuiRootScript();
 		void ExitGuiScript();
+		void ForceDestroyGuiScript();
 		bool StartTick(bool start);
 
 		bool GetVisible();
@@ -86,38 +91,34 @@ namespace App
 		bool AutoResolutionWidth();
 		bool AutoResolutionHeight();
 
+		Graphic::MaterialInstance* GetGuiMaterial() const;
 
 		EventHandle_BeforeDrawVoid eventBeforeDrawUI;
 
 		static MyGUI::KeyCode KeyCodeWJtoMyGUI(Input::InputKey::Code key);
-
+		static MyGUI::MouseButton MouseButtonToMyGUI(Input::InputMouseButton::Code btn);
+		void _renderUI();
 	private:
-		MyGUI::GenesisPlatform* GetPlatform() const;
+
 		void _initMyGUI();
 		void _initScript();
-		void _renderUI();
-		static void _beforeDraw();
-		static void _drawUI();
+		void _beforeDraw();
 
 		Graphic::ViewPortWindow* m_targetWindow;
 		MyGUI::Gui* m_gui;
 		MyGUI::GenesisPlatform* m_platform;
+		GuiScene* m_guiScene;
 		bool  m_visible;
 
 		Util::String m_coreFile;			
-		Util::String m_engineDir;			
+		Util::String m_logDir;			
 		GuiRoot	m_guiRoot;					//reference of a c# object.
 		GuiEvent m_guiEvent;				//used for event between c++ and c#.
+
 		bool m_opened;
 		GUIServer();
 
 	};
-
-	inline void GUIServer::SetTargetWindow(Graphic::ViewPortWindow* vpw)
-	{
-		m_targetWindow = vpw;
-		OnWindowResized();
-	}
 
 	inline Graphic::ViewPortWindow* GUIServer::GetTargetWindow() const
 	{
@@ -128,6 +129,7 @@ namespace App
 	{
 		return m_gui;
 	}
+
 	inline MyGUI::GenesisPlatform* GUIServer::GetPlatform() const
 	{
 		return m_platform;

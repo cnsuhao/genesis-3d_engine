@@ -37,7 +37,12 @@ class ScriptFeature : public App::Feature
 {
 		__DeclareClass(ScriptFeature);
 		__DeclareImageSingleton(ScriptFeature);
-
+	private:
+		enum Constant
+		{
+			SC_SWAP_BUFFER_SIZE = 2,
+		};
+		
 	public:
 		/// constructor
 		ScriptFeature();
@@ -54,10 +59,14 @@ class ScriptFeature : public App::Feature
 		virtual void OnFrame();
 		/// called every time when a frame is over
 		virtual void OnEndFrame();
+		/// called from within GameServer::Stop() before OnLoad when the complete world stop
+		virtual void OnStop();
 		/// called every time when game should be stoped
 		virtual void OnStopped();
 		/// called every time when game should be resumed
 		virtual void OnResumed();
+	private:
+		void _ClearObjectBuffers();
 	public:
 		/// add script instances to this feature
 		void AttachScriptInstances(const ScriptInstances& scriptInstances);
@@ -72,10 +81,16 @@ class ScriptFeature : public App::Feature
 		void RemoveScript(ScriptComponent* const pCom, const ScriptInstances& scriptInstances);
 		/// attach script general
 		void AttachScript(ScriptComponent* const pCom, const ScriptInstances& scriptInstances);
+
+		void PushObjectToDelayRelease( RefCounted* obj );
 	protected:
 
 		ScriptInstanceArraies m_ScriptInstanceArraies;
 		Util::Array <ScriptComponent*>                    m_pScriptComs;
+	private:
+		Threading::CriticalSection							m_CriticalSection;
+		Util::Array<RefCounted*>							m_DelayReleaseArray[SC_SWAP_BUFFER_SIZE];
+		int													m_nSwapIndex;
 	};
 
 }

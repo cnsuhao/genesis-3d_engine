@@ -49,11 +49,13 @@ namespace App
         return 0;
 #endif
 #ifdef __ANDROID__
-		return 0;
+		//return 0;
 #endif
+		
 		const GPtr<Input::InputKeyboard>& keyboard = App::InputFeature::Instance()->GetInputServer()->GetDefaultKeyboard();
 
 		bool down = keyboard->KeyDown((Input::InputKey::Code)iKeyCode);
+
 		return (mono_bool)down;	
 	}
 	//------------------------------------------------------------------------
@@ -63,10 +65,11 @@ namespace App
         return 0;
 #endif
 #ifdef __ANDROID__
-		return 0;
+		//return 0;
 #endif
 		const GPtr<Input::InputKeyboard>& keyboard = App::InputFeature::Instance()->GetInputServer()->GetDefaultKeyboard();
-		return (mono_bool)keyboard->KeyUp((Input::InputKey::Code)iKeyCode);	
+		bool up = keyboard->KeyUp((Input::InputKey::Code)iKeyCode);
+		return (mono_bool)up;	
 	}
 	//------------------------------------------------------------------------
 	static mono_bool ICall_Input_KeyPressed( int iKeyCode)
@@ -75,10 +78,11 @@ namespace App
         return 0;
 #endif
 #ifdef __ANDROID__
-		return 0;
+		//return 0;
 #endif
 		const GPtr<Input::InputKeyboard>& keyboard = App::InputFeature::Instance()->GetInputServer()->GetDefaultKeyboard();
-		return (mono_bool)keyboard->KeyPressed((Input::InputKey::Code)iKeyCode);	
+		bool down = keyboard->KeyPressed((Input::InputKey::Code)iKeyCode);
+		return (mono_bool)down;	
 	}
 	//------------------------------------------------------------------------
 	static mono_bool ICall_Input_MouseButtonDown( int iBtn)

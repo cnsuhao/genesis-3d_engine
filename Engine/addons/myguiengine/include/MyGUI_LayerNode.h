@@ -66,7 +66,9 @@ namespace MyGUI
 		virtual void detachLayerItem(ILayerItem* _item);
 
 		// добавляет саб айтем и возвращает рендер айтем
-		virtual RenderItem* addToRenderItem(ITexture* _texture, bool _firstQueue, bool _manualRender);
+		virtual RenderItem* addToRenderItem(ISubWidget* _subWidget, ITexture* _texture, bool _firstQueue, bool _separate);
+
+		virtual RenderItem* updateRenderItem(ISubWidget* _subWidget, RenderItem* _itemOld, ITexture* _texNew, bool _firstQueue, bool _separate);
 		// необходимо обновление нода
 		virtual void outOfDate(RenderItem* _item);
 
@@ -82,6 +84,15 @@ namespace MyGUI
 
 	protected:
 		void updateCompression();
+		RenderItem* getRenderItem(ITexture* _texture, bool _firstQueue, bool _manualRender);
+
+		RenderItem* newRenderItem(ITexture* _texture, bool _manualRender);
+		RenderItem* pushNewRenderItem(VectorRenderItem& _array, ITexture* _texture, bool _manualRender);
+
+		VectorRenderItem::iterator insertNewRenderItem(ITexture* _texture, bool _manualRender, const VectorDrawItem& _nodes,
+			VectorRenderItem& _array, const VectorRenderItem::iterator& _where);
+
+		void notifyRenderItemChanged(const VectorDrawItem& _nodes, RenderItem* _old, RenderItem* _new);
 
 	protected:
 		// список двух очередей отрисовки, для сабскинов и текста

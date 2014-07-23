@@ -32,31 +32,31 @@ namespace App
 	static void ICall_Debug_Printf( MonoString* pMonoString )
 	{
 		Util::String str = Utility_MonoStringToCppString( pMonoString );
-		n_printf(str.AsCharPtr());
+		script_printf(str.AsCharPtr());
 	}
 
 	static void ICall_Debug_Error( MonoString* pMonoString )
 	{
 		Util::String str = Utility_MonoStringToCppString( pMonoString );
-		n_error(str.AsCharPtr());
+		script_error(str.AsCharPtr());
 	}
 	
 	static void ICall_Debug_Dbgout( MonoString* pMonoString )
 	{
 		Util::String str = Utility_MonoStringToCppString( pMonoString );
-		n_dbgout(str.AsCharPtr());
+		script_dbgout(str.AsCharPtr());
 	}
 	
 	static void ICall_Debug_Warning( MonoString* pMonoString )
 	{
 		Util::String str = Utility_MonoStringToCppString( pMonoString );
-		n_warning(str.AsCharPtr());
+		script_warning(str.AsCharPtr());
 	}
 
 	static void ICall_Debug_Confirm( MonoString* pMonoString )
 	{
 		Util::String str = Utility_MonoStringToCppString( pMonoString );
-		n_confirm(str.AsCharPtr());
+		script_confirm(str.AsCharPtr());
 	}
 
 	static void ICall_Debug_Assert( mono_bool exp )

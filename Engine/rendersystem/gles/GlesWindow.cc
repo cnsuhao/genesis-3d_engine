@@ -43,12 +43,12 @@ namespace GLES
 
 	void GLESWindow::BeginRender()
 	{
-		m_RenderDevice->BeginFrame();
+		//m_RenderDevice->BeginFrame();
 	}
 
 	void GLESWindow::EndRender()
 	{
-		m_RenderDevice->EndFrame();
+		//m_RenderDevice->EndFrame();
 
 		m_RenderDevice->Present(mWnd);
 	}

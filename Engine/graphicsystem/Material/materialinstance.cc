@@ -35,7 +35,6 @@ namespace Graphic
 		using namespace Resources;
 	GPtr<MaterialInstance> MaterialInstance::NullMaterial(NULL);
 	static uint sInstanceID = 1;//零位保留，表示空
-	static const uint sSortDefault = 1000; 
 	static const Util::String scUserDefTex="#UserDefTex";
 
 
@@ -43,7 +42,7 @@ namespace Graphic
 		, m_allLoaded(false)
 		, m_isbuild(false)
 		, m_materialID("")
-		, m_sort(sSortDefault)
+		, m_sort(Graphic::MatSort_Default)
 	{
 		//m_sort = sSortDefault;
 		m_InstanceID = sInstanceID;
@@ -203,7 +202,7 @@ namespace Graphic
 		{
 			mp->SetValue(val);
 			Util::String val1 = mp->GetStringValue();
-			_SetConstantParamOld(paramName, val1 );
+			_SetConstantParamOld(paramName, val1);
 		}
 		return ret;
 	}

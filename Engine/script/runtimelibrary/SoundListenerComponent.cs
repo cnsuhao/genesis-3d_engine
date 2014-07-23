@@ -42,7 +42,7 @@ namespace ScriptRuntime
         /// <summary>
         /// 监听器组件的构造函数
         /// </summary>
-        public SoundListenerComponent()
+        protected SoundListenerComponent()
         {
             ICall_SoundListenerComponent_Bind(this);
         }

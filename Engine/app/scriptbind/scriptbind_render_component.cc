@@ -63,6 +63,7 @@ namespace App
 
 		bool b = Utility_MonoBool(bCopy);
 		self->SetMaterialID( iSubMesh, sShaderID, b);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//--------------------------------------------------------------------------------------------------
 	static void ICall_RenderComponent_SetMaterialInstance( MonoObject* pMonoObj, int iSubMesh, MonoObject* pMonoInstance, mono_bool bCopy)
@@ -72,6 +73,7 @@ namespace App
 		bool b = Utility_MonoBool(bCopy);
 
 		self->SetMaterialID( iSubMesh, materialInstance->GetMaterialID(), b);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//--------------------------------------------------------------------------------------------------
 	static MonoString* ICall_RenderComponent_GetShaderID(MonoObject* pMonoObj,int index)
@@ -101,6 +103,7 @@ namespace App
 		Util::String sShaderID = Utility_MonoStringToCppString( pMonoStr );
 
 		self->SetMaterialByShaderID( iSubMesh, sShaderID );
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//--------------------------------------------------------------------------------------------------
 	static void ICall_RenderComponent_SetTexture( MonoObject*pMonoObj, 
@@ -114,6 +117,7 @@ namespace App
 		Util::String sTexId     = Utility_MonoStringToCppString( pMonoStrTexId );
 
 		self->SetTexture( iSubMesh, sParamName, sTexId, iPriority );
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//--------------------------------------------------------------------------------------------------
 	static void ICall_RenderComponent_SetTextureRTT( MonoObject*pMonoObj, 
@@ -172,6 +176,7 @@ namespace App
 	{
 		ScriptObjWrapper<RenderComponent> self( pMonoObj );
 		self->SetVisible( visible );
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//--------------------------------------------------------------------------------------------------
 	static bool ICall_RenderComponent_IsVisible( MonoObject* pMonoObj, bool visible )

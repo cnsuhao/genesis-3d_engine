@@ -369,7 +369,7 @@ namespace App
 		pTemplate->CopyFrom(pSource,actorPropertySet, true, false, false);
 
 #ifdef __GENESIS_EDITOR__
-		pTemplate->SetFrozen(false,false);
+		pTemplate->SetFrozen(false, true);
 #endif
 
 		// template must deactive and link false
@@ -447,8 +447,6 @@ namespace App
 				} 				
 				
 				pTemplate->SetName(templateActorName);
-
-				
 				
 
 				if (WriteTemplateFile(templateName,pTemplate,iFileType))
@@ -581,7 +579,9 @@ namespace App
 			// cache
 			IndexT index = mTemplateActors.FindIndex( actorTemplateName );
 			if ( index == InvalidIndex)
+			{
 				mTemplateActors.Add(actorTemplateName, templateInfo);
+			}
 			else
 				mTemplateActors.ValueAtIndex( index ) = templateInfo;
 			
@@ -783,7 +783,7 @@ namespace App
 		}
 	}
 	//------------------------------------------------------------------------
-	void ActorManager::DeactiveActors( uint layerMark )
+	void ActorManager::DeactiveActors(Graphic::IRenderScene* renderScene, uint layerMark)
 	{
 		ActiveActorContainer copys = mActiveActors;
 		ActiveActorContainer::Iterator it = copys.Begin();
@@ -793,7 +793,7 @@ namespace App
 			Actor* actor = it->Value();
 			LayerID layerID = actor->GetLayerID();
 			uint mark = BIT_FLAG(layerID);
-			if (mark & layerMark)
+			if (mark & layerMark && renderScene == actor->GetRenderScene())
 			{
 				actor->Deactive();
 			}

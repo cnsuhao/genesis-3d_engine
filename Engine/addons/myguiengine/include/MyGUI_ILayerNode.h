@@ -29,7 +29,7 @@
 
 namespace MyGUI
 {
-
+	class ISubWidget;
 	class ILayer;
 	class ILayerItem;
 	class ILayerNode;
@@ -70,7 +70,9 @@ namespace MyGUI
 		virtual void detachLayerItem(ILayerItem* _root) = 0;
 
 		// добавляет саб айтем и возвращает рендер айтем
-		virtual RenderItem* addToRenderItem(ITexture* _texture, bool _firstQueue, bool _separate) = 0;
+		virtual RenderItem* addToRenderItem(ISubWidget* _item, ITexture* _texture, bool _firstQueue, bool _separate) = 0;
+
+		virtual RenderItem* updateRenderItem(ISubWidget* _subWidget, RenderItem* _itemOld, ITexture* _texNew, bool _firstQueue, bool _separate) = 0;
 		// необходимо обновление нода
 		virtual void outOfDate(RenderItem* _item) = 0;
 

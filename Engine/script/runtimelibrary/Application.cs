@@ -32,6 +32,14 @@ namespace ScriptRuntime
     /// </summary>
     public static partial class Application
     {
+        enum SceneState
+        {
+            Loading = 0,
+		    Loaded  = 1,
+		    Closing = 2,
+		    Closed  = 3,
+		    Unknown = 4,
+        }
         /// <summary>
         /// 打开场景
         /// </summary>
@@ -113,6 +121,25 @@ namespace ScriptRuntime
             {
                 return ICall_Application_GetCurrentScene();
             }
+        }
+        /// <summary>
+        /// 当前场景的加载状态
+        /// </summary>
+        /// <returns>返回 Unknown 表明当前没有场景</returns>
+        public static int CurrentSceneState
+        {
+            get
+            {
+                return ICall_Application_GetCurrentSceneState();
+            }
+        }
+        /// <summary>
+        /// 获得场景的加载状态
+        /// </summary>
+        /// <returns>返回 Unknown 表明该场景从未被加载或者已经完成卸载</returns>
+        public static int GetSceneState(String sceneResID)
+        {
+            return ICall_Application_GetSceneState(sceneResID);
         }
     }
 }

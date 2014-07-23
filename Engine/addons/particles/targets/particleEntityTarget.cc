@@ -103,8 +103,9 @@ namespace Particles
 		}
 		Math::bbox bb;
 		_calculateBBox(bb,GetMatrixList());
-		bb.pmin -= mBoundingBox.pmin;
-		bb.pmax += mBoundingBox.pmax;
+		point pp = mBoundingBox.pmax - mBoundingBox.pmin;
+		bb.pmin -= pp*0.5;
+		bb.pmax += pp*0.5;
 		const Math::matrix44& worldMat = mParentSystem->GetWorldMatrix();
 		Math::matrix44 invMat = Math::matrix44::inverse(worldMat);
 		bb.transform(invMat);

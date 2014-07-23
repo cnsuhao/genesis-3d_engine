@@ -383,10 +383,10 @@ LightComponent::_SetupGlobalLightFrustum_NoCascade()
 	}
 
 	GlobalMaterialParam* pGMP = Material::GetGlobalMaterialParams();
-	pGMP->SetVectorParam(eGShaderVecLightCameraFrustumIntervalEnd,float4(splitDistances[1],splitDistances[2],splitDistances[3],splitDistances[4]));
 	Math::scalar fSize = Math::scalar( smcList.Size() );
 	const RenderBase::DisplayMode& dm = Graphic::GraphicSystem::Instance()->GetMainViewPortWindow()->GetDisplayMode();
 
+	pGMP->SetVectorParam(eGShaderVecLightCameraFrustumIntervalEnd,float4(splitDistances[1],splitDistances[2],splitDistances[3],splitDistances[4]));
 	pGMP->SetVectorParam(eGShaderVecShadowMapSize,float4((float)shadowMapWidth,(float)shadowMapWidth,m_depthBias,fSize));//width,height,bias,cascade levels
 	// set shadow color and strength
 	// shadow.w = shadow strength

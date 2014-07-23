@@ -40,7 +40,15 @@ THE SOFTWARE.
 namespace Graphic
 {
 
-	
+	struct SceneSort : public std::binary_function<const RenderScene*, const RenderScene*, std::size_t>
+	{
+		bool operator() (const RenderScene* lhs, const RenderScene* rhs) const
+		{
+			return lhs->GetRenderSort() < rhs->GetRenderSort();
+		}
+	};
+
+
 
 	//__ImplementClass(ViewPortWindow,'VPWS',Core::RefCounted)
 
@@ -63,14 +71,12 @@ namespace Graphic
 	static const GPtr<ViewPortWindow> ViewPortWindowNull = NULL;
 	static const SizeT DefaultBlockSize = 1 << 23;
 	static const SizeT AdditionBlockSize = 1 << 22;
+	static const SizeT RenderTargetCacheSize = 8;
 
 	GraphicSystem::GraphicSystem()
 		:m_nViewPort(0)
 		,m_ViewPortDirty(false)
-		,m_uiDrawCallBack(NULL)
-		,m_uiBeforeDrawCallBack(NULL)
 		,m_debugDrawCallBack(NULL)
-		,m_currentViewPortWindow(NULL)
 	{
 		__ConstructImageSingleton;
 		m_graphicDisplay = RenderDisplay::Create();
@@ -129,18 +135,15 @@ namespace Graphic
 #if USE_RENDER_THREAD
 		Super::Open();
 #endif
-
-
-		m_streamBufferPool = StreamBufferPool::Create();
-		m_streamBufferPool->Setup(DefaultBlockSize, AdditionBlockSize);
+		StartRenderSystem(width, height);
 
 		_SetupDefaultObjects();
 
-		StartRenderSystem(width, height);
-
 		_CreateDefaultViewPortWindow((WindHandle)hWnd , RenderBase::DisplayMode(0, 0, width, height, RenderBase::PixelFormat::X8R8G8B8));
 
-		//m_ViewPortLists[vp_default]->_SetDisplayMode(RenderBase::DisplayMode(0, 0, width, height, RenderBase::PixelFormat::X8R8G8B8));
+		m_RenderTargetCache.Resize(RenderTargetCacheSize, RenderBase::RenderTargetHandle());
+
+		Material::SetupGlobalMaterialParams();
 	}
 	//------------------------------------------------------------------------
 	void GraphicSystem::StartRenderSystem(int width, int height)
@@ -155,7 +158,25 @@ namespace Graphic
 
 	void GraphicSystem::_SetupDefaultObjects()
 	{
-		//empty
+		m_streamBufferPool = StreamBufferPool::Create();
+		m_streamBufferPool->Setup(DefaultBlockSize, AdditionBlockSize);
+
+#if __WIN32__ && RENDERDEVICE_D3D9
+
+		m_DefaultWhiteRTT = RenderToTexture::Create();
+		m_DefaultWhiteRTT->Setup(1,1,RenderBase::PixelFormat::X8R8G8B8, 
+			RenderBase::RenderTarget::ClearAll, Math::float4(1.0f,1.0f,1.0f,1.0f), 
+			true,1.f);
+
+#endif
+	}
+
+	void GraphicSystem::_DestroyDefaultObjects()
+	{
+		m_DefaultWhiteRTT = NULL;
+
+		m_streamBufferPool->Destory();
+		m_streamBufferPool = NULL;
 	}
 
 	void GraphicSystem::OnUpateFrame()
@@ -167,47 +188,154 @@ namespace Graphic
 		PROFILER_ADDDTICKEND(drawTime);
 	}
 
+	void GraphicSystem::SortRenderScene()
+	{
+		Util::CustomSortArray<RenderScene*, SceneSort>(m_RenderSceneLists);
+	}
+
+	void GraphicSystem::AddRenderScene(RenderScene* pScene)
+	{
+		RenderSceneList::Iterator it = m_RenderSceneLists.Find(pScene);
+		if (NULL == it)
+		{
+			m_RenderSceneLists.Append(pScene);
+			SortRenderScene();
+		}
+	}
+
+	void GraphicSystem::RemoveRenderScene(RenderScene* pScene)
+	{
+		RenderSceneList::Iterator it = m_RenderSceneLists.Find(pScene);
+		if (NULL != it)
+		{
+			m_RenderSceneLists.Erase(it);
+		}
+	}
+
 	//--------------------------------------------------------------------------------
-	void GraphicSystem::SetCurrentTargetWindow(ViewPortWindow* target, RenderBase::RenderTarget::ClearFlag flag)
+	void GraphicSystem::PushTargetWindow(ViewPortWindow* target)
 	{
 		ViewPortWindow* tg = target;
 		if (!tg)
 		{
 			tg = GetMainViewPortWindow();
 		}
-		_SetCurrentTargetWindow(tg);
-		SetRenderTarget(tg->GetBackBuffer(), 0, flag);
+		_PushTargetWindow(tg);
 	}
 
-	void GraphicSystem::_SetCurrentTargetWindow(ViewPortWindow* target)
+
+	void GraphicSystem::_PushTargetWindow(ViewPortWindow* target)
 	{
 		n_assert(target != NULL);
-		m_currentViewPortWindow = target;
-		if (InvalidIndex == m_windowCache.FindIndex(target))
-		{
-			m_windowCache.Append(target);
-		}
 
-		target->BeginRender();
+		if (_FindInCache(target) == NULL)
+		{
+			WinCache wc;
+			wc.window = target;
+			wc.nocleare = true;
+			m_windowCache.Append(wc);
+			target->BeginRender();
+		}
+	}
+
+	GraphicSystem::WinCache* GraphicSystem::_FindInCache(ViewPortWindow* target) const
+	{
+		ViewportWindows::Iterator it = m_windowCache.Begin();
+		ViewportWindows::Iterator end = m_windowCache.End();
+		while(it != end)
+		{
+			if (it->window == target)
+			{
+				return it;
+			}
+			++it;
+		}
+		return NULL;
+	}
+
+	void GraphicSystem::_SetRenderWindow(ViewPortWindow* target)
+	{
+		WinCache* wc = _FindInCache(target);
+		if (wc)
+		{
+			if (wc->nocleare)
+			{
+				SetRenderTarget(target->_GetRTTSuite()->GetRenderToTexture(), 0, RenderBase::RenderTarget::ClearAll);
+				wc->nocleare = false;
+			}
+			else
+			{
+				SetRenderTarget(target->_GetRTTSuite()->GetRenderToTexture(), 0, RenderBase::RenderTarget::ClearDepth);
+			}
+		}
+	}
+
+	void GraphicSystem::_SetBackBuffer(ViewPortWindow* target)
+	{
+		WinCache* wc = _FindInCache(target);
+		if (wc)
+		{
+			if (wc->nocleare)
+			{
+				SetRenderTarget(target->GetBackBuffer(), 0, RenderBase::RenderTarget::ClearAll);
+			}
+			else
+			{
+				SetRenderTarget(target->GetBackBuffer(), 0, RenderBase::RenderTarget::ClearNone);
+			}
+		}
+		else
+		{
+			_PushTargetWindow(target);
+			SetRenderTarget(target->GetBackBuffer(), 0, RenderBase::RenderTarget::ClearAll);
+		}
 	}
 
 	void GraphicSystem::_ClearWindowCache()
 	{
-		m_currentViewPortWindow = NULL;
-		m_windowCache.Clear(false);
+		m_windowCache.Clear(false); 
+	}
+
+	void GraphicSystem::_ApplyBackBuffer()
+	{
+		if (m_windowCache.Size())
+		{
+			ViewportWindows::Iterator it = m_windowCache.Begin();
+			ViewportWindows::Iterator end = m_windowCache.End();
+			while(it != end)
+			{			
+				if (it->window->GetBackBuffer().isvalid())
+				{
+					ImageFiltrationSystem::Render(&it->window->_GetRTTSuite()->GetRenderToTexture()->GetTextureHandle(), 
+						it->window->GetBackBuffer().get(), NULL, 0, RenderBase::RenderTarget::ClearNone);
+				}
+				++it;
+			}
+		}
+		else
+		{
+			SetRenderTarget(m_ViewPortLists[vp_default]->GetBackBuffer(), 0, RenderBase::RenderTarget::ClearAll);
+		}
+
 	}
 
 	void GraphicSystem::_ApplyWindows()
 	{
-		Windows::Iterator it = m_windowCache.Begin();
-		Windows::Iterator end = m_windowCache.End();
-		while(it != end)
+		if (m_windowCache.Size())
 		{
-			//SetRenderTarget((*it)->GetBackBuffer(), 0, RenderBase::RenderTarget::ClearNone);
-			(*it)->ApplyWindow();
-			++it;
+			ViewportWindows::Iterator it = m_windowCache.Begin();
+			ViewportWindows::Iterator end = m_windowCache.End();
+			while(it != end)
+			{					
+				it->window->ApplyWindow();
+				++it;
+			}
 		}
-		m_currentViewPortWindow = NULL;
+		else
+		{
+			m_ViewPortLists[vp_default]->BeginRender();
+			m_ViewPortLists[vp_default]->ApplyWindow();
+		}
 	}
 
 	const Camera* GraphicSystem::GetRenderingCamera()
@@ -253,54 +381,47 @@ namespace Graphic
 
 	void GraphicSystem::RenderAll()
 	{
-		if (m_uiBeforeDrawCallBack) // [2012.3.27 zhongdaohuan]
-		{
-			m_uiBeforeDrawCallBack();
-		}
 		_ClearWindowCache();
 		mRenderSystem->BeginFrame();
 
-		//m_cameraList里的camera是有序的，主窗口下的camera总是在后边。
-		for(IndexT i = m_RenderSceneLists.Size() - 1; i >= 0; i--)
+		for(IndexT i = 0; i < m_RenderSceneLists.Size(); ++i)
 		{
 			RenderScene::CameraList::Iterator it = m_RenderSceneLists[i]->GetCameraList().Begin();
 			RenderScene::CameraList::Iterator end = m_RenderSceneLists[i]->GetCameraList().End();
 
 
-			while(it != end)//其他窗口渲染
+			while(it != end)
 			{
-				ViewPortWindow* vpw = (*it)->GetTargetWindow();
-				if (NULL == vpw)
-				{
-					vpw = GetMainViewPortWindow();
-				}
-				if (vpw->GetNeedUpdate())
-				{
-					_SetCurrentTargetWindow(vpw);
-
+				if ((*it)->GetRenderTargetSuite())
+				{				
 					_RenderCamera((*it));
+				}
+				else
+				{
+					ViewPortWindow* vpw = (*it)->GetTargetWindow();
+					if (NULL == vpw)
+					{
+						vpw = GetMainViewPortWindow();
+					}
+					if (vpw->GetNeedUpdate())
+					{
+						_PushTargetWindow(vpw);
+						_RenderCamera((*it));
+					}
 				}
 				++it;
 			}
-		}
-		//if (NULL == m_currentViewPortWindow)
-		//{
-		//	SetCurrentTargetWindow(GetMainViewPortWindow());
-		//	//SetRenderTarget(RenderBase::RenderTargetHandle());
-		//}
-
-		if (m_uiDrawCallBack)
-		{
-			m_uiDrawCallBack();
 		}
 
 		if ( m_debugDrawCallBack )
 		{
 			m_debugDrawCallBack();
 		}
+		_ApplyBackBuffer();
 		mRenderSystem->EndFrame();
 		_ApplyWindows();
 
+		m_RenderTargetCache.Resize(RenderTargetCacheSize, RenderBase::RenderTargetHandle());
 	}
 
 	//--------------------------------------------------------------------------------
@@ -360,8 +481,8 @@ namespace Graphic
 		
 		m_RenderSceneLists.Clear();
 		m_ViewPortLists.Clear();
-		m_streamBufferPool->Destory();
-		m_streamBufferPool = NULL;
+
+		_DestroyDefaultObjects();
 
 		Material::RemoveGlobalMaterialParams();
 
@@ -371,7 +492,7 @@ namespace Graphic
 #endif
 	}
 	//------------------------------------------------------------------------
-	void GraphicSystem::SetViewPort(const Camera::ViewPort& vp)
+	void GraphicSystem::SetViewport(const Camera::Viewport& vp)
 	{
 #if USE_RENDER_THREAD
 		GPtr<RenderBase::SetViewPortMSG> svpmsg = RenderBase::SetViewPortMSG::Create();
@@ -783,6 +904,7 @@ namespace Graphic
 		srtmsg->SetClearFlag(clearflag);
 		SendWait(srtmsg.cast<Messaging::Message>());
 #else
+		_SetRenderTarget(handle, index);
 		mRenderSystem->_SetRenderTarget(handle,index,clearflag);
 #endif
 
@@ -790,8 +912,25 @@ namespace Graphic
 
 	void GraphicSystem::SetRenderTarget(const GPtr<RenderToTexture>& rt,SizeT index,uint clearflag)
 	{
-		n_assert(rt.isvalid())
-			SetRenderTarget(rt->GetTargetHandle(),index,clearflag);
+		n_assert(rt.isvalid());
+		_SetRenderTarget(rt->GetTargetHandle(), index);
+		SetRenderTarget(rt->GetTargetHandle(),index,clearflag);
+	}
+	RenderBase::RenderTargetHandle GraphicSystem::GetRenderTarget(SizeT index)
+	{		
+		if (0 <= index && index < m_RenderTargetCache.Size())
+		{
+			return m_RenderTargetCache[index];
+		}
+		return RenderBase::RenderTargetHandle();
+	}
+
+	void GraphicSystem::_SetRenderTarget(const RenderBase::RenderTargetHandle& handle, SizeT index)
+	{
+		if (0 <= index && index < m_RenderTargetCache.Size())
+		{
+			m_RenderTargetCache[index] = handle;
+		}
 	}
 
 	void GraphicSystem::SetRenderTargetClearColor(const GPtr<RenderToTexture>& rt,const Math::float4& clearColor)
@@ -1007,7 +1146,14 @@ namespace Graphic
 		n_assert(m_ViewPortLists.Size() != 0);
 
 		GPtr<ViewPortWindow> pVPWnd = ViewPortWindow::Create();
-		pVPWnd->SetDeviceWindow(mRenderSystem->CreateRenderWindow( hWnd ));	
+		if (hWnd != NULL)
+		{
+			pVPWnd->SetDeviceWindow(mRenderSystem->CreateRenderWindow( hWnd ));	
+		}
+		else
+		{
+			pVPWnd->SetDeviceWindow(NULL);
+		}
 		pVPWnd->_SetType(VPT_CustomBegin);
 		pVPWnd->_SetDisplayMode(mode);
 		pVPWnd->Setup();
@@ -1085,12 +1231,22 @@ namespace Graphic
 				if ((*it)->GetCameraOrder() == eCO_Main)
 				{
 					ViewPortWindow* win = (NULL == (*it)->GetTargetWindow())? m_ViewPortLists[vp_default] : (*it)->GetTargetWindow();
-					(*it)->OnDeviceReset(win->GetDisplayMode());
+					(*it)->OnDeviceReset();
 				}
 
 				it++;
 			}
 		}
+
+		ViewPorts::Iterator it = m_ViewPortLists.Begin();
+		ViewPorts::Iterator end = m_ViewPortLists.End();
+
+		while(it != end)
+		{
+			(*it)->OnDeviceReset();
+			it++;
+		}
+
 
 #elif RENDERDEVICE_OPENGLES
 		Resources::ResourceManager::Instance()->ReloadAllVideoMemResource();

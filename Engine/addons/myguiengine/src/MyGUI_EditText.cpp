@@ -303,11 +303,15 @@ namespace MyGUI
 		// если есть текстура, то приаттачиваемся
 		if (nullptr != mTexture && nullptr != mNode)
 		{
-			mRenderItem = mNode->addToRenderItem(mTexture, false, false);
-			mRenderItem->addDrawItem(this, mCountVertex);
+			mRenderItem = mNode->addToRenderItem(this, mTexture, false, false);
 		}
 
 		if (nullptr != mNode) mNode->outOfDate(mRenderItem);
+	}
+
+	size_t EditText::getVertexCount() const
+	{
+		return mCountVertex;
 	}
 
 	const std::string& EditText::getFontName() const
@@ -337,8 +341,20 @@ namespace MyGUI
 		{
 			MYGUI_ASSERT(!mRenderItem, "mRenderItem must be nullptr");
 
-			mRenderItem = mNode->addToRenderItem(mTexture, false, false);
-			mRenderItem->addDrawItem(this, mCountVertex);
+			mRenderItem = mNode->addToRenderItem(this, mTexture, false, false);
+			//mRenderItem->addDrawItem(this, mCountVertex);
+		}
+	}
+
+	void EditText::updateDrawItem(ITexture* _texture, ILayerNode* _node)
+	{
+		mNode = _node;
+		if (nullptr != mTexture)
+		{
+			MYGUI_ASSERT(mRenderItem, "mRenderItem must not be nullptr");
+
+			mRenderItem = mNode->updateRenderItem(this, mRenderItem, mTexture, false, false);
+			//mRenderItem->addDrawItem(this, mCountVertex);
 		}
 	}
 
@@ -350,6 +366,14 @@ namespace MyGUI
 			mRenderItem = nullptr;
 		}
 		mNode = nullptr;
+	}
+
+	void EditText::onRenderItemChanged(ILayerNode* _sender, RenderItem* _old, RenderItem* _new)
+	{
+		if (mNode == _sender && nullptr != mTexture)
+		{
+			mRenderItem = _new;
+		}
 	}
 
 	size_t EditText::getTextSelectionStart() const
@@ -648,6 +672,8 @@ namespace MyGUI
 
 		// колличество реально отрисованных вершин
 		mRenderItem->setLastVertexCount(vertexCount);
+
+		mRenderItem->setMaterialType(MyGUI::NORMAL);
 	}
 
 	void EditText::setInvertSelected(bool _value)

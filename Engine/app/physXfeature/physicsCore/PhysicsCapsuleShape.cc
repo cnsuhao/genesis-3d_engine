@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-#if __USE_PHYSX__ || __GENESIS_EDITOR__
+#if defined (__USE_PHYSX__) || defined (__GENESIS_EDITOR__)
 #include "stdneb.h"
 #include "appframework/actor.h"
 #include "PhysicsCapsuleShape.h"
@@ -69,13 +69,9 @@ namespace App
 
 	void PhysicsCapsuleShape::OnResize(const Math::bbox& bb)
 	{
-		const Math::bbox& _box = bb;
-		Math::vector _center(_box.center().x(), _box.center().y(), _box.center().z());
-		Math::vector _value = _center*m_ActorScale;
-		m_Center.set(_value.x(), _value.y(), _value.z());
-		if (!Math::n_nearequal(_box.size().length(),0.0f,0.001f))
+		if (!Math::n_nearequal(bb.size().length(),0.0f,0.001f))
 		{
-			Math::float2 _extent = _GetScaledLocalExtent(_box.size(), (Math::scalar)m_Direct);
+			Math::float2 _extent = _GetScaledLocalExtent(bb.size(), (Math::scalar)m_Direct);
 			m_Radius = _extent.x();
 			m_Height = _extent.y();
 		}
@@ -138,8 +134,13 @@ namespace App
 		if (m_pShape)
 		{
 			Math::quaternion _realRotation = Math::quaternion::multiply(m_Rotation, _GetQuatByDirection((Math::scalar)m_Direct));
-
-			PxMat44 pos = RotPosToPxMat(m_Center,_realRotation);
+			Math::float3 bbCenter(0.0f, 0.0f, 0.0f);
+			if (m_pEntity && m_pEntity->GetBodyCom() && m_pEntity->GetBodyCom()->GetActor())
+			{
+				const Math::bbox& bb = m_pEntity->GetBodyCom()->GetActor()->GetLocalBoundingBox();
+				bbCenter.set(bb.center().x(), bb.center().y(), bb.center().z());
+			}
+			PxMat44 pos = RotPosToPxMat(m_Center+bbCenter,_realRotation);
 			m_pShape->setLocalPose(PxTransform(pos));
 		}
 	}

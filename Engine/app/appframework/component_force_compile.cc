@@ -48,13 +48,13 @@ namespace App
 			mActor->ThrowMessageToScript<T>(name, pair);
 		}
 	}
-	 void Component::Component_force_compiler()
-	{
-		return; // forbid to call me
-
-		//GPtr<PhysicsShapeComponent> pTemp;
-		//SendMessageToScript<PhysicsShapeComponent>("", pTemp,pTemp);
-	}
+// 	 void Component::Component_force_compiler()
+// 	{
+// 		return; // forbid to call me
+// 
+// 		//GPtr<PhysicsShapeComponent> pTemp;
+// 		//SendMessageToScript<PhysicsShapeComponent>("", pTemp,pTemp);
+// 	}
 
 	
 	

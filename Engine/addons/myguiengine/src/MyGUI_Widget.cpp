@@ -74,6 +74,7 @@ namespace MyGUI
 			skinInfo = SkinManager::getInstance().getByName(_skinName);
 
 		mCoord = _coord;
+		mFloatCoord = _coord;
 
 		mAlign = Align::Default;
 		mWidgetStyle = _style;
@@ -580,46 +581,98 @@ namespace MyGUI
 
 		bool need_move = false;
 		bool need_size = false;
-		IntCoord coord = mCoord;
+		FloatCoord fcoord = mFloatCoord;
 
 		// первоначальное выравнивание
 		if (mAlign.isHStretch())
 		{
 			// растягиваем
-			coord.width = mCoord.width + (size.width - _oldsize.width);
+			fcoord.width = mFloatCoord.width + (float)(size.width - _oldsize.width);
 			need_size = true;
 		}
 		else if (mAlign.isRight())
 		{
 			// двигаем по правому краю
-			coord.left = mCoord.left + (size.width - _oldsize.width);
+			fcoord.left = mFloatCoord.left + (float)(size.width - _oldsize.width);
 			need_move = true;
 		}
 		else if (mAlign.isHCenter())
 		{
 			// выравнивание по горизонтали без растяжения
-			coord.left = (size.width - mCoord.width) / 2;
+			fcoord.left = ((float)size.width - mFloatCoord.width) / 2.f;
+			need_move = true;
+		}
+
+		if (mAlign.isProHStretch())
+		{
+			float Delt = ((float)size.width * fcoord.left)/(float)_oldsize.width;
+			fcoord.left = Delt;
+			Delt = ((float)size.width * fcoord.width)/(float)_oldsize.width;
+			fcoord.width = Delt;
+			need_size = true;
+			need_move = true;
+		}
+		else if (mAlign.isProRight())
+		{
+			float Delt = ((float)size.width * ((float)_oldsize.width - fcoord.right()))/(float)_oldsize.width;
+			float newRight = (float)size.width - Delt;
+			fcoord.left = newRight - mFloatCoord.width;
+			need_move = true;
+		}
+		else if (mAlign.isProLeft())
+		{
+			float Delt = ((float)size.width * fcoord.left)/(float)_oldsize.width;
+			fcoord.left = Delt;
 			need_move = true;
 		}
 
 		if (mAlign.isVStretch())
 		{
 			// растягиваем
-			coord.height = mCoord.height + (size.height - _oldsize.height);
+			fcoord.height = mFloatCoord.height + (float)(size.height - _oldsize.height);
 			need_size = true;
 		}
 		else if (mAlign.isBottom())
 		{
 			// двигаем по нижнему краю
-			coord.top = mCoord.top + (size.height - _oldsize.height);
+			fcoord.top = mFloatCoord.top + (float)(size.height - _oldsize.height);
 			need_move = true;
 		}
 		else if (mAlign.isVCenter())
 		{
 			// выравнивание по вертикали без растяжения
-			coord.top = (size.height - mCoord.height) / 2;
+			fcoord.top = ((float)size.height - mFloatCoord.height) / 2.f;
 			need_move = true;
 		}
+
+		if (mAlign.isProVStretch())
+		{
+			float Delt = (float)(size.height * fcoord.top)/(float)_oldsize.height;
+			fcoord.top = Delt;
+			Delt = (float)(size.height * fcoord.height)/(float)_oldsize.height;
+			fcoord.height = Delt;
+			need_size = true;
+			need_move = true;
+		}
+		else if (mAlign.isProBottom())
+		{
+			float Delt = ((float)size.height * ((float)_oldsize.height - fcoord.bottom()))/(float)_oldsize.height;
+			float newBottom = (float)size.height - Delt;
+			fcoord.top = newBottom - mFloatCoord.height;
+			need_move = true;
+		}
+		else if (mAlign.isProTop())
+		{
+			float Delt = ((float)size.height * fcoord.top)/(float)_oldsize.height;
+			fcoord.top = Delt;
+			need_move = true;
+		}
+
+		IntCoord coord;
+		coord.left = fcoord.left;
+		coord.top = fcoord.top;
+		coord.width = fcoord.width;
+		coord.height = fcoord.height;
 
 		if (need_move)
 		{
@@ -636,6 +689,8 @@ namespace MyGUI
 		{
 			_updateView(); // только если не вызвано передвижение и сайз
 		}
+
+		mFloatCoord = fcoord;
 	}
 
 	void Widget::setPosition(const IntPoint& _point)
@@ -649,6 +704,8 @@ namespace MyGUI
 			(*widget)->_updateAbsolutePoint();
 
 		mCoord = _point;
+		mFloatCoord.left = _point.left;
+		mFloatCoord.top = _point.top;
 
 		_updateView();
 	}
@@ -658,6 +715,8 @@ namespace MyGUI
 		// устанавливаем новую координату а старую пускаем в расчеты
 		IntSize old = mCoord.size();
 		mCoord = _size;
+		mFloatCoord.width = _size.width;
+		mFloatCoord.height = _size.height;
 
 		bool visible = true;
 
@@ -701,6 +760,7 @@ namespace MyGUI
 		// устанавливаем новую координату а старую пускаем в расчеты
 		IntCoord old = mCoord;
 		mCoord = _coord;
+		mFloatCoord = _coord;
 
 		bool visible = true;
 
@@ -1010,6 +1070,14 @@ namespace MyGUI
 
 		if (!value)
 			InputManager::getInstance().unlinkWidget(this);
+	}
+
+	void Widget::setGray(bool _gray)
+	{
+		_setSkinItemGray(_gray);
+
+		for (VectorWidgetPtr::iterator widget = mWidgetChildSkin.begin(); widget != mWidgetChildSkin.end(); ++widget)
+			(*widget)->setGray(_gray);
 	}
 
 	void Widget::setColour(const Colour& _value)

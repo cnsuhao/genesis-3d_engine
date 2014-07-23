@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		255433DC192D909700DD4AA4 /* editstatus.cc in Sources */ = {isa = PBXBuildFile; fileRef = 255433D8192D909700DD4AA4 /* editstatus.cc */; };
+		255433DD192D909700DD4AA4 /* simplecamera.cc in Sources */ = {isa = PBXBuildFile; fileRef = 255433DA192D909700DD4AA4 /* simplecamera.cc */; };
+		255433E0192D90D500DD4AA4 /* RenderTargetSuite.cc in Sources */ = {isa = PBXBuildFile; fileRef = 255433DE192D90D500DD4AA4 /* RenderTargetSuite.cc */; };
+		2561E7331929DFE200F41739 /* script_hook.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2561E7321929DFE200F41739 /* script_hook.cc */; };
+		5850EF201935F045008B3597 /* guirenderobject.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5850EF1C1935F045008B3597 /* guirenderobject.cc */; };
+		5850EF211935F045008B3597 /* guiscene.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5850EF1E1935F045008B3597 /* guiscene.cc */; };
 		58548DAE19061FC400BA92A0 /* script_app.cc in Sources */ = {isa = PBXBuildFile; fileRef = 58548DAC19061FC400BA92A0 /* script_app.cc */; };
 		82C7DF6B192222D2002CE939 /* FileData.cc in Sources */ = {isa = PBXBuildFile; fileRef = 82C7DF5D192222D2002CE939 /* FileData.cc */; };
 		82C7DF6C192222D2002CE939 /* FileTable.cc in Sources */ = {isa = PBXBuildFile; fileRef = 82C7DF60192222D2002CE939 /* FileTable.cc */; };
@@ -14,6 +20,31 @@
 		82C7DF6E192222D2002CE939 /* PackageSystem.cc in Sources */ = {isa = PBXBuildFile; fileRef = 82C7DF65192222D2002CE939 /* PackageSystem.cc */; };
 		82C7DF6F192222D2002CE939 /* PackageTool.cc in Sources */ = {isa = PBXBuildFile; fileRef = 82C7DF67192222D2002CE939 /* PackageTool.cc */; };
 		82C7DF70192222D2002CE939 /* PackageUtil.cc in Sources */ = {isa = PBXBuildFile; fileRef = 82C7DF69192222D2002CE939 /* PackageUtil.cc */; };
+		82D17E6819371431007B315E /* PhysicsBodyComponent.cc in Sources */ = {isa = PBXBuildFile; fileRef = 82D17E6119371431007B315E /* PhysicsBodyComponent.cc */; };
+		82D17E6919371431007B315E /* PhysicsBodyComponentSerialization.cc in Sources */ = {isa = PBXBuildFile; fileRef = 82D17E6319371431007B315E /* PhysicsBodyComponentSerialization.cc */; };
+		82D17E6A19371431007B315E /* PhysicsFeature.cc in Sources */ = {isa = PBXBuildFile; fileRef = 82D17E6419371431007B315E /* PhysicsFeature.cc */; };
+		82D17E6B19371431007B315E /* UserReport.cc in Sources */ = {isa = PBXBuildFile; fileRef = 82D17E6619371431007B315E /* UserReport.cc */; };
+		82D17E8C1937144F007B315E /* PhysicsBoxShape.cc in Sources */ = {isa = PBXBuildFile; fileRef = 82D17E6C1937144F007B315E /* PhysicsBoxShape.cc */; };
+		82D17E8D1937144F007B315E /* PhysicsCapsuleShape.cc in Sources */ = {isa = PBXBuildFile; fileRef = 82D17E6E1937144F007B315E /* PhysicsCapsuleShape.cc */; };
+		82D17E8E1937144F007B315E /* PhysicsConvexShape.cc in Sources */ = {isa = PBXBuildFile; fileRef = 82D17E701937144F007B315E /* PhysicsConvexShape.cc */; };
+		82D17E8F1937144F007B315E /* PhysicsDynamic.cc in Sources */ = {isa = PBXBuildFile; fileRef = 82D17E731937144F007B315E /* PhysicsDynamic.cc */; };
+		82D17E901937144F007B315E /* PhysicsEntity.cc in Sources */ = {isa = PBXBuildFile; fileRef = 82D17E751937144F007B315E /* PhysicsEntity.cc */; };
+		82D17E911937144F007B315E /* PhysicsMaterial.cc in Sources */ = {isa = PBXBuildFile; fileRef = 82D17E771937144F007B315E /* PhysicsMaterial.cc */; };
+		82D17E921937144F007B315E /* PhysicsMeshShape.cc in Sources */ = {isa = PBXBuildFile; fileRef = 82D17E791937144F007B315E /* PhysicsMeshShape.cc */; };
+		82D17E931937144F007B315E /* PhysicsPlaneShape.cc in Sources */ = {isa = PBXBuildFile; fileRef = 82D17E7B1937144F007B315E /* PhysicsPlaneShape.cc */; };
+		82D17E941937144F007B315E /* PhysicsRole.cc in Sources */ = {isa = PBXBuildFile; fileRef = 82D17E7D1937144F007B315E /* PhysicsRole.cc */; };
+		82D17E951937144F007B315E /* PhysicsServer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 82D17E7F1937144F007B315E /* PhysicsServer.cc */; };
+		82D17E961937144F007B315E /* PhysicsShape.cc in Sources */ = {isa = PBXBuildFile; fileRef = 82D17E811937144F007B315E /* PhysicsShape.cc */; };
+		82D17E971937144F007B315E /* PhysicsSphereShape.cc in Sources */ = {isa = PBXBuildFile; fileRef = 82D17E831937144F007B315E /* PhysicsSphereShape.cc */; };
+		82D17E981937144F007B315E /* PhysicsStatic.cc in Sources */ = {isa = PBXBuildFile; fileRef = 82D17E851937144F007B315E /* PhysicsStatic.cc */; };
+		82D17E991937144F007B315E /* PhysicsTerrian.cc in Sources */ = {isa = PBXBuildFile; fileRef = 82D17E871937144F007B315E /* PhysicsTerrian.cc */; };
+		82D17E9A1937144F007B315E /* UserStream.cc in Sources */ = {isa = PBXBuildFile; fileRef = 82D17E8A1937144F007B315E /* UserStream.cc */; };
+		82F91395193748BD00BB1943 /* scriptbind_physicsbody_component.cc in Sources */ = {isa = PBXBuildFile; fileRef = 82F9138F193748BD00BB1943 /* scriptbind_physicsbody_component.cc */; };
+		82F91396193748BD00BB1943 /* scriptbind_physicsboxshape.cc in Sources */ = {isa = PBXBuildFile; fileRef = 82F91390193748BD00BB1943 /* scriptbind_physicsboxshape.cc */; };
+		82F91397193748BD00BB1943 /* scriptbind_physicscapsuleshape.cc in Sources */ = {isa = PBXBuildFile; fileRef = 82F91391193748BD00BB1943 /* scriptbind_physicscapsuleshape.cc */; };
+		82F91398193748BD00BB1943 /* scriptbind_physicsmeshshape.cc in Sources */ = {isa = PBXBuildFile; fileRef = 82F91392193748BD00BB1943 /* scriptbind_physicsmeshshape.cc */; };
+		82F91399193748BD00BB1943 /* scriptbind_physicsscene.cc in Sources */ = {isa = PBXBuildFile; fileRef = 82F91393193748BD00BB1943 /* scriptbind_physicsscene.cc */; };
+		82F9139A193748BD00BB1943 /* scriptbind_physicssphereshape.cc in Sources */ = {isa = PBXBuildFile; fileRef = 82F91394193748BD00BB1943 /* scriptbind_physicssphereshape.cc */; };
 		F504B89B18BC39F800B7C723 /* SoundInterface.cc in Sources */ = {isa = PBXBuildFile; fileRef = F504B89918BC39F800B7C723 /* SoundInterface.cc */; };
 		F52905801830C2DC0081A084 /* CGTool.cc in Sources */ = {isa = PBXBuildFile; fileRef = F52905781830C2DC0081A084 /* CGTool.cc */; };
 		F52905811830C2DC0081A084 /* D3DCompiler.cc in Sources */ = {isa = PBXBuildFile; fileRef = F529057A1830C2DC0081A084 /* D3DCompiler.cc */; };
@@ -860,6 +891,18 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		255433D8192D909700DD4AA4 /* editstatus.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = editstatus.cc; sourceTree = "<group>"; };
+		255433D9192D909700DD4AA4 /* editstatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = editstatus.h; sourceTree = "<group>"; };
+		255433DA192D909700DD4AA4 /* simplecamera.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = simplecamera.cc; sourceTree = "<group>"; };
+		255433DB192D909700DD4AA4 /* simplecamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = simplecamera.h; sourceTree = "<group>"; };
+		255433DE192D90D500DD4AA4 /* RenderTargetSuite.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTargetSuite.cc; sourceTree = "<group>"; };
+		255433DF192D90D500DD4AA4 /* RenderTargetSuite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTargetSuite.h; sourceTree = "<group>"; };
+		2561E7321929DFE200F41739 /* script_hook.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = script_hook.cc; sourceTree = "<group>"; };
+		2561E7341929DFEC00F41739 /* script_hook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = script_hook.h; sourceTree = "<group>"; };
+		5850EF1C1935F045008B3597 /* guirenderobject.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = guirenderobject.cc; sourceTree = "<group>"; };
+		5850EF1D1935F045008B3597 /* guirenderobject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = guirenderobject.h; sourceTree = "<group>"; };
+		5850EF1E1935F045008B3597 /* guiscene.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = guiscene.cc; sourceTree = "<group>"; };
+		5850EF1F1935F045008B3597 /* guiscene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = guiscene.h; sourceTree = "<group>"; };
 		58548DAC19061FC400BA92A0 /* script_app.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = script_app.cc; sourceTree = "<group>"; };
 		58548DAD19061FC400BA92A0 /* script_app.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = script_app.h; sourceTree = "<group>"; };
 		587A3D9A18F68D15000ED13A /* OCAndCPlusInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCAndCPlusInterface.h; sourceTree = "<group>"; };
@@ -890,6 +933,88 @@
 		82C7DF68192222D2002CE939 /* PackageTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PackageTool.h; sourceTree = "<group>"; };
 		82C7DF69192222D2002CE939 /* PackageUtil.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PackageUtil.cc; sourceTree = "<group>"; };
 		82C7DF6A192222D2002CE939 /* PackageUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PackageUtil.h; sourceTree = "<group>"; };
+		82D17E6119371431007B315E /* PhysicsBodyComponent.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PhysicsBodyComponent.cc; path = physXfeature/PhysicsBodyComponent.cc; sourceTree = "<group>"; };
+		82D17E6219371431007B315E /* PhysicsBodyComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhysicsBodyComponent.h; path = physXfeature/PhysicsBodyComponent.h; sourceTree = "<group>"; };
+		82D17E6319371431007B315E /* PhysicsBodyComponentSerialization.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PhysicsBodyComponentSerialization.cc; path = physXfeature/PhysicsBodyComponentSerialization.cc; sourceTree = "<group>"; };
+		82D17E6419371431007B315E /* PhysicsFeature.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PhysicsFeature.cc; path = physXfeature/PhysicsFeature.cc; sourceTree = "<group>"; };
+		82D17E6519371431007B315E /* PhysicsFeature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhysicsFeature.h; path = physXfeature/PhysicsFeature.h; sourceTree = "<group>"; };
+		82D17E6619371431007B315E /* UserReport.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UserReport.cc; path = physXfeature/UserReport.cc; sourceTree = "<group>"; };
+		82D17E6719371431007B315E /* UserReport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserReport.h; path = physXfeature/UserReport.h; sourceTree = "<group>"; };
+		82D17E6C1937144F007B315E /* PhysicsBoxShape.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PhysicsBoxShape.cc; path = physXfeature/physicsCore/PhysicsBoxShape.cc; sourceTree = "<group>"; };
+		82D17E6D1937144F007B315E /* PhysicsBoxShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhysicsBoxShape.h; path = physXfeature/physicsCore/PhysicsBoxShape.h; sourceTree = "<group>"; };
+		82D17E6E1937144F007B315E /* PhysicsCapsuleShape.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PhysicsCapsuleShape.cc; path = physXfeature/physicsCore/PhysicsCapsuleShape.cc; sourceTree = "<group>"; };
+		82D17E6F1937144F007B315E /* PhysicsCapsuleShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhysicsCapsuleShape.h; path = physXfeature/physicsCore/PhysicsCapsuleShape.h; sourceTree = "<group>"; };
+		82D17E701937144F007B315E /* PhysicsConvexShape.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PhysicsConvexShape.cc; path = physXfeature/physicsCore/PhysicsConvexShape.cc; sourceTree = "<group>"; };
+		82D17E711937144F007B315E /* PhysicsConvexShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhysicsConvexShape.h; path = physXfeature/physicsCore/PhysicsConvexShape.h; sourceTree = "<group>"; };
+		82D17E721937144F007B315E /* PhysicsDeclaration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhysicsDeclaration.h; path = physXfeature/physicsCore/PhysicsDeclaration.h; sourceTree = "<group>"; };
+		82D17E731937144F007B315E /* PhysicsDynamic.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PhysicsDynamic.cc; path = physXfeature/physicsCore/PhysicsDynamic.cc; sourceTree = "<group>"; };
+		82D17E741937144F007B315E /* PhysicsDynamic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhysicsDynamic.h; path = physXfeature/physicsCore/PhysicsDynamic.h; sourceTree = "<group>"; };
+		82D17E751937144F007B315E /* PhysicsEntity.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PhysicsEntity.cc; path = physXfeature/physicsCore/PhysicsEntity.cc; sourceTree = "<group>"; };
+		82D17E761937144F007B315E /* PhysicsEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhysicsEntity.h; path = physXfeature/physicsCore/PhysicsEntity.h; sourceTree = "<group>"; };
+		82D17E771937144F007B315E /* PhysicsMaterial.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PhysicsMaterial.cc; path = physXfeature/physicsCore/PhysicsMaterial.cc; sourceTree = "<group>"; };
+		82D17E781937144F007B315E /* PhysicsMaterial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhysicsMaterial.h; path = physXfeature/physicsCore/PhysicsMaterial.h; sourceTree = "<group>"; };
+		82D17E791937144F007B315E /* PhysicsMeshShape.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PhysicsMeshShape.cc; path = physXfeature/physicsCore/PhysicsMeshShape.cc; sourceTree = "<group>"; };
+		82D17E7A1937144F007B315E /* PhysicsMeshShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhysicsMeshShape.h; path = physXfeature/physicsCore/PhysicsMeshShape.h; sourceTree = "<group>"; };
+		82D17E7B1937144F007B315E /* PhysicsPlaneShape.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PhysicsPlaneShape.cc; path = physXfeature/physicsCore/PhysicsPlaneShape.cc; sourceTree = "<group>"; };
+		82D17E7C1937144F007B315E /* PhysicsPlaneShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhysicsPlaneShape.h; path = physXfeature/physicsCore/PhysicsPlaneShape.h; sourceTree = "<group>"; };
+		82D17E7D1937144F007B315E /* PhysicsRole.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PhysicsRole.cc; path = physXfeature/physicsCore/PhysicsRole.cc; sourceTree = "<group>"; };
+		82D17E7E1937144F007B315E /* PhysicsRole.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhysicsRole.h; path = physXfeature/physicsCore/PhysicsRole.h; sourceTree = "<group>"; };
+		82D17E7F1937144F007B315E /* PhysicsServer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PhysicsServer.cc; path = physXfeature/physicsCore/PhysicsServer.cc; sourceTree = "<group>"; };
+		82D17E801937144F007B315E /* PhysicsServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhysicsServer.h; path = physXfeature/physicsCore/PhysicsServer.h; sourceTree = "<group>"; };
+		82D17E811937144F007B315E /* PhysicsShape.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PhysicsShape.cc; path = physXfeature/physicsCore/PhysicsShape.cc; sourceTree = "<group>"; };
+		82D17E821937144F007B315E /* PhysicsShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhysicsShape.h; path = physXfeature/physicsCore/PhysicsShape.h; sourceTree = "<group>"; };
+		82D17E831937144F007B315E /* PhysicsSphereShape.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PhysicsSphereShape.cc; path = physXfeature/physicsCore/PhysicsSphereShape.cc; sourceTree = "<group>"; };
+		82D17E841937144F007B315E /* PhysicsSphereShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhysicsSphereShape.h; path = physXfeature/physicsCore/PhysicsSphereShape.h; sourceTree = "<group>"; };
+		82D17E851937144F007B315E /* PhysicsStatic.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PhysicsStatic.cc; path = physXfeature/physicsCore/PhysicsStatic.cc; sourceTree = "<group>"; };
+		82D17E861937144F007B315E /* PhysicsStatic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhysicsStatic.h; path = physXfeature/physicsCore/PhysicsStatic.h; sourceTree = "<group>"; };
+		82D17E871937144F007B315E /* PhysicsTerrian.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PhysicsTerrian.cc; path = physXfeature/physicsCore/PhysicsTerrian.cc; sourceTree = "<group>"; };
+		82D17E881937144F007B315E /* PhysicsTerrian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhysicsTerrian.h; path = physXfeature/physicsCore/PhysicsTerrian.h; sourceTree = "<group>"; };
+		82D17E891937144F007B315E /* PhysicsUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhysicsUtil.h; path = physXfeature/physicsCore/PhysicsUtil.h; sourceTree = "<group>"; };
+		82D17E8A1937144F007B315E /* UserStream.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UserStream.cc; path = physXfeature/physicsCore/UserStream.cc; sourceTree = "<group>"; };
+		82D17E8B1937144F007B315E /* UserStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserStream.h; path = physXfeature/physicsCore/UserStream.h; sourceTree = "<group>"; };
+		82F9138F193748BD00BB1943 /* scriptbind_physicsbody_component.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scriptbind_physicsbody_component.cc; sourceTree = "<group>"; };
+		82F91390193748BD00BB1943 /* scriptbind_physicsboxshape.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scriptbind_physicsboxshape.cc; sourceTree = "<group>"; };
+		82F91391193748BD00BB1943 /* scriptbind_physicscapsuleshape.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scriptbind_physicscapsuleshape.cc; sourceTree = "<group>"; };
+		82F91392193748BD00BB1943 /* scriptbind_physicsmeshshape.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scriptbind_physicsmeshshape.cc; sourceTree = "<group>"; };
+		82F91393193748BD00BB1943 /* scriptbind_physicsscene.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scriptbind_physicsscene.cc; sourceTree = "<group>"; };
+		82F91394193748BD00BB1943 /* scriptbind_physicssphereshape.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scriptbind_physicssphereshape.cc; sourceTree = "<group>"; };
+		82F9139B193749C700BB1943 /* scriptbind_PhysicsScene_register.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scriptbind_PhysicsScene_register.h; sourceTree = "<group>"; };
+		82F9139D19374A4400BB1943 /* bind_actor.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = bind_actor.xml; sourceTree = "<group>"; };
+		82F9139E19374A4400BB1943 /* bind_actormanager.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = bind_actormanager.xml; sourceTree = "<group>"; };
+		82F9139F19374A4400BB1943 /* bind_animation_component.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = bind_animation_component.xml; sourceTree = "<group>"; };
+		82F913A019374A4400BB1943 /* bind_application.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = bind_application.xml; sourceTree = "<group>"; };
+		82F913A119374A4400BB1943 /* bind_cameracomponent.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = bind_cameracomponent.xml; sourceTree = "<group>"; };
+		82F913A219374A4400BB1943 /* bind_component.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = bind_component.xml; sourceTree = "<group>"; };
+		82F913A319374A4400BB1943 /* bind_lightcomponent.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = bind_lightcomponent.xml; sourceTree = "<group>"; };
+		82F913A419374A4400BB1943 /* bind_scene.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = bind_scene.xml; sourceTree = "<group>"; };
+		82F913A519374A4400BB1943 /* bind_soundchorusfilter_component.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = bind_soundchorusfilter_component.xml; sourceTree = "<group>"; };
+		82F913A619374A4400BB1943 /* bind_sounddistortionfilter_component.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = bind_sounddistortionfilter_component.xml; sourceTree = "<group>"; };
+		82F913A719374A4400BB1943 /* bind_soundechofilter_component.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = bind_soundechofilter_component.xml; sourceTree = "<group>"; };
+		82F913A819374A4400BB1943 /* bind_soundhighpassfilter_component.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = bind_soundhighpassfilter_component.xml; sourceTree = "<group>"; };
+		82F913A919374A4400BB1943 /* bind_soundlowpassfilter_component.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = bind_soundlowpassfilter_component.xml; sourceTree = "<group>"; };
+		82F913AA19374A4400BB1943 /* bind_soundreverb_component.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = bind_soundreverb_component.xml; sourceTree = "<group>"; };
+		82F913AB19374A4400BB1943 /* bind_soundreverbfilter_component.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = bind_soundreverbfilter_component.xml; sourceTree = "<group>"; };
+		82F913AC19374A4400BB1943 /* bind_soundsource_component.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = bind_soundsource_component.xml; sourceTree = "<group>"; };
+		82F913AD19374A4400BB1943 /* scriptbind_ActorManager_register.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scriptbind_ActorManager_register.h; sourceTree = "<group>"; };
+		82F913AE19374A4400BB1943 /* scriptbind_Actor_register.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scriptbind_Actor_register.h; sourceTree = "<group>"; };
+		82F913AF19374A4400BB1943 /* scriptbind_AnimationComponent_register.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scriptbind_AnimationComponent_register.h; sourceTree = "<group>"; };
+		82F913B019374A4400BB1943 /* scriptbind_Application_register.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scriptbind_Application_register.h; sourceTree = "<group>"; };
+		82F913B119374A4400BB1943 /* scriptbind_CameraComponent_register.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scriptbind_CameraComponent_register.h; sourceTree = "<group>"; };
+		82F913B219374A4400BB1943 /* scriptbind_Component_register.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scriptbind_Component_register.h; sourceTree = "<group>"; };
+		82F913B319374A4400BB1943 /* scriptbind_LightComponent_register.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scriptbind_LightComponent_register.h; sourceTree = "<group>"; };
+		82F913B419374A4400BB1943 /* scriptbind_PhysicsBodyComponent_register.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scriptbind_PhysicsBodyComponent_register.h; sourceTree = "<group>"; };
+		82F913B519374A4400BB1943 /* scriptbind_PhysicsBoxShape_register.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scriptbind_PhysicsBoxShape_register.h; sourceTree = "<group>"; };
+		82F913B619374A4400BB1943 /* scriptbind_PhysicsCapsuleShape_register.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scriptbind_PhysicsCapsuleShape_register.h; sourceTree = "<group>"; };
+		82F913B719374A4400BB1943 /* scriptbind_PhysicsMeshShape_register.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scriptbind_PhysicsMeshShape_register.h; sourceTree = "<group>"; };
+		82F913B819374A4400BB1943 /* scriptbind_PhysicsScene_register.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scriptbind_PhysicsScene_register.h; sourceTree = "<group>"; };
+		82F913B919374A4400BB1943 /* scriptbind_PhysicsShape_register.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scriptbind_PhysicsShape_register.h; sourceTree = "<group>"; };
+		82F913BA19374A4400BB1943 /* scriptbind_PhysicsSphere_register.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scriptbind_PhysicsSphere_register.h; sourceTree = "<group>"; };
+		82F913BB19374A4400BB1943 /* scriptbind_Scene_register.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scriptbind_Scene_register.h; sourceTree = "<group>"; };
+		82F913BC19374A4400BB1943 /* scriptbind_SoundEchoFilterComponent_register.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scriptbind_SoundEchoFilterComponent_register.h; sourceTree = "<group>"; };
+		82F913BD19374A4400BB1943 /* scriptbind_SoundLowPassFilterComponent_register.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scriptbind_SoundLowPassFilterComponent_register.h; sourceTree = "<group>"; };
+		82F913BE19374A4400BB1943 /* scriptbind_SoundReverbFilterComponent_register.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scriptbind_SoundReverbFilterComponent_register.h; sourceTree = "<group>"; };
+		82F913BF19374A4400BB1943 /* scriptbind_SoundReverbZone_register.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scriptbind_SoundReverbZone_register.h; sourceTree = "<group>"; };
+		82F913C019374A4400BB1943 /* scriptbind_projector_component_register.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scriptbind_projector_component_register.h; sourceTree = "<group>"; };
 		F504B89918BC39F800B7C723 /* SoundInterface.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SoundInterface.cc; sourceTree = "<group>"; };
 		F504B89A18BC39F800B7C723 /* SoundInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoundInterface.h; sourceTree = "<group>"; };
 		F52905781830C2DC0081A084 /* CGTool.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CGTool.cc; sourceTree = "<group>"; };
@@ -2858,6 +2983,111 @@
 			path = ../../packagetool;
 			sourceTree = "<group>";
 		};
+		82D17E5E193713CA007B315E /* PhysXFeature */ = {
+			isa = PBXGroup;
+			children = (
+				82D17E60193713EE007B315E /* Core */,
+				82D17E5F193713DD007B315E /* Components */,
+			);
+			name = PhysXFeature;
+			sourceTree = "<group>";
+		};
+		82D17E5F193713DD007B315E /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				82D17E6119371431007B315E /* PhysicsBodyComponent.cc */,
+				82D17E6219371431007B315E /* PhysicsBodyComponent.h */,
+				82D17E6319371431007B315E /* PhysicsBodyComponentSerialization.cc */,
+				82D17E6419371431007B315E /* PhysicsFeature.cc */,
+				82D17E6519371431007B315E /* PhysicsFeature.h */,
+				82D17E6619371431007B315E /* UserReport.cc */,
+				82D17E6719371431007B315E /* UserReport.h */,
+			);
+			name = Components;
+			sourceTree = "<group>";
+		};
+		82D17E60193713EE007B315E /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				82D17E6C1937144F007B315E /* PhysicsBoxShape.cc */,
+				82D17E6D1937144F007B315E /* PhysicsBoxShape.h */,
+				82D17E6E1937144F007B315E /* PhysicsCapsuleShape.cc */,
+				82D17E6F1937144F007B315E /* PhysicsCapsuleShape.h */,
+				82D17E701937144F007B315E /* PhysicsConvexShape.cc */,
+				82D17E711937144F007B315E /* PhysicsConvexShape.h */,
+				82D17E721937144F007B315E /* PhysicsDeclaration.h */,
+				82D17E731937144F007B315E /* PhysicsDynamic.cc */,
+				82D17E741937144F007B315E /* PhysicsDynamic.h */,
+				82D17E751937144F007B315E /* PhysicsEntity.cc */,
+				82D17E761937144F007B315E /* PhysicsEntity.h */,
+				82D17E771937144F007B315E /* PhysicsMaterial.cc */,
+				82D17E781937144F007B315E /* PhysicsMaterial.h */,
+				82D17E791937144F007B315E /* PhysicsMeshShape.cc */,
+				82D17E7A1937144F007B315E /* PhysicsMeshShape.h */,
+				82D17E7B1937144F007B315E /* PhysicsPlaneShape.cc */,
+				82D17E7C1937144F007B315E /* PhysicsPlaneShape.h */,
+				82D17E7D1937144F007B315E /* PhysicsRole.cc */,
+				82D17E7E1937144F007B315E /* PhysicsRole.h */,
+				82D17E7F1937144F007B315E /* PhysicsServer.cc */,
+				82D17E801937144F007B315E /* PhysicsServer.h */,
+				82D17E811937144F007B315E /* PhysicsShape.cc */,
+				82D17E821937144F007B315E /* PhysicsShape.h */,
+				82D17E831937144F007B315E /* PhysicsSphereShape.cc */,
+				82D17E841937144F007B315E /* PhysicsSphereShape.h */,
+				82D17E851937144F007B315E /* PhysicsStatic.cc */,
+				82D17E861937144F007B315E /* PhysicsStatic.h */,
+				82D17E871937144F007B315E /* PhysicsTerrian.cc */,
+				82D17E881937144F007B315E /* PhysicsTerrian.h */,
+				82D17E891937144F007B315E /* PhysicsUtil.h */,
+				82D17E8A1937144F007B315E /* UserStream.cc */,
+				82D17E8B1937144F007B315E /* UserStream.h */,
+			);
+			name = Core;
+			sourceTree = "<group>";
+		};
+		82F9139C19374A4400BB1943 /* autogen */ = {
+			isa = PBXGroup;
+			children = (
+				82F9139D19374A4400BB1943 /* bind_actor.xml */,
+				82F9139E19374A4400BB1943 /* bind_actormanager.xml */,
+				82F9139F19374A4400BB1943 /* bind_animation_component.xml */,
+				82F913A019374A4400BB1943 /* bind_application.xml */,
+				82F913A119374A4400BB1943 /* bind_cameracomponent.xml */,
+				82F913A219374A4400BB1943 /* bind_component.xml */,
+				82F913A319374A4400BB1943 /* bind_lightcomponent.xml */,
+				82F913A419374A4400BB1943 /* bind_scene.xml */,
+				82F913A519374A4400BB1943 /* bind_soundchorusfilter_component.xml */,
+				82F913A619374A4400BB1943 /* bind_sounddistortionfilter_component.xml */,
+				82F913A719374A4400BB1943 /* bind_soundechofilter_component.xml */,
+				82F913A819374A4400BB1943 /* bind_soundhighpassfilter_component.xml */,
+				82F913A919374A4400BB1943 /* bind_soundlowpassfilter_component.xml */,
+				82F913AA19374A4400BB1943 /* bind_soundreverb_component.xml */,
+				82F913AB19374A4400BB1943 /* bind_soundreverbfilter_component.xml */,
+				82F913AC19374A4400BB1943 /* bind_soundsource_component.xml */,
+				82F913AD19374A4400BB1943 /* scriptbind_ActorManager_register.h */,
+				82F913AE19374A4400BB1943 /* scriptbind_Actor_register.h */,
+				82F913AF19374A4400BB1943 /* scriptbind_AnimationComponent_register.h */,
+				82F913B019374A4400BB1943 /* scriptbind_Application_register.h */,
+				82F913B119374A4400BB1943 /* scriptbind_CameraComponent_register.h */,
+				82F913B219374A4400BB1943 /* scriptbind_Component_register.h */,
+				82F913B319374A4400BB1943 /* scriptbind_LightComponent_register.h */,
+				82F913B419374A4400BB1943 /* scriptbind_PhysicsBodyComponent_register.h */,
+				82F913B519374A4400BB1943 /* scriptbind_PhysicsBoxShape_register.h */,
+				82F913B619374A4400BB1943 /* scriptbind_PhysicsCapsuleShape_register.h */,
+				82F913B719374A4400BB1943 /* scriptbind_PhysicsMeshShape_register.h */,
+				82F913B819374A4400BB1943 /* scriptbind_PhysicsScene_register.h */,
+				82F913B919374A4400BB1943 /* scriptbind_PhysicsShape_register.h */,
+				82F913BA19374A4400BB1943 /* scriptbind_PhysicsSphere_register.h */,
+				82F913BB19374A4400BB1943 /* scriptbind_Scene_register.h */,
+				82F913BC19374A4400BB1943 /* scriptbind_SoundEchoFilterComponent_register.h */,
+				82F913BD19374A4400BB1943 /* scriptbind_SoundLowPassFilterComponent_register.h */,
+				82F913BE19374A4400BB1943 /* scriptbind_SoundReverbFilterComponent_register.h */,
+				82F913BF19374A4400BB1943 /* scriptbind_SoundReverbZone_register.h */,
+				82F913C019374A4400BB1943 /* scriptbind_projector_component_register.h */,
+			);
+			name = autogen;
+			sourceTree = "<group>";
+		};
 		F52905931830CA550081A084 /* ShaderTemplate */ = {
 			isa = PBXGroup;
 			children = (
@@ -4057,6 +4287,7 @@
 		F5F4911617E1A66100361F45 /* app */ = {
 			isa = PBXGroup;
 			children = (
+				82D17E5E193713CA007B315E /* PhysXFeature */,
 				F560C2AC181109EB00487A7D /* spritebacth */,
 				F5F49CB617E1C55900361F45 /* vegetationfeature */,
 				F5F4911717E1A66100361F45 /* ALSystemFeature */,
@@ -4107,6 +4338,10 @@
 		F5F4912017E1A66100361F45 /* appframework */ = {
 			isa = PBXGroup;
 			children = (
+				255433D8192D909700DD4AA4 /* editstatus.cc */,
+				255433D9192D909700DD4AA4 /* editstatus.h */,
+				255433DA192D909700DD4AA4 /* simplecamera.cc */,
+				255433DB192D909700DD4AA4 /* simplecamera.h */,
 				F5E8AB301867EABF006C5348 /* profiletool.cc */,
 				F5E8AB311867EABF006C5348 /* profiletool.h */,
 				F5F4912117E1A66100361F45 /* actor.cc */,
@@ -4303,6 +4538,10 @@
 		F5F491C117E1A66200361F45 /* guifeature */ = {
 			isa = PBXGroup;
 			children = (
+				5850EF1C1935F045008B3597 /* guirenderobject.cc */,
+				5850EF1D1935F045008B3597 /* guirenderobject.h */,
+				5850EF1E1935F045008B3597 /* guiscene.cc */,
+				5850EF1F1935F045008B3597 /* guiscene.h */,
 				F5F491C217E1A66200361F45 /* androidguiinputhandler.cc */,
 				F5F491C317E1A66200361F45 /* androidguiinputhandler.h */,
 				F5F491C417E1A66200361F45 /* FontFeature.cc */,
@@ -4386,6 +4625,12 @@
 		F5F4923A17E1A66200361F45 /* scriptbind */ = {
 			isa = PBXGroup;
 			children = (
+				82F9138F193748BD00BB1943 /* scriptbind_physicsbody_component.cc */,
+				82F91390193748BD00BB1943 /* scriptbind_physicsboxshape.cc */,
+				82F91391193748BD00BB1943 /* scriptbind_physicscapsuleshape.cc */,
+				82F91392193748BD00BB1943 /* scriptbind_physicsmeshshape.cc */,
+				82F91393193748BD00BB1943 /* scriptbind_physicsscene.cc */,
+				82F91394193748BD00BB1943 /* scriptbind_physicssphereshape.cc */,
 				F5DA5AE0185826380083349F /* scriptbind_physicsshape.cc */,
 				F529059A1830CBA40081A084 /* scriptbind_projector_component.cc */,
 				F560C2C018110A0500487A7D /* scriptbind_camera.cc */,
@@ -4430,6 +4675,8 @@
 		F5F4923B17E1A66200361F45 /* autogen */ = {
 			isa = PBXGroup;
 			children = (
+				82F9139C19374A4400BB1943 /* autogen */,
+				82F9139B193749C700BB1943 /* scriptbind_PhysicsScene_register.h */,
 				F5F4923C17E1A66200361F45 /* bind_actor.xml */,
 				F5F4923D17E1A66200361F45 /* bind_actormanager.xml */,
 				F5F4923E17E1A66200361F45 /* bind_animation_component.xml */,
@@ -4476,6 +4723,8 @@
 		F5F492AE17E1A66200361F45 /* scriptfeature */ = {
 			isa = PBXGroup;
 			children = (
+				2561E7341929DFEC00F41739 /* script_hook.h */,
+				2561E7321929DFE200F41739 /* script_hook.cc */,
 				58548DAC19061FC400BA92A0 /* script_app.cc */,
 				58548DAD19061FC400BA92A0 /* script_app.h */,
 				F5F492AF17E1A66200361F45 /* editable_field_value.cc */,
@@ -5679,6 +5928,8 @@
 		F5F495C317E1A66400361F45 /* graphicsystem */ = {
 			isa = PBXGroup;
 			children = (
+				255433DE192D90D500DD4AA4 /* RenderTargetSuite.cc */,
+				255433DF192D90D500DD4AA4 /* RenderTargetSuite.h */,
 				F5F495C417E1A66400361F45 /* base */,
 				F5F495D717E1A66400361F45 /* Camera */,
 				F5F495EE17E1A66400361F45 /* CMakeLists.txt */,
@@ -6148,6 +6399,7 @@
 				F5F4978B17E1A66500361F45 /* MyGUI_Exception.cpp in Sources */,
 				F5F4978C17E1A66500361F45 /* MyGUI_FactoryManager.cpp in Sources */,
 				F5F4978D17E1A66500361F45 /* MyGUI_FileLogListener.cpp in Sources */,
+				82D17E6B19371431007B315E /* UserReport.cc in Sources */,
 				F5F4978E17E1A66500361F45 /* MyGUI_FontManager.cpp in Sources */,
 				F5F4978F17E1A66500361F45 /* MyGUI_GeometryUtility.cpp in Sources */,
 				F5F4979017E1A66500361F45 /* MyGUI_Gui.cpp in Sources */,
@@ -6164,6 +6416,7 @@
 				F5F4979B17E1A66500361F45 /* MyGUI_LogManager.cpp in Sources */,
 				F5F4979C17E1A66500361F45 /* MyGUI_LogSource.cpp in Sources */,
 				F5F4979D17E1A66500361F45 /* MyGUI_MainSkin.cpp in Sources */,
+				82D17E961937144F007B315E /* PhysicsShape.cc in Sources */,
 				F5F4979E17E1A66500361F45 /* MyGUI_MaskPickInfo.cpp in Sources */,
 				F5F4979F17E1A66500361F45 /* MyGUI_MenuBar.cpp in Sources */,
 				F5F497A017E1A66500361F45 /* MyGUI_MenuControl.cpp in Sources */,
@@ -6215,6 +6468,7 @@
 				F5F497CD17E1A66500361F45 /* MyGUI_WidgetManager.cpp in Sources */,
 				F5F497CE17E1A66500361F45 /* MyGUI_WidgetUserData.cpp in Sources */,
 				F5F497CF17E1A66500361F45 /* MyGUI_Window.cpp in Sources */,
+				255433DC192D909700DD4AA4 /* editstatus.cc in Sources */,
 				F5F497D017E1A66500361F45 /* MyGUI_XmlDocument.cpp in Sources */,
 				F5F4980617E1A66500361F45 /* particleColorAffector.cc in Sources */,
 				F5F4980717E1A66500361F45 /* particleColorAffectorSerialization.cc in Sources */,
@@ -6222,11 +6476,13 @@
 				F5F4980B17E1A66500361F45 /* particleFollowerAffectorSerialization.cc in Sources */,
 				82C7DF6C192222D2002CE939 /* FileTable.cc in Sources */,
 				F5F4980C17E1A66500361F45 /* particleGravityAffector.cc in Sources */,
+				255433E0192D90D500DD4AA4 /* RenderTargetSuite.cc in Sources */,
 				F5F4980D17E1A66500361F45 /* particleGravityAffectorSerialization.cc in Sources */,
 				F5F4981017E1A66500361F45 /* particleLinearForceAffector.cc in Sources */,
 				F5F4981117E1A66500361F45 /* particleLinearForceAffectorSerialization.cc in Sources */,
 				F5F4981317E1A66500361F45 /* particleMovementAffectorSerialization.cc in Sources */,
 				F5F4981417E1A66500361F45 /* particleRandomiserAffector.cc in Sources */,
+				82D17E951937144F007B315E /* PhysicsServer.cc in Sources */,
 				F5F4981517E1A66500361F45 /* particleRandomiserAffectorSerialization.cc in Sources */,
 				F5F4981617E1A66500361F45 /* particleScaleAffector.cc in Sources */,
 				F5F4981717E1A66500361F45 /* particleScaleAffectorSerialization.cc in Sources */,
@@ -6235,6 +6491,7 @@
 				F5F4981A17E1A66500361F45 /* particleTextureRotatorAffector.cc in Sources */,
 				F5F4981B17E1A66500361F45 /* particleTextureRotatorAffectorSerialization.cc in Sources */,
 				F5F4981C17E1A66500361F45 /* particleVortexAffector.cc in Sources */,
+				82D17E9A1937144F007B315E /* UserStream.cc in Sources */,
 				F5F4981D17E1A66500361F45 /* particleVortexAffectorSerialization.cc in Sources */,
 				F5F4981E17E1A66500361F45 /* particleBoxEmitter.cc in Sources */,
 				F5F4981F17E1A66500361F45 /* particleBoxEmitterSerialization.cc in Sources */,
@@ -6353,6 +6610,7 @@
 				F5F4992A17E1A66500361F45 /* visserver.cc in Sources */,
 				F5F4992B17E1A66500361F45 /* viscell.cc in Sources */,
 				F5F4992C17E1A66500361F45 /* visquadtree.cc in Sources */,
+				2561E7331929DFE200F41739 /* script_hook.cc in Sources */,
 				F5F4992D17E1A66500361F45 /* vissystembase.cc in Sources */,
 				F5F4994317E1A66500361F45 /* ALSystemFeature.cc in Sources */,
 				F5F4994417E1A66500361F45 /* GameIap.cc in Sources */,
@@ -6375,6 +6633,7 @@
 				F5F4995517E1A66500361F45 /* serialization.cc in Sources */,
 				F5F4995617E1A66500361F45 /* statehandler.cc in Sources */,
 				F5F4995717E1A66500361F45 /* intersectutil.cc in Sources */,
+				82D17E6919371431007B315E /* PhysicsBodyComponentSerialization.cc in Sources */,
 				F5F4995817E1A66500361F45 /* manuresutil.cc in Sources */,
 				F5F4995A17E1A66500361F45 /* mouserayutil.cc in Sources */,
 				F5F4995B17E1A66500361F45 /* shadowmaputil.cc in Sources */,
@@ -6396,10 +6655,12 @@
 				F5F4997517E1A66500361F45 /* meshrenderobject.cc in Sources */,
 				F5F4997617E1A66500361F45 /* projectorcomponent.cc in Sources */,
 				F5F4997717E1A66500361F45 /* projectorcomponentserialization.cc in Sources */,
+				82D17E971937144F007B315E /* PhysicsSphereShape.cc in Sources */,
 				F5F4997817E1A66500361F45 /* projectorrenderobject.cc in Sources */,
 				F5F4997917E1A66500361F45 /* rendercomponent.cc in Sources */,
 				F5F4997A17E1A66500361F45 /* rendercomponentserialization.cc in Sources */,
 				F5F4997B17E1A66500361F45 /* screenmeshrenderobject.cc in Sources */,
+				82D17E8C1937144F007B315E /* PhysicsBoxShape.cc in Sources */,
 				F5F4997C17E1A66500361F45 /* simpleskycomponent.cc in Sources */,
 				F5F4997D17E1A66500361F45 /* simpleskycomponentserialization.cc in Sources */,
 				F5F4997E17E1A66500361F45 /* skeletoncomponent.cpp in Sources */,
@@ -6429,6 +6690,7 @@
 				F5F4999C17E1A66500361F45 /* scriptbind_popupmenu.cc in Sources */,
 				F5F4999D17E1A66500361F45 /* scriptbind_progressbar.cc in Sources */,
 				F5F4999E17E1A66500361F45 /* scriptbind_rendertarget.cc in Sources */,
+				82D17E991937144F007B315E /* PhysicsTerrian.cc in Sources */,
 				F5F4999F17E1A66500361F45 /* scriptbind_scrollbar.cc in Sources */,
 				F5F499A017E1A66500361F45 /* scriptbind_scrollview.cc in Sources */,
 				F5F499A117E1A66500361F45 /* scriptbind_tabcontrol.cc in Sources */,
@@ -6444,6 +6706,7 @@
 				F5F499AB17E1A66500361F45 /* guiserver.cc in Sources */,
 				F5F499AC17E1A66500361F45 /* guiutility.cc in Sources */,
 				F5F499AD17E1A66500361F45 /* osxguiinputhandler.cpp in Sources */,
+				82D17E8E1937144F007B315E /* PhysicsConvexShape.cc in Sources */,
 				F5F499AE17E1A66500361F45 /* scriptgui.cc in Sources */,
 				F5F499AF17E1A66500361F45 /* win32guiinputhandler.cc in Sources */,
 				F5F499B117E1A66500361F45 /* inputfeature.cc in Sources */,
@@ -6458,6 +6721,7 @@
 				F5F499E217E1A66500361F45 /* ResourceFeature.cc in Sources */,
 				F5F499E317E1A66500361F45 /* scriptbind_actor.cc in Sources */,
 				F5F499E417E1A66500361F45 /* scriptbind_actor_manager.cc in Sources */,
+				82D17E941937144F007B315E /* PhysicsRole.cc in Sources */,
 				F5F499E517E1A66500361F45 /* scriptbind_animation_component.cc in Sources */,
 				F5F499E617E1A66500361F45 /* scriptbind_application.cc in Sources */,
 				F5F499E717E1A66500361F45 /* scriptbind_camera_component.cc in Sources */,
@@ -6481,6 +6745,7 @@
 				F5F49A1D17E1A66500361F45 /* scriptbind_skeleton_component.cc in Sources */,
 				F5F49A2117E1A66500361F45 /* scriptbind_soundechofilter_component.cc in Sources */,
 				F5F49A2217E1A66500361F45 /* scriptbind_soundFilter_component.cc in Sources */,
+				82D17E8F1937144F007B315E /* PhysicsDynamic.cc in Sources */,
 				F5F49A2417E1A66500361F45 /* scriptbind_soundListener_component.cc in Sources */,
 				F5F49A2517E1A66500361F45 /* scriptbind_soundlowpassfilter_component.cc in Sources */,
 				F5F49A2717E1A66500361F45 /* scriptbind_soundreverbfilter_component.cc in Sources */,
@@ -6513,6 +6778,7 @@
 				F5F49A4C17E1A66500361F45 /* SoundReverbFilterComponentSerialization.cc in Sources */,
 				F5F49A4D17E1A66500361F45 /* SoundSourceComponent.cc in Sources */,
 				F5F49A4E17E1A66500361F45 /* SoundSourceComponentSerialization.cc in Sources */,
+				82D17E981937144F007B315E /* PhysicsStatic.cc in Sources */,
 				F5F49A4F17E1A66500361F45 /* SoundFeature.cc in Sources */,
 				F5F49A5017E1A66500361F45 /* SoundRes.cc in Sources */,
 				F5F49A5717E1A66500361F45 /* stdneb.cc in Sources */,
@@ -6534,6 +6800,7 @@
 				F5F49A7017E1A66500361F45 /* osxsysfunc.mm in Sources */,
 				F5F49A7117E1A66500361F45 /* refcounted.cc in Sources */,
 				F5F49A7217E1A66500361F45 /* refcountedlist.cc in Sources */,
+				255433DD192D909700DD4AA4 /* simplecamera.cc in Sources */,
 				F5F49A7317E1A66500361F45 /* rtti.cc in Sources */,
 				F5F49A7417E1A66500361F45 /* win32sysfunc.cc in Sources */,
 				F5F49A7517E1A66500361F45 /* debugcounter.cc in Sources */,
@@ -6562,6 +6829,7 @@
 				F5F49A8C17E1A66500361F45 /* httprequestreader.cc in Sources */,
 				F5F49A8D17E1A66500361F45 /* httprequestwriter.cc in Sources */,
 				F5F49A8E17E1A66500361F45 /* httpresponsereader.cc in Sources */,
+				5850EF211935F045008B3597 /* guiscene.cc in Sources */,
 				F5F49A8F17E1A66500361F45 /* httpresponsewriter.cc in Sources */,
 				F5F49A9017E1A66500361F45 /* httpserver.cc in Sources */,
 				F5F49A9117E1A66500361F45 /* httpserverproxy.cc in Sources */,
@@ -6573,6 +6841,7 @@
 				F5F49A9717E1A66500361F45 /* interfacehandlerbase.cc in Sources */,
 				F5F49A9817E1A66500361F45 /* androidarchive.cc in Sources */,
 				F5F49A9917E1A66500361F45 /* androidarchivefilesystem.cc in Sources */,
+				82D17E931937144F007B315E /* PhysicsPlaneShape.cc in Sources */,
 				F5F49A9A17E1A66500361F45 /* androidconsolehandler.cc in Sources */,
 				F5F49A9B17E1A66500361F45 /* androidfswrapper.cc in Sources */,
 				F5F49A9C17E1A66500361F45 /* archive.cc in Sources */,
@@ -6589,6 +6858,7 @@
 				F5F49AA617E1A66500361F45 /* consolehandler.cc in Sources */,
 				F5F49AA717E1A66500361F45 /* consolepagehandler.cc in Sources */,
 				F5F49AA817E1A66500361F45 /* iopagehandler.cc in Sources */,
+				82D17E8D1937144F007B315E /* PhysicsCapsuleShape.cc in Sources */,
 				F5F49AA917E1A66500361F45 /* excelxmlreader.cc in Sources */,
 				F5F49AAA17E1A66500361F45 /* fileservicesystem.cc in Sources */,
 				F5F49AAB17E1A66500361F45 /* filestream.cc in Sources */,
@@ -6618,6 +6888,7 @@
 				F5F49AC317E1A66500361F45 /* win360fswrapper.cc in Sources */,
 				F5F49AC417E1A66500361F45 /* xmlreader.cc in Sources */,
 				F5F49AC517E1A66500361F45 /* xmlwriter.cc in Sources */,
+				5850EF201935F045008B3597 /* guirenderobject.cc in Sources */,
 				F5F49AC617E1A66500361F45 /* ziparchive.cc in Sources */,
 				F5F49AC717E1A66500361F45 /* zipdirentry.cc in Sources */,
 				F5F49AC817E1A66500361F45 /* zipfileentry.cc in Sources */,
@@ -6659,11 +6930,13 @@
 				F5F49AF317E1A66500361F45 /* osxmemorypool.cc in Sources */,
 				F5F49AF417E1A66500361F45 /* poolarrayallocator.cc in Sources */,
 				F5F49AF917E1A66500361F45 /* boxbuilder.cc in Sources */,
+				82D17E6819371431007B315E /* PhysicsBodyComponent.cc in Sources */,
 				F5F49AFA17E1A66500361F45 /* conebuilder.cc in Sources */,
 				F5F49AFB17E1A66500361F45 /* meshbuilder.cc in Sources */,
 				F5F49AFC17E1A66500361F45 /* parallelogrambuilder.cc in Sources */,
 				82C7DF6E192222D2002CE939 /* PackageSystem.cc in Sources */,
 				F5F49AFD17E1A66500361F45 /* asyncport.cc in Sources */,
+				82D17E911937144F007B315E /* PhysicsMaterial.cc in Sources */,
 				F5F49AFE17E1A66500361F45 /* asynhandlerthread.cc in Sources */,
 				F5F49AFF17E1A66500361F45 /* batchmessage.cc in Sources */,
 				F5F49B0017E1A66500361F45 /* blockinghandlerthread.cc in Sources */,
@@ -6745,6 +7018,7 @@
 				F5F49B4E17E1A66500361F45 /* RenderToTexture.cc in Sources */,
 				F5F49B4F17E1A66500361F45 /* StreamBufferPool.cc in Sources */,
 				F5F49B5017E1A66500361F45 /* Camera.cc in Sources */,
+				82D17E901937144F007B315E /* PhysicsEntity.cc in Sources */,
 				F5F49B5117E1A66500361F45 /* CameraSetting.cc in Sources */,
 				F5F49B5217E1A66500361F45 /* ActiveLight.cc in Sources */,
 				F5F49B5317E1A66500361F45 /* DeferredLightingPass.cc in Sources */,
@@ -6872,6 +7146,7 @@
 				F55211AA1856FC71003AC44B /* GenesisShaderParser.cc in Sources */,
 				F55211AB1856FC71003AC44B /* stdneb.cc in Sources */,
 				F55211AF1856FC9C003AC44B /* particleLimitAffector.cc in Sources */,
+				82D17E6A19371431007B315E /* PhysicsFeature.cc in Sources */,
 				F55211B01856FC9C003AC44B /* particleLimitAffectorSerialization.cc in Sources */,
 				F55211BA1856FD1A003AC44B /* DXTextureDecompress.cc in Sources */,
 				F55211BB1856FD1A003AC44B /* FloatsCompression.cc in Sources */,
@@ -6890,6 +7165,7 @@
 				F55211D81856FDEF003AC44B /* RenderWindow.cc in Sources */,
 				F55211F118580147003AC44B /* MyGUI_GenesisDataManager.cpp in Sources */,
 				F55211F218580147003AC44B /* MyGUI_GenesisDataStream.cpp in Sources */,
+				82D17E921937144F007B315E /* PhysicsMeshShape.cc in Sources */,
 				F55211F318580147003AC44B /* MyGUI_GenesisInput.cpp in Sources */,
 				F55211F418580147003AC44B /* MyGUI_GenesisRenderManager.cpp in Sources */,
 				F55211F518580147003AC44B /* MyGUI_GenesisRTTexture.cpp in Sources */,
@@ -6919,6 +7195,12 @@
 				F5C42B4E18B1E3A400F5144E /* ShaderJoint.cc in Sources */,
 				F5C42B4F18B1E3A400F5144E /* ShaderCompilerUtil.cc in Sources */,
 				F504B89B18BC39F800B7C723 /* SoundInterface.cc in Sources */,
+				82F91395193748BD00BB1943 /* scriptbind_physicsbody_component.cc in Sources */,
+				82F91396193748BD00BB1943 /* scriptbind_physicsboxshape.cc in Sources */,
+				82F91397193748BD00BB1943 /* scriptbind_physicscapsuleshape.cc in Sources */,
+				82F91398193748BD00BB1943 /* scriptbind_physicsmeshshape.cc in Sources */,
+				82F91399193748BD00BB1943 /* scriptbind_physicsscene.cc in Sources */,
+				82F9139A193748BD00BB1943 /* scriptbind_physicssphereshape.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7036,6 +7318,8 @@
 					__OSX__,
 					MYGUI_RTTI_DISABLE_TYPE_INFO,
 					__USE_AUDIO__,
+					NDEBUG,
+					__arm__,
 				);
 				HEADER_SEARCH_PATHS = (
 					../rendersystem,
@@ -7053,6 +7337,22 @@
 					../../../genesis_externals/Externals/,
 					../extlibs/ShaderUtil,
 					../depends,
+					../ExtIncludes/physX3/ios,
+					../ExtIncludes/physX3/ios/cooking,
+					../ExtIncludes/physX3/ios/geometry,
+					../ExtIncludes/physX3/ios/extensions,
+					../ExtIncludes/physX3/ios/cloth,
+					../ExtIncludes/physX3/ios/characterkinematic,
+					../ExtIncludes/physX3/ios/common,
+					../ExtIncludes/physX3/ios/particles,
+					../ExtIncludes/physX3/ios/vehicle,
+					../ExtIncludes/physX3/ios/RepXUpgrader,
+					../ExtIncludes/physX3/ios/RepX,
+					../ExtIncludes/physX3/ios/pxtask,
+					../ExtIncludes/physX3/ios/pvd,
+					../ExtIncludes/physX3/ios/physxvisualdebuggersdk,
+					../ExtIncludes/physX3/ios/physxprofilesdk,
+					../ExtIncludes/physX3/ios/foundation,
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -7075,6 +7375,8 @@
 					__OSX__,
 					MYGUI_RTTI_DISABLE_TYPE_INFO,
 					__USE_AUDIO__,
+					NDEBUG,
+					__arm__,
 				);
 				HEADER_SEARCH_PATHS = (
 					../rendersystem,
@@ -7092,6 +7394,22 @@
 					../../../genesis_externals/Externals/,
 					../extlibs/ShaderUtil,
 					../depends,
+					../ExtIncludes/physX3/ios,
+					../ExtIncludes/physX3/ios/cooking,
+					../ExtIncludes/physX3/ios/geometry,
+					../ExtIncludes/physX3/ios/extensions,
+					../ExtIncludes/physX3/ios/cloth,
+					../ExtIncludes/physX3/ios/characterkinematic,
+					../ExtIncludes/physX3/ios/common,
+					../ExtIncludes/physX3/ios/particles,
+					../ExtIncludes/physX3/ios/vehicle,
+					../ExtIncludes/physX3/ios/RepXUpgrader,
+					../ExtIncludes/physX3/ios/RepX,
+					../ExtIncludes/physX3/ios/pxtask,
+					../ExtIncludes/physX3/ios/pvd,
+					../ExtIncludes/physX3/ios/physxvisualdebuggersdk,
+					../ExtIncludes/physX3/ios/physxprofilesdk,
+					../ExtIncludes/physX3/ios/foundation,
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";

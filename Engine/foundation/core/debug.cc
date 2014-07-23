@@ -75,9 +75,10 @@ n_barf2(const char* exp, const char* msg, const char* file, int line)
     requires abortion of the application.
 */
 
-#if (_DEBUG || DEBUG || __WIN32__ ) && ( __WIN32__ ||__OSX__)
+//#if (_DEBUG || DEBUG || __WIN32__ ) && ( __WIN32__ ||__OSX__)
+#ifndef __ANDROID__
 void __cdecl
-n_error(const char* msg, ...)
+log_error(const char* msg, ...)
 {
 	va_list argList;
 	if (__pCustomAssertFunc)
@@ -112,7 +113,7 @@ n_error(const char* msg, ...)
     require abortion of the application.
 */
 void __cdecl
-n_warning(const char* msg, ...)
+log_warning(const char* msg, ...)
 {
     va_list argList;
     va_start(argList, msg);
@@ -135,7 +136,7 @@ n_warning(const char* msg, ...)
     user which requires a confirmation (usually displayed as a MessageBox).
 */
 void __cdecl
-n_confirm(const char* msg, ...)
+log_confirm(const char* msg, ...)
 {
     va_list argList;
     va_start(argList, msg);
@@ -160,7 +161,7 @@ n_confirm(const char* msg, ...)
      - 27-Nov-98   floh    created
 */
 void __cdecl
-n_printf(const char *msg, ...)
+log_printf(const char *msg, ...)
 {
 	va_list argList;
 	va_start(argList, msg);
@@ -175,7 +176,7 @@ n_printf(const char *msg, ...)
     - 26-Mar-05    kims    created
 */
 void __cdecl
-n_dbgout(const char *msg, ...)
+log_dbgout(const char *msg, ...)
 {
     va_list argList;
     va_start(argList,msg);
@@ -184,7 +185,7 @@ n_dbgout(const char *msg, ...)
 }
 #if defined( DEBUG ) || defined( _DEBUG )
 void __cdecl
-n_debuglog(const char *msg, ...)
+log_debuglog(const char *msg, ...)
 {
 	va_list argList;
 	va_start(argList, msg);

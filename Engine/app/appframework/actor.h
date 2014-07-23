@@ -222,6 +222,8 @@ namespace App
 		// find child actor index in child list
 		IndexT FindChildIndex(FastId id) const;
 
+		IndexT FindChildIndex(const Util::String& name) const;
+
 		// add child. If childActor Has Parent, Failed, Need Remove Form Other Parent First. Please Use SetParent
 		void AddChild(GPtr<Actor>& childActor );
 
@@ -940,7 +942,7 @@ namespace App
 
 
 
-
+#include "component_force_compile.cc"
 
 
 #endif // __actor_H__

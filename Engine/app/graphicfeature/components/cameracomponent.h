@@ -446,7 +446,7 @@ inline
 bool
 CameraComponent::GetRenderShadowMap() const
 {
-	return m_camera->HasLightLitMap();
+	return m_camera->IsRenderLightLitMap();
 }
 
 inline

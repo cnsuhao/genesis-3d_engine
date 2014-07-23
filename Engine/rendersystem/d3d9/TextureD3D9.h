@@ -25,6 +25,8 @@ THE SOFTWARE.
 #ifndef _TEXTURED3D9_H_
 #define _TEXTURED3D9_H_
 #include "rendersystem/base/Texture.h"
+#include "D3d9Heads.h"
+
 namespace D3D9
 {
 	using namespace RenderBase;

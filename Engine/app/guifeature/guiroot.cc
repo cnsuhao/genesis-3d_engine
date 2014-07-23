@@ -60,6 +60,7 @@ namespace App
 
 	GuiRoot::GuiRoot()
 		:m_rootObj(NULL)
+		,m_rootRefID(0)
 	{
 
 	}
@@ -117,10 +118,13 @@ namespace App
 
 	void GuiRoot::Destroy()
 	{
-		mono_gchandle_free(m_rootRefID);
-		m_rootRefID = 0;
-		m_rootObj = NULL;
-		resetScriptMethods();
+		if (m_rootObj)
+		{
+			mono_gchandle_free(m_rootRefID);
+			m_rootRefID = 0;
+			m_rootObj = NULL;
+			resetScriptMethods();
+		}
 	}
 
 	void GuiRoot::InitGuiScript()

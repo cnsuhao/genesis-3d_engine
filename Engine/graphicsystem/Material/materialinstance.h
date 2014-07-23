@@ -55,6 +55,16 @@ namespace Graphic
 		Util::String val;
 	};
 
+	enum MaterialSort
+	{
+		MatSort_Default = 2000,
+		MatSort_TerrainBegin = 5000,
+		MatSort_TerrainEnd = 5999,
+		MatSort_ProjectorBegin = 9000,
+		MatSort_ProjectorEnd = 9999,
+		MatSort_Max = 10000
+	};
+
 	typedef Util::Dictionary<ShaderParamString, GPtr<Resources::TextureResInfo> > TexParamMap;
 	typedef Util::Dictionary<ShaderParamString,Util::String> ShaderConstantParamMap;
 	class MaterialInstance : public Graphic::Material

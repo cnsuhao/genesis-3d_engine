@@ -506,16 +506,10 @@ namespace App
 		pWriter->SerializeUInt(s_TerrainLMSize, mObject->GetLMSize() );
 		pWriter->SerializeUInt(s_TerrainLightmapMode, (uint)mObject->GetLightmapMode() );
 
-
-		for(int matIndex=0;matIndex<mObject->GetMaterialCount();matIndex++)
+		for (int matIndex = 0; matIndex < mObject->GetMaterialCount(); ++matIndex)
 		{
-			GPtr<Graphic::MaterialInstance> instance = mObject->GetMaterial(matIndex);
-			if (instance)
-			{
-				Resources::ResourceManager::Instance()->SaveMaterial(instance->GetMaterialID());
-			}
+			Resources::ResourceManager::Instance()->SaveMaterial(mObject->GetMaterialID(matIndex));
 		}
-
 		return;
 	}
 

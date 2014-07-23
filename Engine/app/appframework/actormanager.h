@@ -111,7 +111,7 @@ namespace App
 
 		void DeactiveActor( GPtr<Actor>& pActor, bool forceActiveControlofChild );// = false 
 
-		void DeactiveActors( uint layerMark );
+		void DeactiveActors(Graphic::IRenderScene* renderScene, uint layerMark);
 
 		//---------------------------actor template manage ---------------------------------------------
 		/**

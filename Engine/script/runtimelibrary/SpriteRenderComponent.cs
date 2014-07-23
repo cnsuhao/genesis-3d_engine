@@ -41,7 +41,7 @@ namespace ScriptRuntime
         /// <summary>
         /// 创建一个精灵
         /// </summary>
-        public SpriteRenderComponent()
+        protected SpriteRenderComponent()
         {
             ICall_SpriteRenderComponent_Bind(this);
         }

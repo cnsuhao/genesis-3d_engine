@@ -50,7 +50,8 @@ namespace App
 		Graphic::MaterialInstance* pRT = self.GetCppObjPtr();
 		n_assert( NULL!=pRT );
 
-		ReleaseCppObjWithMonoObj<Graphic::MaterialInstance>( pRT, pMonoObj );
+		//ReleaseCppObjWithMonoObj<Graphic::MaterialInstance>( pRT, pMonoObj );
+		DelayReleaseCppObjWithMonoObj<Graphic::MaterialInstance>( pRT, pMonoObj );
 	}
 
 	static void ICall_Material_SetTexture(MonoObject* pMonoObj, MonoString* paramName, gpointer textureHandlePtr)

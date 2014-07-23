@@ -129,7 +129,7 @@ void SimpleSkyComponent::updateScale( Graphic::Camera* camera )
 	_mscale.scale(Math::float4(scale,scale,scale,1.0f));
 	Math::matrix44 trans = camera->GetCameraSetting().GetViewTransform();
 	trans.set_position(Math::float4(0.0f,0.0f,0.0f,1.0f));
-	Math::matrix44 rot = Math::matrix44::rotationx(-90);
+	Math::matrix44 rot = Math::matrix44::rotationx(-N_PI/2);
 	trans = Math::matrix44::multiply(trans,rot);
 	trans = Math::matrix44::multiply(trans,_mscale);
 	mActor->SetTransform(trans);	

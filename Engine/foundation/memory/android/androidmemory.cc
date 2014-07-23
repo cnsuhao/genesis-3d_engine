@@ -25,7 +25,7 @@ THE SOFTWARE.
 #include "stdneb.h"
 #include "core/types.h"
 #include "core/sysfunc.h"
-#include <malloc.h>
+
 //todo fix this later
 #define _msize(ptr) 0
 
@@ -60,7 +60,7 @@ Alloc(HeapType heapType, size_t size, size_t alignment)
 #endif
         
     // allocate memory from global heap    
-    allocPtr = malloc(size);
+    allocPtr = __Alloc16(size);
     if (0 == allocPtr)
     {
         n_error("Allocation failed from Heap '%s'!\n", GetHeapTypeName(heapType));
@@ -103,7 +103,7 @@ Realloc(HeapType heapType, void* ptr, size_t size)
 #endif
         
     // reallocate the memory
-    void* allocPtr = realloc(ptr, size);
+    void* allocPtr = __ReAlloc16(ptr, size);
     if (0 == allocPtr)
     {
         n_error("Allocation failed from Heap '%s'!\n", GetHeapTypeName(heapType));
@@ -136,7 +136,7 @@ Free(HeapType heapType, void* ptr)
 #if NEBULA3_MEMORY_STATS
         size_t allocatedSize = _msize(ptr);
 #endif
-        free(ptr);
+        __Free16(ptr);
             
 #if NEBULA3_MEMORY_STATS
 		int nAllocatedSize = -((int)allocatedSize);

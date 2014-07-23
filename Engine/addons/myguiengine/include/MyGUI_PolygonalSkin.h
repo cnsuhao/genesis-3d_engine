@@ -39,6 +39,8 @@ namespace MyGUI
 		PolygonalSkin();
 		virtual ~PolygonalSkin();
 
+		virtual size_t getVertexCount() const;
+
 		/** Set line points. */
 		void setPoints(const std::vector<FloatPoint>& _points);
 
@@ -51,8 +53,10 @@ namespace MyGUI
 
 		virtual void setStateData(IStateInfo* _data);
 
+		virtual void updateDrawItem(ITexture* _texture, ILayerNode* _node);
 		virtual void createDrawItem(ITexture* _texture, ILayerNode* _node);
 		virtual void destroyDrawItem();
+		virtual void onRenderItemChanged(ILayerNode* _sender, RenderItem* _old, RenderItem* _new);
 
 		// метод для отрисовки себя
 		virtual void doRender();
@@ -65,6 +69,7 @@ namespace MyGUI
 
 		virtual void _setUVSet(const FloatRect& _rect);
 		virtual void _setColour(const Colour& _value);
+		virtual void _setGray(bool _gray);
 
 	protected:
 		void _rebuildGeometry();

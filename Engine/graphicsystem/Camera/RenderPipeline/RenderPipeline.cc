@@ -46,44 +46,72 @@ namespace Graphic
 	{
 	}
 	//------------------------------------------------------------------------
+
+	void RenderPipeline::setTargetWindow(PipelineParamters& context)
+	{
+		GraphicRenderer::ResetCache();
+		if (context.m_targetWindows)
+		{
+			GraphicSystem::Instance()->_SetRenderWindow(context.m_targetWindows);
+		}
+		else
+		{
+			const GPtr<RenderToTexture>& rtt = context.m_targetSuite->GetRenderToTexture();
+			if (rtt.isvalid())
+			{
+				GraphicSystem::Instance()->SetRenderTarget(rtt, 0, RenderBase::RenderTarget::ClearAll);
+			}
+		}
+	}
+	//------------------------------------------------------------------------
 	void RenderPipeline::setGlobalShaderParam(PipelineParamters& params)
 	{
 		const Camera* camera = params.m_camera;
 
 		if(camera->UseViewport())
 		{
-			const Camera::ViewPort& vp = camera->GetViewport();
-			GraphicSystem::Instance()->SetViewPort(vp);
+			const Camera::Viewport& vp = camera->GetViewport();
+			GraphicSystem::Instance()->SetViewport(vp);
 		}
-
-
-
 
 		GlobalMaterialParam* pGMP = Material::GetGlobalMaterialParams();
 
-		ViewPortWindow* target = camera->GetTargetWindow();
-		if (NULL == target)
+		if (params.m_targetWindows)
 		{
-			target = GraphicSystem::Instance()->GetMainViewPortWindow();
+			const RenderBase::DisplayMode& dm = params.m_targetWindows->GetDisplayMode();
+			Material::GetGlobalMaterialParams()->SetVectorParam(eGShaderVecScreenSize,
+				float4(float(dm.GetWidth()), float(dm.GetHeight()), 0.5f / (float)dm.GetWidth(), 0.5f / (float)dm.GetHeight())		
+				);
 		}
-		target->ApplyGlobalShaderParam();
+		else
+		{
+			int width = params.m_targetSuite->GetWidth();
+			int height = params.m_targetSuite->GetHeight();
+			Material::GetGlobalMaterialParams()->SetVectorParam(eGShaderVecScreenSize,
+				float4((float)width, (float)height, 0.5f / (float)width, 0.5f / (float)height)
+				);
+		}
+		
 		camera->GetRenderScene()->ApplyEnvironment();
 
 
 		//将全局参数设置为当前要渲染相机的RT属性
 		// TODO： 加入wireframe 判断RT？
 
-		if (camera->GetDepthMap().isvalid())
+		if (camera->IsRenderDepthMap())
 		{
-			Material::GetGlobalMaterialParams()->SetTextureParam(eGShaderTexDepthMap,camera->GetDepthMap()->GetTextureHandle());
+			Material::GetGlobalMaterialParams()->SetTextureParam(eGShaderTexDepthMap, params.m_targetSuite->GetDepthTexture()->GetTextureHandle());
 		}
 
 #if __WIN32__ && RENDERDEVICE_D3D9
-		if (camera->GetLightLitTexture().isvalid())
+		if (camera->IsRenderLightLitMap())
 		{
-			Material::GetGlobalMaterialParams()->SetTextureParam(eGShaderTexLightLitMap,camera->GetLightLitTexture()->GetTextureHandle());
+			Material::GetGlobalMaterialParams()->SetTextureParam(eGShaderTexLightLitMap, params.m_targetSuite->GetLightLitTexture()->GetTextureHandle());
 		}
-
+		else
+		{
+			Material::GetGlobalMaterialParams()->SetTextureParam(eGShaderTexLightLitMap, GraphicSystem::Instance()->GetDefaultWhiteRTT()->GetTextureHandle());
+		}
 #endif
 		const Math::matrix44& view = camera->GetViewTransform();
 		const Math::matrix44& proj = camera->GetProjTransform();
@@ -298,13 +326,12 @@ namespace Graphic
 	//------------------------------------------------------------------------
 	void RenderPipeline::renderDepthMap(PipelineParamters& params)
 	{
-		if(!params.m_camera->HasDepthMap())
+		if(!params.m_camera->IsRenderDepthMap())
 			return;
 		GraphicRenderer::ResetCache();
 		const Camera* camera = params.m_camera;
-		const GPtr<RenderToTexture>& depthRT = camera->GetDepthMap();
+		const GPtr<RenderToTexture>& depthRT = params.m_targetSuite->GetDepthTexture();
 		GraphicSystem::Instance()->SetRenderTarget(depthRT,0,RenderBase::RenderTarget::ClearAll);
-		m_currentRT = depthRT;
 
 		renderRenderableList(params, RenderData::Opaque, eDepth, NULL, Renderable::GenDepth);
 		//alphablend物体 不需要渲染深度
@@ -315,7 +342,7 @@ namespace Graphic
 	void RenderPipeline::renderLightLitMap(PipelineParamters& params)
 	{
 		const Camera* camera = params.m_camera;
-		if(!(camera->HasLightLitMap() && camera->HasDepthMap()) )
+		if(!(camera->IsRenderLightLitMap() && camera->IsRenderDepthMap()) )
 			return;
 		GraphicRenderer::ResetCache();
 		const Light* sunLight = camera->GetRenderScene()->GetSunLight();
@@ -348,8 +375,8 @@ namespace Graphic
 		pGMP->SetVectorParam(eGShaderVecLightCameraNear, lightCameraNear);
 		pGMP->SetVectorParam(eGShaderVecLightCameraFar, lightCameraFar);
 
-		const GPtr<RenderToTexture>& lightlitRT = camera->GetLightLitTexture();
-		m_currentRT = lightlitRT;
+		const GPtr<RenderToTexture>& lightlitRT = params.m_targetSuite->GetLightLitTexture();
+
 		ImageFiltrationSystem::Render(NULL, lightlitRT, camera->GetLightLitMaterial());
 	}
 
@@ -359,18 +386,10 @@ namespace Graphic
 		if(!params.m_camera->IsRenderCustom())
 			return;
 		GraphicRenderer::ResetCache();
-		const GPtr<RenderToTexture>& rtt = params.m_camera->GetRenderToTexture();
-		n_assert(rtt.isvalid());
-		if (m_currentRT == rtt)
-		{
-			GraphicSystem::Instance()->SetRenderTarget(rtt,0,RenderBase::RenderTarget::ClearAll);
-		}
-		else
-		{
-			GraphicSystem::Instance()->SetRenderTarget(rtt,0,RenderBase::RenderTarget::ClearColor |
-				RenderBase::RenderTarget::ClearDepth | RenderBase::RenderTarget::ClearStencil);
-			m_currentRT = rtt;
-		}
+		const GPtr<RenderToTexture>& rtt = params.m_targetSuite->GetRenderToTexture();
+
+		GraphicSystem::Instance()->SetRenderTarget(rtt, 0, RenderBase::RenderTarget::ClearAll);
+
 
 		const Camera* camera = params.m_camera;
 		const Material* mat = params.m_camera->GetCustomMaterial().get_unsafe();
@@ -408,9 +427,8 @@ namespace Graphic
 		{
 			const Camera* camera = params.m_camera;
 
-			m_currentRT = 0;
-			const GPtr<RenderToTexture>& rtt= camera->GetSwapTexture();
-			const GPtr<RenderToTexture>& mainTex = camera->GetRenderToTexture();
+			const GPtr<RenderToTexture>& rtt= params.m_targetSuite->GetSwapTexture();
+			const GPtr<RenderToTexture>& mainTex = params.m_targetSuite->GetRenderToTexture();
 
 			if ( mainTex.isvalid() && rtt.isvalid() )
 			{
@@ -421,7 +439,6 @@ namespace Graphic
 					// 先将mianbuffer的内容复制到swapbuffer
 					ImageFiltrationSystem::Render(&(mainTex->GetTextureHandle()), rtt, NULL, 0, RenderBase::RenderTarget::ClearNone);
 					GraphicSystem::Instance()->SetRenderTarget(mainTex->GetTargetHandle(),0,RenderBase::RenderTarget::ClearNone);
-					m_currentRT = mainTex;
 
 					GlobalMaterialParam* pGMP = Material::GetGlobalMaterialParams();
 					pGMP->SetTextureParam(eGShaderTexSwapBuffer, rtt->GetTextureHandle());
@@ -445,8 +462,9 @@ namespace Graphic
 		RenderDataIndexArray& indices = params.m_renderDatas.GetRenderDataIndices(RenderData::Screen);
 
 		GraphicRenderer::ResetCache();
-		const GPtr<RenderToTexture>& rtt= params.m_camera->GetRenderToTexture();
-		GraphicSystem::Instance()->SetRenderTarget(rtt,0,RenderBase::RenderTarget::ClearDepth);
+		const GPtr<RenderToTexture>& rtt = params.m_targetSuite->GetRenderToTexture();
+
+		GraphicSystem::Instance()->SetRenderTarget(rtt, 0, RenderBase::RenderTarget::ClearDepth);
 
 		matrix44 view = matrix44::identity();
 		ViewPortWindow* window = params.m_camera->GetTargetWindow();
@@ -479,7 +497,7 @@ namespace Graphic
 		GraphicSystem::Instance()->SetWireFrameMode(false);
 
 		const GPtr<Camera>& camera = params.m_camera;
-		const GPtr<RenderToTexture>& mainBuffer = camera->GetRenderToTexture();
+		const GPtr<RenderToTexture>& mainBuffer = params.m_targetSuite->GetRenderToTexture();
 		if (!mainBuffer.isvalid())
 		{
 			return;
@@ -490,7 +508,7 @@ namespace Graphic
 		int count = postEffects.Size();
 		if (count > 0)
 		{
-			RenderToTexture* destination = camera->GetSwapTexture().get();
+			RenderToTexture* destination = params.m_targetSuite->GetSwapTexture().get();
 			int index = 0;
 			PROFILER_ADDDTICKBEGIN(postTime);
 			while(index < count)
@@ -506,31 +524,28 @@ namespace Graphic
 			PROFILER_ADDDTICKEND(postTime);
 		}
 
+		if (source == params.m_targetSuite->GetSwapTexture().get())
+		{
+			PROFILER_ADDDTICKBEGIN(postTime);
+			ImageFiltrationSystem::Render(&source->GetTextureHandle(), mainBuffer.get(), NULL, 0);//SwapTexture没有深度缓冲，所以要先copy到mainBuffer里。
+			PROFILER_ADDDTICKEND(postTime);
+			source = mainBuffer.get();
+		}
+
 		if (contain(params,RenderData::Screen))
 		{
-			if (source == camera->GetSwapTexture().get())
-			{
-				PROFILER_ADDDTICKBEGIN(postTime);
-				ImageFiltrationSystem::Render(&source->GetTextureHandle(), mainBuffer.get(), NULL, 0);//SwapTexture没有深度缓冲，所以要先copy到mainBuffer里。
-				PROFILER_ADDDTICKEND(postTime);
-				source = mainBuffer.get();
-			}
 			renderScreenObjs(params);
 		}			
-#if __WIN32__
-		ViewPortWindow* vpw = GraphicSystem::Instance()->GetCurrentTargetWindow();
-		if (vpw != NULL)
-		{
-			GraphicSystem::Instance()->SetRenderTarget(vpw->GetBackBuffer(), 0, RenderBase::RenderTarget::ClearNone);
-		}
-		else
+
+		if (params.m_targetWindows == NULL)
 		{
 			GraphicSystem::Instance()->SetRenderTarget(RenderBase::RenderTargetHandle(), 0, RenderBase::RenderTarget::ClearNone);
-			return;
 		}
-		
-#endif
-
-		ImageFiltrationSystem::Render(&source->GetTextureHandle(), NULL, NULL, 0);
+		//else
+		//{
+		//	GraphicSystem::Instance()->SetRenderTarget(params.m_targetWindows->GetBackBuffer(), 0, RenderBase::RenderTarget::ClearNone);
+		//	ImageFiltrationSystem::Render(&source->GetTextureHandle(), 
+		//		params.m_targetWindows->GetBackBuffer().get(), NULL, NULL, 0);
+		//}
 	}
 } 

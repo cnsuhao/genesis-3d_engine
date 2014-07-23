@@ -28,7 +28,7 @@ THE SOFTWARE.
 #include "addons/myguiplatforms/include/MyGUI_GenesisPlatform.h"
 #include "basegamefeature/managers/timesource.h"
 #include "guifeature/gui.h"
-#include "guiroot.h"
+#include "guifeature/guiscene.h"
 
 #include "foundation/io/ioserver.h"
 namespace App
@@ -39,8 +39,6 @@ namespace App
 
 	using namespace MyGUI;
 
-	Util::String g_uiPath = "asset:UIMedia/";
-
 
 	GUIServer::GUIServer()
 		:m_gui(NULL)
@@ -48,6 +46,7 @@ namespace App
 		,m_visible(true)
 		,m_opened(false)
 		,m_targetWindow(NULL)
+		,m_coreFile(GUI_ROOT_CONFIG)
 	{
 		__ConstructImageSingleton;
 	}
@@ -63,27 +62,50 @@ namespace App
 		return (NULL != m_platform) && (NULL != m_gui);
 	}
 
-	void GUIServer::SetCoreFile(const char* core)
+	void GUIServer::SetLogDir(const Util::String& dir)
+	{
+		m_logDir = dir;
+	}
+
+	void GUIServer::SetCoreFile(const Util::String& core)
 	{
 		m_coreFile = core;
 	}
 
-	void GUIServer::SetEngineDir(const Util::String& dir)
+	void GUIServer::AddMediaLocaltion(const Util::String& path)
 	{
-		m_engineDir = dir;
+		GenesisGuiGlobal::pushMediaLocation(path.AsCharPtr());
 	}
 
-	bool GUIServer::Open()
+	void GUIServer::SetTargetWindow(Graphic::ViewPortWindow* vpw)
 	{
-		Util::String core_file = g_uiPath + m_coreFile;
-		if(IO::IoServer::Instance()->FileExists(Util::StringAtom(core_file)))
+		m_targetWindow = vpw;
+		OnWindowResized();
+		if (m_guiScene)
 		{
-			_initMyGUI();
-			_initScript();
-			m_opened = true;
+			m_guiScene->SetTargetWindow(vpw);
 		}
-		return m_opened;
+	}
 
+	void GUIServer::Open()
+	{
+		_initMyGUI();
+		_initScript();
+		m_opened = true;
+	}
+
+	void GUIServer::OnFrame()
+	{
+		_beforeDraw();
+	}
+
+	Graphic::MaterialInstance* GUIServer::GetGuiMaterial() const
+	{
+		if (m_platform)
+		{
+			return m_platform->getRenderManagerPtr()->getMaterial()->GetHandle().get_unsafe();
+		}
+		return NULL;
 	}
 
 	void GUIServer::Close()
@@ -103,11 +125,16 @@ namespace App
 				n_delete(m_platform);
 				m_platform = NULL;
 			}
+
+			if (m_guiScene)
+			{
+				m_guiScene->Destroy();
+				n_delete(m_guiScene);
+				m_guiScene = NULL;
+			}
 			m_targetWindow = NULL;
 			m_opened = false;
 		}
-
-		Graphic::GraphicSystem::Instance()->SetUIDrawCallBack(NULL);
 	}
 
 	void GUIServer::OnWindowResized()
@@ -136,6 +163,11 @@ namespace App
 	{
 		m_guiRoot.ExitGuiScript();
 
+		ForceDestroyGuiScript();
+	}
+
+	void GUIServer::ForceDestroyGuiScript()
+	{
 		m_guiRoot.Destroy();
 		m_guiEvent.Destroy();
 	}
@@ -346,20 +378,31 @@ namespace App
 		return mygui_key;
 	}			
 	
+	MyGUI::MouseButton GUIServer::MouseButtonToMyGUI(Input::InputMouseButton::Code btn)
+	{
+		switch(btn)
+		{
+		case Input::InputMouseButton::LeftButton:
+			return MyGUI::MouseButton::Left;
+		case Input::InputMouseButton::RightButton:
+			return MyGUI::MouseButton::Right;
+		case Input::InputMouseButton::MiddleButton:
+			return MyGUI::MouseButton::Middle;
+		default: 
+			return MyGUI::MouseButton::None;
+		}
+	}
 
 	void GUIServer::_initMyGUI()
 	{
 		n_assert(NULL == m_platform);
 		n_assert(NULL == m_gui);
 		m_platform = n_new(GenesisPlatform);
-		GenesisTexture::SetResourcePath(g_uiPath);
-		GenesisRenderManager::SetResourcePath(g_uiPath);
-		GenesisDataManager::getInstance().SetResourcePath(g_uiPath);
 		std::string uilog;
 #ifdef __WIN32__
-		if (m_engineDir.Length())
+		if (m_logDir.Length())
 		{
-			uilog = m_engineDir.AsCharPtr();
+			uilog = m_logDir.AsCharPtr();
 			uilog += "\\gui.log";
 		}
 #endif
@@ -368,18 +411,16 @@ namespace App
 
 		m_gui = n_new(Gui);
 		m_gui->initialise(m_coreFile.AsCharPtr());
-		Graphic::GraphicSystem::Instance()->SetUIDrawCallBack(_drawUI);
-		Graphic::GraphicSystem::Instance()->SetUIBeforeDrawCallBack(_beforeDraw);
+
 		MyGUI::PointerManager::getInstance().setVisible(false);
+
+		m_guiScene = n_new(GuiScene);
+		m_guiScene->Setup();
 	}
 	void GUIServer::_initScript()
 	{
 		m_guiRoot.Init();
 		m_guiEvent.Init();
-	}
-	void GUIServer::_drawUI()
-	{
-		Instance()->_renderUI();
 	}
 
 	void GUIServer::_renderUI()
@@ -393,18 +434,14 @@ namespace App
 			}
 			if (vpw->GetNeedUpdate())
 			{
-				Graphic::GraphicSystem::Instance()->SetCurrentTargetWindow(vpw, RenderBase::RenderTarget::ClearNone);
-				GetPlatform()->getRenderManagerPtr()->renderGUI((float)App::GameTime::Instance()->GetFrameTime());
+				//Graphic::GraphicSystem::Instance()->_SetBackBuffer(vpw);
+				m_platform->getRenderManagerPtr()->renderGUI((float)App::GameTime::Instance()->GetFrameTime());
 			}
 
 		}
 	}
 	void GUIServer::_beforeDraw()
 	{
-		if (HasInstance())
-		{
-			Instance()->eventBeforeDrawUI((void*)Instance());
-		}
-
+		eventBeforeDrawUI((void*)Instance());
 	}
 }

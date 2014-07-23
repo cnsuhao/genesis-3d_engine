@@ -56,6 +56,19 @@ namespace App
 		return mScene->GetRenderScene();
 	}
 
+	SceneEnvironment::SceneEnvironment()
+		:graivty(0.0f,-9.81f,0.0f)
+		,skinWidth(0.025f)
+		,bounce(0.0f)
+		,sleepVel(0.5f)
+		,sleepAngular(0.5f)
+		,maxAngular(7.0f)
+		,defaultMat("")
+	{
+		layerIDArray.Resize(32,0xffffffff);
+	}
+
+
 	__ImplementClass(App::Scene, 'SCEN' ,Core::RefCounted);
 
 	//------------------------------------------------------------------------
@@ -99,7 +112,7 @@ namespace App
 	{
 		GetRenderScene()->SetEnvironment(&mEnvironment);
         
-#if __USE_PHYSX__ || __GENESIS_EDITOR__
+#if defined (__USE_PHYSX__) || defined (__GENESIS_EDITOR__)
 		if(apply)
 		{
 			PhysicsServer::Instance()->SetGravity(mEnvironment.graivty);

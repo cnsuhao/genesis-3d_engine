@@ -31,45 +31,6 @@
 		F5C42B2418B1AE5F00F5144E /* libmpg123-ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C42B0418B1ADC100F5144E /* libmpg123-ios.a */; };
 		F5C42B2518B1AE5F00F5144E /* libOggIos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C42AFE18B1AD6C00F5144E /* libOggIos.a */; };
 		F5C42B2618B1AE5F00F5144E /* libzlibIos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C42AF818B1AD5A00F5144E /* libzlibIos.a */; };
-		F5EFE69418BC442000D585CC /* Asset in Resources */ = {isa = PBXBuildFile; fileRef = F5EFE68118BC441F00D585CC /* Asset */; };
-		F5EFE69518BC442000D585CC /* CompressRes in Resources */ = {isa = PBXBuildFile; fileRef = F5EFE68218BC441F00D585CC /* CompressRes */; };
-		F5EFE69618BC442000D585CC /* CompressUI in Resources */ = {isa = PBXBuildFile; fileRef = F5EFE68318BC441F00D585CC /* CompressUI */; };
-		F5EFE69718BC442000D585CC /* Google_UIMedia in Resources */ = {isa = PBXBuildFile; fileRef = F5EFE68418BC441F00D585CC /* Google_UIMedia */; };
-		F5EFE69818BC442000D585CC /* JYPK in Resources */ = {isa = PBXBuildFile; fileRef = F5EFE68518BC441F00D585CC /* JYPK */; };
-		F5EFE69918BC442000D585CC /* Lightmap in Resources */ = {isa = PBXBuildFile; fileRef = F5EFE68618BC441F00D585CC /* Lightmap */; };
-		F5EFE69A18BC442000D585CC /* logfiles in Resources */ = {isa = PBXBuildFile; fileRef = F5EFE68718BC441F00D585CC /* logfiles */; };
-		F5EFE69B18BC442000D585CC /* Mesh in Resources */ = {isa = PBXBuildFile; fileRef = F5EFE68818BC441F00D585CC /* Mesh */; };
-		F5EFE69C18BC442000D585CC /* Physics in Resources */ = {isa = PBXBuildFile; fileRef = F5EFE68918BC442000D585CC /* Physics */; };
-		F5EFE69D18BC442000D585CC /* preview in Resources */ = {isa = PBXBuildFile; fileRef = F5EFE68A18BC442000D585CC /* preview */; };
-		F5EFE69E18BC442000D585CC /* QMShader in Resources */ = {isa = PBXBuildFile; fileRef = F5EFE68B18BC442000D585CC /* QMShader */; };
-		F5EFE69F18BC442000D585CC /* Scene in Resources */ = {isa = PBXBuildFile; fileRef = F5EFE68C18BC442000D585CC /* Scene */; };
-		F5EFE6A018BC442000D585CC /* Script in Resources */ = {isa = PBXBuildFile; fileRef = F5EFE68D18BC442000D585CC /* Script */; };
-		F5EFE6A118BC442000D585CC /* Shader in Resources */ = {isa = PBXBuildFile; fileRef = F5EFE68E18BC442000D585CC /* Shader */; };
-		F5EFE6A218BC442000D585CC /* Sharp.Genesis in Resources */ = {isa = PBXBuildFile; fileRef = F5EFE68F18BC442000D585CC /* Sharp.Genesis */; };
-		F5EFE6A318BC442000D585CC /* System in Resources */ = {isa = PBXBuildFile; fileRef = F5EFE69018BC442000D585CC /* System */; };
-		F5EFE6A418BC442000D585CC /* toolchain in Resources */ = {isa = PBXBuildFile; fileRef = F5EFE69118BC442000D585CC /* toolchain */; };
-		F5EFE6A518BC442000D585CC /* UIMedia in Resources */ = {isa = PBXBuildFile; fileRef = F5EFE69218BC442000D585CC /* UIMedia */; };
-		F5EFE6A618BC442000D585CC /* UserDefCSharp in Resources */ = {isa = PBXBuildFile; fileRef = F5EFE69318BC442000D585CC /* UserDefCSharp */; };
-		F5EFE6BC18BC443400D585CC /* Mono.Security.dll in Resources */ = {isa = PBXBuildFile; fileRef = F5EFE6B218BC443400D585CC /* Mono.Security.dll */; };
-		F5EFE6BD18BC443400D585CC /* mscorlib.dll in Resources */ = {isa = PBXBuildFile; fileRef = F5EFE6B318BC443400D585CC /* mscorlib.dll */; };
-		F5EFE6BE18BC443400D585CC /* ScriptFrameworkLibrary.dll in Resources */ = {isa = PBXBuildFile; fileRef = F5EFE6B418BC443400D585CC /* ScriptFrameworkLibrary.dll */; };
-		F5EFE6BF18BC443400D585CC /* ScriptGUILibrary.dll in Resources */ = {isa = PBXBuildFile; fileRef = F5EFE6B518BC443400D585CC /* ScriptGUILibrary.dll */; };
-		F5EFE6C018BC443400D585CC /* ScriptRuntimeLibrary.dll in Resources */ = {isa = PBXBuildFile; fileRef = F5EFE6B618BC443400D585CC /* ScriptRuntimeLibrary.dll */; };
-		F5EFE6C118BC443400D585CC /* System.Configuration.dll in Resources */ = {isa = PBXBuildFile; fileRef = F5EFE6B718BC443400D585CC /* System.Configuration.dll */; };
-		F5EFE6C218BC443400D585CC /* System.dll in Resources */ = {isa = PBXBuildFile; fileRef = F5EFE6B818BC443400D585CC /* System.dll */; };
-		F5EFE6C318BC443400D585CC /* System.Security.dll in Resources */ = {isa = PBXBuildFile; fileRef = F5EFE6B918BC443400D585CC /* System.Security.dll */; };
-		F5EFE6C418BC443400D585CC /* System.Xml.dll in Resources */ = {isa = PBXBuildFile; fileRef = F5EFE6BA18BC443400D585CC /* System.Xml.dll */; };
-		F5EFE6C518BC443400D585CC /* UserDefCSharp.dll in Resources */ = {isa = PBXBuildFile; fileRef = F5EFE6BB18BC443400D585CC /* UserDefCSharp.dll */; };
-		F5EFE6C618BC444F00D585CC /* Mono.Security.dll in Sources */ = {isa = PBXBuildFile; fileRef = F5EFE6B218BC443400D585CC /* Mono.Security.dll */; };
-		F5EFE6C718BC444F00D585CC /* mscorlib.dll in Sources */ = {isa = PBXBuildFile; fileRef = F5EFE6B318BC443400D585CC /* mscorlib.dll */; };
-		F5EFE6C818BC444F00D585CC /* ScriptFrameworkLibrary.dll in Sources */ = {isa = PBXBuildFile; fileRef = F5EFE6B418BC443400D585CC /* ScriptFrameworkLibrary.dll */; };
-		F5EFE6C918BC444F00D585CC /* ScriptGUILibrary.dll in Sources */ = {isa = PBXBuildFile; fileRef = F5EFE6B518BC443400D585CC /* ScriptGUILibrary.dll */; };
-		F5EFE6CA18BC444F00D585CC /* ScriptRuntimeLibrary.dll in Sources */ = {isa = PBXBuildFile; fileRef = F5EFE6B618BC443400D585CC /* ScriptRuntimeLibrary.dll */; };
-		F5EFE6CB18BC444F00D585CC /* System.Configuration.dll in Sources */ = {isa = PBXBuildFile; fileRef = F5EFE6B718BC443400D585CC /* System.Configuration.dll */; };
-		F5EFE6CC18BC444F00D585CC /* System.dll in Sources */ = {isa = PBXBuildFile; fileRef = F5EFE6B818BC443400D585CC /* System.dll */; };
-		F5EFE6CD18BC444F00D585CC /* System.Security.dll in Sources */ = {isa = PBXBuildFile; fileRef = F5EFE6B918BC443400D585CC /* System.Security.dll */; };
-		F5EFE6CE18BC444F00D585CC /* System.Xml.dll in Sources */ = {isa = PBXBuildFile; fileRef = F5EFE6BA18BC443400D585CC /* System.Xml.dll */; };
-		F5EFE6CF18BC444F00D585CC /* UserDefCSharp.dll in Sources */ = {isa = PBXBuildFile; fileRef = F5EFE6BB18BC443400D585CC /* UserDefCSharp.dll */; };
 		F5F49C2D17E1C17A00361F45 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5F49C2C17E1C17900361F45 /* UIKit.framework */; };
 		F5F49C2F17E1C17A00361F45 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5F49C2E17E1C17A00361F45 /* Foundation.framework */; };
 		F5F49C3117E1C17A00361F45 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5F49C3017E1C17A00361F45 /* CoreGraphics.framework */; };
@@ -212,35 +173,6 @@
 		F5C42B0B18B1ADFE00F5144E /* libopcode.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libopcode.xcodeproj; path = ../../../genesis_externals/Externals/IosLibs/libopcode/libopcode.xcodeproj; sourceTree = "<group>"; };
 		F5C42B1118B1AE1000F5144E /* GLSLOptimizer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GLSLOptimizer.xcodeproj; path = ../../../genesis_externals/Externals/IosLibs/mesa/GLSLOptimizer/GLSLOptimizer.xcodeproj; sourceTree = "<group>"; };
 		F5C42B1718B1AE2A00F5144E /* hlsl2glslfork.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = hlsl2glslfork.xcodeproj; path = ../../../genesis_externals/Externals/IosLibs/hlsl2glslfork/hlsl2glslfork/hlsl2glslfork.xcodeproj; sourceTree = "<group>"; };
-		F5EFE68118BC441F00D585CC /* Asset */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Asset; path = ../../../../TL_Run/Asset; sourceTree = "<group>"; };
-		F5EFE68218BC441F00D585CC /* CompressRes */ = {isa = PBXFileReference; lastKnownFileType = folder; name = CompressRes; path = ../../../../TL_Run/CompressRes; sourceTree = "<group>"; };
-		F5EFE68318BC441F00D585CC /* CompressUI */ = {isa = PBXFileReference; lastKnownFileType = folder; name = CompressUI; path = ../../../../TL_Run/CompressUI; sourceTree = "<group>"; };
-		F5EFE68418BC441F00D585CC /* Google_UIMedia */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Google_UIMedia; path = ../../../../TL_Run/Google_UIMedia; sourceTree = "<group>"; };
-		F5EFE68518BC441F00D585CC /* JYPK */ = {isa = PBXFileReference; lastKnownFileType = folder; name = JYPK; path = ../../../../TL_Run/JYPK; sourceTree = "<group>"; };
-		F5EFE68618BC441F00D585CC /* Lightmap */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Lightmap; path = ../../../../TL_Run/Lightmap; sourceTree = "<group>"; };
-		F5EFE68718BC441F00D585CC /* logfiles */ = {isa = PBXFileReference; lastKnownFileType = folder; name = logfiles; path = ../../../../TL_Run/logfiles; sourceTree = "<group>"; };
-		F5EFE68818BC441F00D585CC /* Mesh */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Mesh; path = ../../../../TL_Run/Mesh; sourceTree = "<group>"; };
-		F5EFE68918BC442000D585CC /* Physics */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Physics; path = ../../../../TL_Run/Physics; sourceTree = "<group>"; };
-		F5EFE68A18BC442000D585CC /* preview */ = {isa = PBXFileReference; lastKnownFileType = folder; name = preview; path = ../../../../TL_Run/preview; sourceTree = "<group>"; };
-		F5EFE68B18BC442000D585CC /* QMShader */ = {isa = PBXFileReference; lastKnownFileType = folder; name = QMShader; path = ../../../../TL_Run/QMShader; sourceTree = "<group>"; };
-		F5EFE68C18BC442000D585CC /* Scene */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Scene; path = ../../../../TL_Run/Scene; sourceTree = "<group>"; };
-		F5EFE68D18BC442000D585CC /* Script */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Script; path = ../../../../TL_Run/Script; sourceTree = "<group>"; };
-		F5EFE68E18BC442000D585CC /* Shader */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Shader; path = ../../../../TL_Run/Shader; sourceTree = "<group>"; };
-		F5EFE68F18BC442000D585CC /* Sharp.Genesis */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = Sharp.Genesis; path = ../../../../TL_Run/Sharp.Genesis; sourceTree = "<group>"; };
-		F5EFE69018BC442000D585CC /* System */ = {isa = PBXFileReference; lastKnownFileType = folder; name = System; path = ../../../../TL_Run/System; sourceTree = "<group>"; };
-		F5EFE69118BC442000D585CC /* toolchain */ = {isa = PBXFileReference; lastKnownFileType = folder; name = toolchain; path = ../../../../TL_Run/toolchain; sourceTree = "<group>"; };
-		F5EFE69218BC442000D585CC /* UIMedia */ = {isa = PBXFileReference; lastKnownFileType = folder; name = UIMedia; path = ../../../../TL_Run/UIMedia; sourceTree = "<group>"; };
-		F5EFE69318BC442000D585CC /* UserDefCSharp */ = {isa = PBXFileReference; lastKnownFileType = folder; name = UserDefCSharp; path = ../../../../TL_Run/UserDefCSharp; sourceTree = "<group>"; };
-		F5EFE6B218BC443400D585CC /* Mono.Security.dll */ = {isa = PBXFileReference; lastKnownFileType = file; name = Mono.Security.dll; path = ../../../../TL_Run/Script/Mono.Security.dll; sourceTree = "<group>"; };
-		F5EFE6B318BC443400D585CC /* mscorlib.dll */ = {isa = PBXFileReference; lastKnownFileType = file; name = mscorlib.dll; path = ../../../../TL_Run/Script/mscorlib.dll; sourceTree = "<group>"; };
-		F5EFE6B418BC443400D585CC /* ScriptFrameworkLibrary.dll */ = {isa = PBXFileReference; lastKnownFileType = file; name = ScriptFrameworkLibrary.dll; path = ../../../../TL_Run/Script/ScriptFrameworkLibrary.dll; sourceTree = "<group>"; };
-		F5EFE6B518BC443400D585CC /* ScriptGUILibrary.dll */ = {isa = PBXFileReference; lastKnownFileType = file; name = ScriptGUILibrary.dll; path = ../../../../TL_Run/Script/ScriptGUILibrary.dll; sourceTree = "<group>"; };
-		F5EFE6B618BC443400D585CC /* ScriptRuntimeLibrary.dll */ = {isa = PBXFileReference; lastKnownFileType = file; name = ScriptRuntimeLibrary.dll; path = ../../../../TL_Run/Script/ScriptRuntimeLibrary.dll; sourceTree = "<group>"; };
-		F5EFE6B718BC443400D585CC /* System.Configuration.dll */ = {isa = PBXFileReference; lastKnownFileType = file; name = System.Configuration.dll; path = ../../../../TL_Run/Script/System.Configuration.dll; sourceTree = "<group>"; };
-		F5EFE6B818BC443400D585CC /* System.dll */ = {isa = PBXFileReference; lastKnownFileType = file; name = System.dll; path = ../../../../TL_Run/Script/System.dll; sourceTree = "<group>"; };
-		F5EFE6B918BC443400D585CC /* System.Security.dll */ = {isa = PBXFileReference; lastKnownFileType = file; name = System.Security.dll; path = ../../../../TL_Run/Script/System.Security.dll; sourceTree = "<group>"; };
-		F5EFE6BA18BC443400D585CC /* System.Xml.dll */ = {isa = PBXFileReference; lastKnownFileType = file; name = System.Xml.dll; path = ../../../../TL_Run/Script/System.Xml.dll; sourceTree = "<group>"; };
-		F5EFE6BB18BC443400D585CC /* UserDefCSharp.dll */ = {isa = PBXFileReference; lastKnownFileType = file; name = UserDefCSharp.dll; path = ../../../../TL_Run/Script/UserDefCSharp.dll; sourceTree = "<group>"; };
 		F5F49C2917E1C17900361F45 /* GameApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GameApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F5F49C2C17E1C17900361F45 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		F5F49C2E17E1C17A00361F45 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -412,25 +344,6 @@
 		F5F49C2017E1C17800361F45 = {
 			isa = PBXGroup;
 			children = (
-				F5EFE68118BC441F00D585CC /* Asset */,
-				F5EFE68218BC441F00D585CC /* CompressRes */,
-				F5EFE68318BC441F00D585CC /* CompressUI */,
-				F5EFE68418BC441F00D585CC /* Google_UIMedia */,
-				F5EFE68518BC441F00D585CC /* JYPK */,
-				F5EFE68618BC441F00D585CC /* Lightmap */,
-				F5EFE68718BC441F00D585CC /* logfiles */,
-				F5EFE68818BC441F00D585CC /* Mesh */,
-				F5EFE68918BC442000D585CC /* Physics */,
-				F5EFE68A18BC442000D585CC /* preview */,
-				F5EFE68B18BC442000D585CC /* QMShader */,
-				F5EFE68C18BC442000D585CC /* Scene */,
-				F5EFE68D18BC442000D585CC /* Script */,
-				F5EFE68E18BC442000D585CC /* Shader */,
-				F5EFE68F18BC442000D585CC /* Sharp.Genesis */,
-				F5EFE69018BC442000D585CC /* System */,
-				F5EFE69118BC442000D585CC /* toolchain */,
-				F5EFE69218BC442000D585CC /* UIMedia */,
-				F5EFE69318BC442000D585CC /* UserDefCSharp */,
 				F5F49C7A17E1C25F00361F45 /* CSharpAssembly */,
 				F5BC88A417F2959300F0D1DD /* IOSFramework */,
 				F5F49C2B17E1C17900361F45 /* Frameworks */,
@@ -482,16 +395,6 @@
 		F5F49C7A17E1C25F00361F45 /* CSharpAssembly */ = {
 			isa = PBXGroup;
 			children = (
-				F5EFE6B218BC443400D585CC /* Mono.Security.dll */,
-				F5EFE6B318BC443400D585CC /* mscorlib.dll */,
-				F5EFE6B418BC443400D585CC /* ScriptFrameworkLibrary.dll */,
-				F5EFE6B518BC443400D585CC /* ScriptGUILibrary.dll */,
-				F5EFE6B618BC443400D585CC /* ScriptRuntimeLibrary.dll */,
-				F5EFE6B718BC443400D585CC /* System.Configuration.dll */,
-				F5EFE6B818BC443400D585CC /* System.dll */,
-				F5EFE6B918BC443400D585CC /* System.Security.dll */,
-				F5EFE6BA18BC443400D585CC /* System.Xml.dll */,
-				F5EFE6BB18BC443400D585CC /* UserDefCSharp.dll */,
 				F560C2FE1811212200487A7D /* RegisterMonoModules.cpp */,
 				F560C2FF1811212200487A7D /* RegisterMonoModules.h */,
 			);
@@ -684,35 +587,6 @@
 				F5BC88BD17F2959400F0D1DD /* GenesisEngineIos-Info.plist in Resources */,
 				F560C2F018111C0700487A7D /* ViewController_iPad.xib in Resources */,
 				F560C2F118111C0700487A7D /* ViewController_iPhone.xib in Resources */,
-				F5EFE69418BC442000D585CC /* Asset in Resources */,
-				F5EFE69518BC442000D585CC /* CompressRes in Resources */,
-				F5EFE69618BC442000D585CC /* CompressUI in Resources */,
-				F5EFE69718BC442000D585CC /* Google_UIMedia in Resources */,
-				F5EFE69818BC442000D585CC /* JYPK in Resources */,
-				F5EFE69918BC442000D585CC /* Lightmap in Resources */,
-				F5EFE69A18BC442000D585CC /* logfiles in Resources */,
-				F5EFE69B18BC442000D585CC /* Mesh in Resources */,
-				F5EFE69C18BC442000D585CC /* Physics in Resources */,
-				F5EFE69D18BC442000D585CC /* preview in Resources */,
-				F5EFE69E18BC442000D585CC /* QMShader in Resources */,
-				F5EFE69F18BC442000D585CC /* Scene in Resources */,
-				F5EFE6A018BC442000D585CC /* Script in Resources */,
-				F5EFE6A118BC442000D585CC /* Shader in Resources */,
-				F5EFE6A218BC442000D585CC /* Sharp.Genesis in Resources */,
-				F5EFE6A318BC442000D585CC /* System in Resources */,
-				F5EFE6A418BC442000D585CC /* toolchain in Resources */,
-				F5EFE6A518BC442000D585CC /* UIMedia in Resources */,
-				F5EFE6A618BC442000D585CC /* UserDefCSharp in Resources */,
-				F5EFE6BC18BC443400D585CC /* Mono.Security.dll in Resources */,
-				F5EFE6BD18BC443400D585CC /* mscorlib.dll in Resources */,
-				F5EFE6BE18BC443400D585CC /* ScriptFrameworkLibrary.dll in Resources */,
-				F5EFE6BF18BC443400D585CC /* ScriptGUILibrary.dll in Resources */,
-				F5EFE6C018BC443400D585CC /* ScriptRuntimeLibrary.dll in Resources */,
-				F5EFE6C118BC443400D585CC /* System.Configuration.dll in Resources */,
-				F5EFE6C218BC443400D585CC /* System.dll in Resources */,
-				F5EFE6C318BC443400D585CC /* System.Security.dll in Resources */,
-				F5EFE6C418BC443400D585CC /* System.Xml.dll in Resources */,
-				F5EFE6C518BC443400D585CC /* UserDefCSharp.dll in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -723,18 +597,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F5EFE6C618BC444F00D585CC /* Mono.Security.dll in Sources */,
 				587F8B4318FB8FB4007563A8 /* TextViewController.mm in Sources */,
-				F5EFE6C718BC444F00D585CC /* mscorlib.dll in Sources */,
-				F5EFE6C818BC444F00D585CC /* ScriptFrameworkLibrary.dll in Sources */,
-				F5EFE6C918BC444F00D585CC /* ScriptGUILibrary.dll in Sources */,
-				F5EFE6CA18BC444F00D585CC /* ScriptRuntimeLibrary.dll in Sources */,
-				F5EFE6CB18BC444F00D585CC /* System.Configuration.dll in Sources */,
-				F5EFE6CC18BC444F00D585CC /* System.dll in Sources */,
-				F5EFE6CD18BC444F00D585CC /* System.Security.dll in Sources */,
-				F5EFE6CE18BC444F00D585CC /* System.Xml.dll in Sources */,
 				587F8B4218FB8FB4007563A8 /* OCAndCPlusInterface.mm in Sources */,
-				F5EFE6CF18BC444F00D585CC /* UserDefCSharp.dll in Sources */,
 				F5BC88B617F2959400F0D1DD /* AppDelegate.mm in Sources */,
 				F5BC88BE17F2959400F0D1DD /* main.mm in Sources */,
 				F5BC88BF17F2959400F0D1DD /* ViewController.mm in Sources */,
@@ -849,7 +713,9 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Librarys\"",
+					/Users/qisong/Desktop/guopeng/new/genesis_externals/Librarys/PhysX3/Ios,
 				);
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = ../;
 				WRAPPER_EXTENSION = app;
@@ -871,7 +737,9 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Librarys\"",
+					/Users/qisong/Desktop/guopeng/new/genesis_externals/Librarys/PhysX3/Ios,
 				);
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = ../;
 				WRAPPER_EXTENSION = app;

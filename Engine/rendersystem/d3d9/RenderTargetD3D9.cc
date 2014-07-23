@@ -120,7 +120,7 @@ RenderTargetD3D9::LoadBuffers(SizeT _width, SizeT _height)
 
     // setup our pixel format and multisample parameters (order important!)
     this->d3d9ColorBufferFormat = D3D9Types::AsD3D9PixelFormat(this->colorBufferFormat);
-    this->SetupMultiSampleType();
+    this->setupMultiSampleType();
 
     // check if a resolve texture must be allocated
     if (this->mipMapsEnabled ||
@@ -356,55 +356,71 @@ RenderTargetD3D9::Discard()
     Select the antialias parameters that most closely resembly 
     the preferred settings in the DisplayDevice object.
 */
-
 void
-RenderTargetD3D9::SetupMultiSampleType()
+RenderTargetD3D9::setupMultiSampleType()
 {
     n_assert(D3DFMT_UNKNOWN != this->d3d9ColorBufferFormat);
     RenderDeviceD3D9* renderDevice = RenderDeviceD3D9::Instance();
 
-    #if NEBULA3_DIRECT3D_DEBUG
-        this->d3d9MultiSampleType = D3DMULTISAMPLE_NONE;
-        this->d3d9MultiSampleQuality = 0;
-    #else
-        // convert Nebula3 antialias quality into D3D type
-        this->d3d9MultiSampleType = D3D9Types::AsD3D9MultiSampleType(this->antiAliasQuality);
-        
-        // check if the multisample type is compatible with the selected display mode
-        DWORD availableQualityLevels = 0;
-        HRESULT renderTargetResult = renderDevice->CheckDeviceMultiSampleType(0, 
-                                     D3DDEVTYPE_HAL,
-                                     this->d3d9ColorBufferFormat,
-                                     FALSE,
-                                     this->d3d9MultiSampleType,
-                                     &availableQualityLevels);
-        HRESULT depthBufferResult = renderDevice->CheckDeviceMultiSampleType(0,
-                                    D3DDEVTYPE_HAL,
-                                    D3DFMT_D24S8,
-                                    FALSE,
-                                    this->d3d9MultiSampleType,
-                                    NULL);
-        if ((D3DERR_NOTAVAILABLE == renderTargetResult) || (D3DERR_NOTAVAILABLE == depthBufferResult))
-        {
-            // reset to no multisampling
-            this->d3d9MultiSampleType = D3DMULTISAMPLE_NONE;
-            this->d3d9MultiSampleQuality = 0;
-        }
-        else
-        {
-            n_assert(SUCCEEDED(renderTargetResult) && SUCCEEDED(depthBufferResult));
-        }
+	if (this->antiAliasQuality == RenderBase::AntiAliasQuality::None)
+	{
+		this->d3d9MultiSampleType = D3DMULTISAMPLE_NONE;
+		this->d3d9MultiSampleQuality = 0;
+	}
+	else
+	{
+		int multiType  = (int)D3D9Types::AsD3D9MultiSampleType(this->antiAliasQuality);
 
-        // clamp multisample quality to the available quality levels
-        if (availableQualityLevels > 0)
-        {
-            this->d3d9MultiSampleQuality = availableQualityLevels - 1;
-        }
-        else
-        {
-            this->d3d9MultiSampleQuality = 0;
-        }
-    #endif
+		if (multiType > (int)D3DMULTISAMPLE_16_SAMPLES)
+		{
+			multiType = (int)D3DMULTISAMPLE_16_SAMPLES;
+		}
+		// check if the multisample type is compatible with the selected display mode
+		DWORD availableQualityLevels = 0;
+		while(multiType > 0)
+		{
+			HRESULT renderTargetResult = renderDevice->CheckDeviceMultiSampleType(0, 
+				D3DDEVTYPE_HAL,
+				this->d3d9ColorBufferFormat,
+				FALSE,
+				(D3DMULTISAMPLE_TYPE)multiType,
+				&availableQualityLevels);
+			HRESULT depthBufferResult = renderDevice->CheckDeviceMultiSampleType(0,
+				D3DDEVTYPE_HAL,
+				D3DFMT_D24S8,
+				FALSE,
+				(D3DMULTISAMPLE_TYPE)multiType,
+				NULL);
+			if (S_OK == renderTargetResult && S_OK == depthBufferResult)
+			{
+				break;
+			}
+			availableQualityLevels = 0;
+			--multiType;
+			//if ((D3DERR_NOTAVAILABLE == renderTargetResult) || (D3DERR_NOTAVAILABLE == depthBufferResult))
+			//{
+			//	--multiType;
+			//}
+			//else
+			//{
+			//	n_assert(SUCCEEDED(renderTargetResult) && SUCCEEDED(depthBufferResult));
+			//}
+		}
+
+		this->d3d9MultiSampleType = (D3DMULTISAMPLE_TYPE)multiType;
+		// clamp multisample quality to the available quality levels
+		if (availableQualityLevels > 0)
+		{
+			this->d3d9MultiSampleQuality = availableQualityLevels - 1;
+		}
+		else
+		{
+			this->d3d9MultiSampleQuality = 0;
+		}
+	}
+
+
+	
 }  
 //------------------------------------------------------------------------------
 /**

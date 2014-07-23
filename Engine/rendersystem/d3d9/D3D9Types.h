@@ -26,6 +26,7 @@ THE SOFTWARE.
 #pragma once
 #ifndef D3D9TYPES_H_
 #define D3D9TYPES_H_
+#include "D3d9Heads.h"
 #include "core/types.h"
 #include "base/RenderDeviceTypes.h"
 #include "base/RenderResource.h"

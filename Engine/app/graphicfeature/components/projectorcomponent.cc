@@ -181,6 +181,11 @@ void ProjectorRenderComponent::_UpdateProjector()
 	// Update shader param & retrieve render objects
 	mProjector->_UpdateProjector();
 
+	for(int matIndex=0;matIndex<GetMaterialCount();matIndex++)
+	{
+		GPtr<Graphic::MaterialInstance> instance = GetMaterial(matIndex);
+		instance->SetSort(Graphic::MatSort_ProjectorBegin+matIndex);
+	}
 
 	// Collision dealing
 	Math::matrix44 viewProjMatrix = Math::matrix44::zero();

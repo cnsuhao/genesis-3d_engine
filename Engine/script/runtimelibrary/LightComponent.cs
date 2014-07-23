@@ -37,7 +37,7 @@ namespace ScriptRuntime
         /// <summary>
         /// 创建一个光源组件,默认为电光源
         /// </summary>
-        public LightComponent()
+        protected LightComponent()
         {
             ICall_LightComponent_Bind(this);
         }

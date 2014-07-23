@@ -81,6 +81,7 @@ namespace ScriptRuntime
         /// 设置光照渲染纹理
         /// </summary>
         /// <param name="rtt">指定光照纹理的目标</param>
+        [System.Obsolete("This function is not used anymore.")]
         public void SetLightLitTexture(RenderToTexture rtt)
         {
             if (null != rtt)

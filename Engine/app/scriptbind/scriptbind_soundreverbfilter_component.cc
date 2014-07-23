@@ -51,18 +51,21 @@ namespace App
 	{
 		ScriptObjWrapper<SoundReverbFilterComponent> self( pMonoObj );
 		self->SetReverbPreset(preset);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//------------------------------------------------------------------------
 	static void ICall_SoundReverbFilterComponent_CopyValueFromPreset(MonoObject* pMonoObj, int preset)
 	{
 		ScriptObjWrapper<SoundReverbFilterComponent> self( pMonoObj );
 		self->CopyValueFromPreset(preset);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//------------------------------------------------------------------------
 	static void ICall_SoundReverbFilterComponent_Attach(MonoObject* pMonoObj)
 	{
 		ScriptObjWrapper<SoundReverbFilterComponent> self( pMonoObj );
 		self->Attach();
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//------------------------------------------------------------------------
 	static void ICall_SoundReverbFilterComponent_Detach(MonoObject* pMonoObj)
@@ -80,7 +83,8 @@ namespace App
 	static void ICall_SoundReverbFilterComponent_SetDensity(MonoObject* pMonoObj, float pvalue)
 	{
 		ScriptObjWrapper<SoundReverbFilterComponent> self( pMonoObj );
-		return self->SetReverbParam(SoundReverbFilterComponent::Density, pvalue);
+		self->SetReverbParam(SoundReverbFilterComponent::Density, pvalue);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//------------------------------------------------------------------------
 	static float ICall_SoundReverbFilterComponent_GetDiffusion(MonoObject* pMonoObj)
@@ -92,7 +96,8 @@ namespace App
 	static void ICall_SoundReverbFilterComponent_SetDiffusion(MonoObject* pMonoObj, float pvalue)
 	{
 		ScriptObjWrapper<SoundReverbFilterComponent> self( pMonoObj );
-		return self->SetReverbParam(SoundReverbFilterComponent::Diffusion, pvalue);
+		self->SetReverbParam(SoundReverbFilterComponent::Diffusion, pvalue);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//------------------------------------------------------------------------
 	static float ICall_SoundReverbFilterComponent_GetGain(MonoObject* pMonoObj)
@@ -104,7 +109,8 @@ namespace App
 	static void ICall_SoundReverbFilterComponent_SetGain(MonoObject* pMonoObj, float pvalue)
 	{
 		ScriptObjWrapper<SoundReverbFilterComponent> self( pMonoObj );
-		return self->SetReverbParam(SoundReverbFilterComponent::Gain, pvalue);
+		self->SetReverbParam(SoundReverbFilterComponent::Gain, pvalue);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//------------------------------------------------------------------------
 	static float ICall_SoundReverbFilterComponent_GetGainHF(MonoObject* pMonoObj)
@@ -116,7 +122,8 @@ namespace App
 	static void ICall_SoundReverbFilterComponent_SetGainHF(MonoObject* pMonoObj, float pvalue)
 	{
 		ScriptObjWrapper<SoundReverbFilterComponent> self( pMonoObj );
-		return self->SetReverbParam(SoundReverbFilterComponent::GainHF, pvalue);
+		self->SetReverbParam(SoundReverbFilterComponent::GainHF, pvalue);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//------------------------------------------------------------------------
 	static float ICall_SoundReverbFilterComponent_GetDecayTime(MonoObject* pMonoObj)
@@ -128,7 +135,8 @@ namespace App
 	static void ICall_SoundReverbFilterComponent_SetDecayTime(MonoObject* pMonoObj, float pvalue)
 	{
 		ScriptObjWrapper<SoundReverbFilterComponent> self( pMonoObj );
-		return self->SetReverbParam(SoundReverbFilterComponent::DecayTime, pvalue);
+		self->SetReverbParam(SoundReverbFilterComponent::DecayTime, pvalue);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//------------------------------------------------------------------------
 	static float ICall_SoundReverbFilterComponent_GetDecayHFRatio(MonoObject* pMonoObj)

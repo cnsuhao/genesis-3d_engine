@@ -444,6 +444,7 @@ namespace App
 		n_assert(m_TerrainDataSource);
 		n_assert(mActor);
 
+		m_TerrainDataSource->CalculateSectorInfoDataByUnit(0, 0, m_TerrainDataSource->GetHeightMapSize(), m_TerrainDataSource->GetHeightMapSize());
 		m_TerrainTree->RebuildAllNodes(m_TerrainDataSource);
 
 		mActor->_UpdateLocalBBox();
@@ -1007,7 +1008,7 @@ namespace App
 		for(int matIndex=0;matIndex<GetMaterialCount();matIndex++)
 		{
 			GPtr<Graphic::MaterialInstance> instance = GetMaterial(matIndex);
-			instance->SetSort(matIndex);
+			instance->SetSort(Graphic::MatSort_TerrainBegin+matIndex);
 		}
 
 		m_bIsTextureDirty = true;
@@ -1197,7 +1198,7 @@ namespace App
 	//------------------------------------------------------------------------------
 	const Util::String TerrainRenderComponent::GetControlMapName(IndexT controlMapIdx)
 	{
-		Util::String name = GetTerrainName() + "_AlphaMap_" + Util::String::FromInt(controlMapIdx) + ".tga";
+		Util::String name = GetTerrainName() + "_AlphaMap_" + Util::String::FromInt(controlMapIdx);// + ".tga";
 		return name;
 	}
 	//------------------------------------------------------------------------------

@@ -259,6 +259,7 @@ SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/../bin/win32/" )
 
 #<-------------------------------------------------Editor------------------------------------------------>
 SET( GENESIS_EDITOR_DIR ${PROJECT_SOURCE_DIR}/../../genesis_editor)
+SET( GENESIS_INTERNAL_DIR ${PROJECT_SOURCE_DIR}/../../genesis_internal)
 SET( GENESIS_EDITOR_CMAKE_FILE ${GENESIS_EDITOR_DIR}/CMake/EditorBuildConfig.cmake)
 
 IF( EXISTS ${GENESIS_EDITOR_CMAKE_FILE} )

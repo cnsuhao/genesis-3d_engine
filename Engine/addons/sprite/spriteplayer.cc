@@ -232,7 +232,7 @@ namespace Sprite
 #ifdef __SPRITE_CHECK__
 				mAnimationChangeCount = clip->getChangeCount();
 #endif
-				mDirty = true;
+				updateAnimation();
 			}
 		}
 	}

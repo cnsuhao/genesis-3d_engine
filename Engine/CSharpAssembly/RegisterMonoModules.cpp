@@ -28,14 +28,5 @@ void RegisterMonoModules()
 {
 	mono_aot_only = true;
     //mono_ficall_flag = true;
-   	mono_aot_register_module(mono_aot_module_mscorlib_info);
-	mono_aot_register_module(mono_aot_module_UserDefCSharp_info);
-	mono_aot_register_module(mono_aot_module_Mono_Security_info);
-	mono_aot_register_module(mono_aot_module_System_info);
-	mono_aot_register_module(mono_aot_module_ScriptFrameworkLibrary_info);
-    mono_aot_register_module(mono_aot_module_ScriptGUILibrary_info);
-    mono_aot_register_module(mono_aot_module_ScriptRuntimeLibrary_info);
-    mono_aot_register_module(mono_aot_module_System_Configuration_info);
-    mono_aot_register_module(mono_aot_module_System_Security_info);
-    mono_aot_register_module(mono_aot_module_System_Xml_info);
+
 }

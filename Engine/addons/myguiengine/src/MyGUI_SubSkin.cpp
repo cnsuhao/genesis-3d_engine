@@ -186,13 +186,35 @@ namespace MyGUI
 		if (nullptr != mNode) mNode->outOfDate(mRenderItem);
 	}
 
+	size_t SubSkin::getVertexCount() const
+	{
+		return VertexQuad::VertexCount;
+	}
+
+	void SubSkin::onRenderItemChanged(ILayerNode* _sender, RenderItem* _old, RenderItem* _new)
+	{
+		if (mNode == _sender)
+		{
+			mRenderItem = _new;
+		}
+	}
+
 	void SubSkin::createDrawItem(ITexture* _texture, ILayerNode* _node)
 	{
 		MYGUI_ASSERT(!mRenderItem, "mRenderItem must be nullptr");
 
 		mNode = _node;
-		mRenderItem = mNode->addToRenderItem(_texture, true, mSeparate);
-		mRenderItem->addDrawItem(this, VertexQuad::VertexCount);
+		mRenderItem = mNode->addToRenderItem(this, _texture, true, mSeparate);
+		//mRenderItem->addDrawItem(this, VertexQuad::VertexCount);
+	}
+
+	void SubSkin::updateDrawItem(ITexture* _texture, ILayerNode* _node)
+	{
+		MYGUI_ASSERT(mRenderItem, "mRenderItem must not be nullptr");
+
+		mNode = _node;
+		mRenderItem = mNode->updateRenderItem(this, mRenderItem, _texture, true, mSeparate);
+		//mRenderItem->addDrawItem(this, VertexQuad::VertexCount);
 	}
 
 	void SubSkin::destroyDrawItem()
@@ -251,6 +273,7 @@ namespace MyGUI
 		float vertex_right = vertex_left + (info.pixScaleX * (float)mCurrentCoord.width * 2);
 		float vertex_top = -(((info.pixScaleY * (float)(mCurrentCoord.top + mCroppedParent->getAbsoluteTop() - info.topOffset) + info.vOffset) * 2) - 1);
 		float vertex_bottom = vertex_top - (info.pixScaleY * (float)mCurrentCoord.height * 2);
+		IMaterialType type = mGray ? MyGUI::GRAY : MyGUI::NORMAL;
 
 		quad->set(
 			vertex_left,
@@ -266,6 +289,19 @@ namespace MyGUI
 		);
 
 		mRenderItem->setLastVertexCount(VertexQuad::VertexCount);
+
+		mRenderItem->setMaterialType(type);
+	}
+
+	void SubSkin::_setGray(bool _gray)
+	{
+		if (mGray == _gray)
+			return;
+
+		mGray = _gray;
+
+		if (nullptr != mNode)
+			mNode->outOfDate(mRenderItem);
 	}
 
 	void SubSkin::_setColour(const Colour& _value)

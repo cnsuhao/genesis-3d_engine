@@ -102,6 +102,7 @@ GameApplication::GameApplication()
 	, m_pShaderFactory(NULL)
 	, mOpenSceneDirty(false)
 	, mCloseSceneDirty(false)
+	, mCurSceneState(Unknown)
 {
     __ConstructThreadSingleton;
 	_RegisterDynamicClass();
@@ -223,6 +224,7 @@ GameApplication::Open()
 	// create collision server
 	mCollisonServer = Graphic::CollisionModelServer::Create();
 
+	mGuiServer = App::GUIServer::Create();
 	return true;
 }
 
@@ -269,13 +271,14 @@ GameApplication::Close()
 		exitGuiScript();
 	}
 
-
 #ifndef __SCRIPT_COMMIT__
 	App::Utility_ScriptRootExit();
 	App::ShutDownScriptSystem();
 #endif
 
     exitGui();
+	mGuiServer = NULL;
+
 	this->cleanupGameFeatures();
 	this->mGameServer->Close();
     
@@ -341,7 +344,7 @@ void GameApplication::Quit()
 	mQuit = true;
 }
 
-bool GameApplication::IsQuit()
+bool GameApplication::IsQuit() const
 {
 	return mQuit;
 }
@@ -380,6 +383,10 @@ GameApplication::Run()
 				}
 				this->mCoreServer->Trigger();
 				mGameServer->OnFrameWithoutGraphics(); 
+				if (mGuiServer)
+				{
+					mGuiServer->OnFrame();
+				}
 			}
 			break;
 		case DS_Reset:
@@ -392,6 +399,10 @@ GameApplication::Run()
 			{
 				this->mCoreServer->Trigger();
 				mGameServer->OnFrame();   
+				if (mGuiServer)
+				{
+					mGuiServer->OnFrame();
+				}
 			}
 			break;
 		default:
@@ -410,13 +421,15 @@ GameApplication::Run()
 bool GameApplication::OpenScene(const Util::String& sceneName, bool force)
 {
 	n_assert(IsOpen());
+	mOpenSceneName = sceneName;
 	if (force)
 	{
-		return openScene(sceneName);
+		mCurSceneState = Loaded;
+		return openScene(mOpenSceneName);
 	}
 	else
 	{
-		mOpenSceneName = sceneName;
+		mCurSceneState = Loading;
 		mOpenSceneDirty = true;
 		return true;
 	}
@@ -424,6 +437,7 @@ bool GameApplication::OpenScene(const Util::String& sceneName, bool force)
 
 bool GameApplication::openScene(const Util::String& sceneName)
 {
+	mCurSceneState = Loaded;
 	App::SceneScheduleManager* pSceneSchedule = App::SceneScheduleManager::Instance();
 	return pSceneSchedule->OpenScene(sceneName, false);
 }
@@ -477,9 +491,30 @@ const GPtr<Scene>& GameApplication::GetCurrentScene() const
 	return pSceneSchedule->GetMainScene();
 }
 
+int GameApplication::GetCurrentSceneState()
+{
+	return mCurSceneState;
+}
+
+int GameApplication::GetSceneState(const Util::String& sceneName)
+{
+	if (sceneName == mOpenSceneName)
+	{
+		return mCurSceneState;
+	}
+	App::SceneScheduleManager* pSceneSchedule = App::SceneScheduleManager::Instance();
+	GPtr<Scene> scene = pSceneSchedule->GetScene(sceneName);
+	if (scene.isvalid())
+	{
+		return Loaded;
+	}
+	return Unknown;
+}
+
 //------------------------------------------------------------------------------
 bool GameApplication::closeScene(const Util::String& sceneName)
 {
+	mCurSceneState = Closed;
 	App::SceneScheduleManager* pSceneSchedule = App::SceneScheduleManager::Instance();
 	return	pSceneSchedule->CloseScene(sceneName);
 }
@@ -489,10 +524,12 @@ bool GameApplication::CloseScene( const Util::String& sceneName, bool force )
 	n_assert(IsOpen());
 	if (force)
 	{
+		mCurSceneState = Closed;
 		return closeScene(sceneName);
 	}
 	else
 	{
+		mCurSceneState = Closing;
 		mCloseSceneName = sceneName;
 		mCloseSceneDirty = true;
 		return true;
@@ -503,6 +540,7 @@ bool GameApplication::CloseScene( const Util::String& sceneName, bool force )
 void GameApplication::CloseAllScenes()
 {
 	n_assert(IsOpen());
+	mCurSceneState = Closed;
 	App::SceneScheduleManager* pSceneSchedule = App::SceneScheduleManager::Instance();
 	pSceneSchedule->CloseAllScenes();
 }
@@ -548,7 +586,7 @@ GameApplication::setupGameFeatures()
 	this->mParticleFeature = App::ParticleFeature::Create();
 	this->mVegeFeature = App::VegetationFeature::Create();
 	this->mResourceFeature = App::ResourceFeature::Create();
-#if __USE_PHYSX__ || __GENESIS_EDITOR__
+#if defined (__USE_PHYSX__) || defined (__GENESIS_EDITOR__)
 	this->mPhysicsFeature = App::PhysicsFeature::Create();
 #endif
 	this->mAnimationFeature = App::AnimationFeature::Create();
@@ -602,7 +640,7 @@ GameApplication::setupGameFeatures()
 	mGameServer->AttachGameFeature(this->mParticleFeature.upcast<App::Feature>());
 	mGameServer->AttachGameFeature(this->mVegeFeature.upcast<App::Feature>());
 	mGameServer->AttachGameFeature(this->mResourceFeature.upcast<App::Feature>());
-#if __USE_PHYSX__ || __GENESIS_EDITOR__	
+#if defined (__USE_PHYSX__) || defined (__GENESIS_EDITOR__)
 	mGameServer->AttachGameFeature(this->mPhysicsFeature.upcast<App::Feature>());
 #endif
 	mGameServer->AttachGameFeature(this->mAnimationFeature.upcast<App::Feature>());
@@ -628,21 +666,31 @@ GameApplication::setupGameFeatures()
 void
 GameApplication::initGui()
 {
-
-	mGuiServer = App::GUIServer::Create();
 	if (!mGuiServer->IsOpen())
 	{
-		mGuiServer->SetCoreFile(GUI_ROOT_CONFIG);
-		mGuiServer->SetEngineDir(mEngineDir);
-		mGuiServer->Open();
+		Util::String coreFile = Util::String(GUI_DEFAULT_LOCATION) + Util::String(GUI_ROOT_CONFIG);
+		if(mIoServer->FileExists(Util::StringAtom(coreFile)))
+		{
+			mGuiServer->SetLogDir(mEngineDir);
+			mGuiServer->AddMediaLocaltion(GUI_DEFAULT_LOCATION);
+			mGuiServer->Open();
+		}
 	}
 	if (mGuiServer->IsOpen())
 	{
 		mGuiInputHandler = Input::GuiInputHandler::Create();
-		n_assert(mGuiInputHandler);
 		mInputFeature->GetInputServer()->AttachInputHandler(Input::InputPriority::Gui, mGuiInputHandler.upcast<Input::InputHandler>());
 	}
+}
 
+void GameApplication::exitGui()
+{		
+	mInputFeature->GetInputServer()->RemoveInputHandler(mGuiInputHandler.upcast<Input::InputHandler>());
+	mGuiInputHandler = NULL;
+	if (this->mGuiServer)
+	{
+		this->mGuiServer->Close();
+	}
 }
 
 void
@@ -665,20 +713,11 @@ void GameApplication::exitGuiScript()
 {
 	if (this->mGuiServer && this->mGuiServer->IsOpen())
 	{
-		mInputFeature->GetInputServer()->RemoveInputHandler(mGuiInputHandler.upcast<Input::InputHandler>());
-		mGuiInputHandler = NULL;
 		this->mGuiServer->ExitGuiScript();
 	}
 }
 
-void GameApplication::exitGui()
-{
-	if (this->mGuiServer)
-	{
-		this->mGuiServer->Close();
-		this->mGuiServer = NULL;
-	}
-}
+
 
 
 //------------------------------------------------------------------------------
@@ -704,7 +743,7 @@ GameApplication::cleanupGameFeatures()
 	this->mParticleFeature = 0;
 	this->mVegeFeature = 0;
 	this->mResourceFeature = 0;
-#if __USE_PHYSX__ || __GENESIS_EDITOR__	
+#if defined (__USE_PHYSX__) || defined (__GENESIS_EDITOR__)
 	this->mPhysicsFeature = 0;
 #endif
 	this->mAnimationFeature = 0;

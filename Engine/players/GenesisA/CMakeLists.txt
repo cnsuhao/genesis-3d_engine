@@ -35,6 +35,7 @@ SET ( _SOURCE_FILES
 	
 )
 
+
 #<-------- Additional Include Directories ------------------>
 INCLUDE_DIRECTORIES(
 	#TODO:Make this clear and simple
@@ -50,6 +51,7 @@ INCLUDE_DIRECTORIES(
 	${CMAKE_SOURCE_DIR}/extlibs/ShaderUtil/mojoshader
 	${CMAKE_SOURCE_DIR}/extlibs/ShaderUtil/hlsl2glslfork
 	${CMAKE_SOURCE_DIR}/extlibs/ShaderUtil/GlslOptimizer
+	${CMAKE_SOURCE_DIR}/extincludes
 
 	# should remove later
 	${CMAKE_SOURCE_DIR}/graphicsystem
@@ -111,23 +113,24 @@ TARGET_LINK_LIBRARIES(
 
 
 IF ( ANDROID_OPTIMIZED )
-TARGET_LINK_LIBRARIES(
-	GenesisA
-	${CMAKE_SOURCE_DIR}/../../genesis_externals/Librarys/FreeImage/android/Release/FreeImageLib.a	
-	${CMAKE_SOURCE_DIR}/../../genesis_externals/Librarys/FreeImage/android/Release/OpenEXR.a	
-	${CMAKE_SOURCE_DIR}/../../genesis_externals/Librarys/FreeImage/android/Release/LibTIFF4.a	
-	${CMAKE_SOURCE_DIR}/../../genesis_externals/Librarys/FreeImage/android/Release/LibRaw.a	
-	${CMAKE_SOURCE_DIR}/../../genesis_externals/Librarys/FreeImage/android/Release/LibOpenJPEG.a	
-	${CMAKE_SOURCE_DIR}/../../genesis_externals/Librarys/FreeImage/android/Release/LibJPEG.a	
-	${CMAKE_SOURCE_DIR}/../../genesis_externals/Librarys/FreeImage/android/Release/ZLib.a	
-	${CMAKE_SOURCE_DIR}/../../genesis_externals/Librarys/FreeImage/android/Release/LibPNG.a	
-	${CMAKE_SOURCE_DIR}/../../genesis_externals/Librarys/OpenAL/Android/OpenAL32.a
-	${CMAKE_SOURCE_DIR}/../../genesis_externals/Librarys/mojoshader/android/Release/mojoshader.a	
-	${CMAKE_SOURCE_DIR}/../../genesis_externals/Librarys/GlslOptimizer/android/Release/GLSL_Optimizer.a
-	${CMAKE_SOURCE_DIR}/../../genesis_externals/Librarys/hlslang/android/Release/hlslang.a
-	${CMAKE_SOURCE_DIR}/../../genesis_externals/Librarys/FreeImage/android/Release/FreeImageLib.a	
-	${CMAKE_SOURCE_DIR}/../../genesis_externals/Librarys/Opcode/Android_Debug/Opcode.a
-)
+	TARGET_LINK_LIBRARIES(
+		GenesisA
+		${CMAKE_SOURCE_DIR}/../../genesis_externals/Librarys/FreeImage/android/Release/FreeImageLib.a	
+		${CMAKE_SOURCE_DIR}/../../genesis_externals/Librarys/FreeImage/android/Release/OpenEXR.a	
+		${CMAKE_SOURCE_DIR}/../../genesis_externals/Librarys/FreeImage/android/Release/LibTIFF4.a	
+		${CMAKE_SOURCE_DIR}/../../genesis_externals/Librarys/FreeImage/android/Release/LibRaw.a	
+		${CMAKE_SOURCE_DIR}/../../genesis_externals/Librarys/FreeImage/android/Release/LibOpenJPEG.a	
+		${CMAKE_SOURCE_DIR}/../../genesis_externals/Librarys/FreeImage/android/Release/LibJPEG.a	
+		${CMAKE_SOURCE_DIR}/../../genesis_externals/Librarys/FreeImage/android/Release/ZLib.a	
+		${CMAKE_SOURCE_DIR}/../../genesis_externals/Librarys/FreeImage/android/Release/LibPNG.a	
+		${CMAKE_SOURCE_DIR}/../../genesis_externals/Librarys/OpenAL/Android/OpenAL32.a
+		${CMAKE_SOURCE_DIR}/../../genesis_externals/Librarys/mojoshader/android/Release/mojoshader.a	
+		${CMAKE_SOURCE_DIR}/../../genesis_externals/Librarys/GlslOptimizer/android/Release/GLSL_Optimizer.a
+		${CMAKE_SOURCE_DIR}/../../genesis_externals/Librarys/hlslang/android/Release/hlslang.a
+		${CMAKE_SOURCE_DIR}/../../genesis_externals/Librarys/FreeImage/android/Release/FreeImageLib.a	
+		${CMAKE_SOURCE_DIR}/../../genesis_externals/Librarys/Opcode/Android_Debug/Opcode.a
+
+		)
 ELSE( ANDROID_OPTIMIZED )
 TARGET_LINK_LIBRARIES(
 	GenesisA
@@ -145,8 +148,17 @@ TARGET_LINK_LIBRARIES(
 	${CMAKE_SOURCE_DIR}/../../genesis_externals/Librarys/hlslang/android/Debug/hlslang.a
 	${CMAKE_SOURCE_DIR}/../../genesis_externals/Librarys/FreeImage/android/Debug/FreeImageLib.a	
 	${CMAKE_SOURCE_DIR}/../../genesis_externals/Librarys/Opcode/Android_Release/Opcode.a
+	
 )
 ENDIF ( ANDROID_OPTIMIZED )
+
+IF(${LINK_ANDRIOD_PHYSX})
+			TARGET_LINK_LIBRARIES(
+				GenesisA
+				${CMAKE_SOURCE_DIR}/../../genesis_externals/Librarys/PhysX3/Android/libPhysX.a
+			)
+ENDIF()
+
 
 IF ( ANDROID_PROFILE )
 TARGET_LINK_LIBRARIES(

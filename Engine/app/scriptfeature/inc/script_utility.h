@@ -35,7 +35,10 @@ THE SOFTWARE.
 #include "foundation/util/monoapi.h"
 #include "foundation/core/rtti.h"
 #include "app/scriptfeature/inc/script_fwd_decl.h"
+#include "app/scriptfeature/script_hook.h"
 #include "app/appframework/component.h"
+
+#include "app/scriptfeature/inc/script_feature.h"
 
 // - define some mono function by macro
 #define mono_array_addr(array,type,index) ((type*)(void*) mono_array_addr_with_size (array, sizeof (type), index))
@@ -492,6 +495,23 @@ namespace App
 		// - release one ref of this cpp object,this foo is called in a mono's certain thread,
 		// - it may be called at any time after the GC.
 		pCppObj->Release();
+
+		return true;
+	}
+
+	template<typename T>
+	bool DelayReleaseCppObjWithMonoObj( T* pCppObj, MonoObject* pMonoObj )
+	{
+		script_fatal_error( NULL!=pCppObj );
+		script_fatal_error( NULL!=pMonoObj );
+
+		// - unbind this two object
+		Utility_SetCppObjectPtr( pMonoObj, NULL );
+
+		// - release one ref of this cpp object,this foo is called in a mono's certain thread,
+		// - it may be called at any time after the GC.
+		//pCppObj->Release();
+		ScriptFeature::Instance()->PushObjectToDelayRelease( pCppObj );
 
 		return true;
 	}

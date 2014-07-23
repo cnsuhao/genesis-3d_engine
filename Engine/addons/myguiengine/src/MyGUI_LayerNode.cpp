@@ -154,40 +154,133 @@ namespace MyGUI
 		return nullptr;
 	}
 
-	RenderItem* LayerNode::addToRenderItem(ITexture* _texture, bool _firstQueue, bool _manualRender)
+	RenderItem* LayerNode::addToRenderItem(ISubWidget* _subWidget, ITexture* _texture, bool _firstQueue, bool _separate)
+	{
+		RenderItem* item = getRenderItem(_texture, _firstQueue, _separate);
+		item->addDrawItem(_subWidget, _subWidget->getVertexCount());
+		return item;
+	}
+
+	RenderItem* LayerNode::updateRenderItem(ISubWidget* _subWidget, RenderItem* _itemOld, ITexture* _texNew, bool _firstQueue, bool _separate)
+	{
+		if (_itemOld == nullptr)
+		{
+			return addToRenderItem(_subWidget, _texNew, _firstQueue, _separate);
+		}
+		bool separateOld = _itemOld->getManualRender();
+
+		// check in first array.
+		VectorRenderItem::iterator itOld = std::find(mFirstRenderItems.begin(), mFirstRenderItems.end(), _itemOld);
+		if (itOld != mFirstRenderItems.end())
+		{	
+			ITexture* _texOld = _itemOld->getTexture();
+			if (_texOld == _texNew && separateOld == _separate)
+			{
+				return _itemOld;
+			}
+			else
+			{
+				// break render item.
+				VectorDrawItem frontDrawItems;
+				VectorDrawItem tailDrawItems;
+
+				(*itOld)->breakDrawItems(_subWidget, frontDrawItems, tailDrawItems);
+
+				// front
+				if (frontDrawItems.size())
+				{
+					itOld = insertNewRenderItem(_texOld, separateOld, frontDrawItems, mFirstRenderItems, itOld);
+					RenderItem* itemFront = *itOld;
+					++itOld; //roll back to insert node,
+					notifyRenderItemChanged(frontDrawItems, _itemOld, itemFront);
+				}
+
+				//tail
+				if (tailDrawItems.size())
+				{
+					itOld = insertNewRenderItem(_texOld, separateOld, tailDrawItems, mFirstRenderItems, itOld + 1);
+					RenderItem* itemTail = *itOld;
+					--itOld;//roll back to insert node,
+					notifyRenderItemChanged(tailDrawItems, _itemOld, itemTail);
+				}
+
+				// middle
+				mOutOfDate = false;
+
+				if (0 == frontDrawItems.size())
+				{
+					if (*itOld != mFirstRenderItems.front())
+					{
+						// try combine vertices.
+						VectorRenderItem::iterator preItem = itOld - 1;
+						if ((*preItem)->getTexture() == _texNew && (((*preItem)->getManualRender() || _separate) == false) ) // manual render cannot combine vertices
+						{
+							(*preItem)->addDrawItem(_subWidget, _subWidget->getVertexCount());
+							_subWidget->onRenderItemChanged(this, _itemOld, *preItem);
+
+							(*itOld)->clearDrawItems();
+							return *preItem;
+						}
+					}
+				}
+
+				if (0 == tailDrawItems.size())
+				{
+					if (*itOld != mFirstRenderItems.back())
+					{
+						// try combine vertices.
+						VectorRenderItem::iterator nextItem = itOld + 1;
+						if ((*nextItem)->getTexture() == _texNew && ((*nextItem)->getManualRender() || _separate == false) ) // manual render cannot combine vertices.
+						{
+							(*nextItem)->insertDrawItem(0, _subWidget, _subWidget->getVertexCount());
+							_subWidget->onRenderItemChanged(this, _itemOld, *nextItem);
+
+							(*itOld)->clearDrawItems();
+							return *nextItem;
+						}
+					}
+				}
+		
+				(*itOld)->clearDrawItems();
+				(*itOld)->setManualRender(_separate);
+				(*itOld)->setTexture(_texNew);
+				(*itOld)->addDrawItem(_subWidget, _subWidget->getVertexCount());
+				return *itOld;
+			}
+		}
+
+		// check in second array.
+		_itemOld->removeDrawItem(_subWidget);
+		return addToRenderItem(_subWidget, _texNew, _firstQueue, _separate);
+	}
+
+	RenderItem* LayerNode::getRenderItem(ITexture* _texture, bool _firstQueue, bool _manualRender)
 	{
 		// для первичной очереди нужен порядок
 		if (_firstQueue)
 		{
 			if (mFirstRenderItems.empty() || _manualRender)
 			{
-				// создаем новый буфер
-				RenderItem* item = new RenderItem();
-				item->setTexture(_texture);
-				item->setManualRender(_manualRender);
-				mFirstRenderItems.push_back(item);
-
-				mOutOfDate = false;
-
-				return item;
+				return pushNewRenderItem(mFirstRenderItems, _texture, _manualRender);
 			}
 
+			// find first empty element.
 			// если в конце пустой буфер, то нуна найти последний пустой с краю
 			// либо с нужной текстурой за пустым
 			VectorRenderItem::reverse_iterator iter = mFirstRenderItems.rbegin();
-			if ((*iter)->getNeedVertexCount() == 0)
+			if ((*iter)->getDrawItemCount() == 0)
 			{
 				while (true)
 				{
 					VectorRenderItem::reverse_iterator next = iter + 1;
 					if (next != mFirstRenderItems.rend())
 					{
-						if ((*next)->getNeedVertexCount() == 0)
+						if ((*next)->getDrawItemCount() == 0)
 						{
 							iter = next;
 							continue;
 						}
-						else if ((*next)->getTexture() == _texture)
+						else if ((*next)->getTexture() == _texture && (!(*iter)->getManualRender()) )
 						{
 							iter = next;
 						}
@@ -197,59 +290,100 @@ namespace MyGUI
 				}
 
 				(*iter)->setTexture(_texture);
-
+				(*iter)->setManualRender(_manualRender);
 				mOutOfDate = false;
 
 				return (*iter);
 			}
 			// последний буфер с нужной текстурой
-			else if ((*iter)->getTexture() == _texture)
+			else if ( (*iter)->getTexture() == _texture && (!(*iter)->getManualRender()) )
 			{
 				mOutOfDate = false;
 
 				return *iter;
 			}
-
-			// создаем новый буфер
-			RenderItem* item = new RenderItem();
-			item->setTexture(_texture);
-			item->setManualRender(_manualRender);
-			mFirstRenderItems.push_back(item);
-
-			mOutOfDate = false;
-
-			return item;
+			return pushNewRenderItem(mFirstRenderItems, _texture, _manualRender);
 		}
 
 		// для второй очереди порядок неважен
 		for (VectorRenderItem::iterator iter = mSecondRenderItems.begin(); iter != mSecondRenderItems.end(); ++iter)
 		{
 			// либо такая же текстура, либо пустой буфер
-			if ((*iter)->getTexture() == _texture)
+			if ( (*iter)->getTexture() == _texture && (!(*iter)->getManualRender()) )
 			{
 				mOutOfDate = false;
 
 				return (*iter);
 			}
-			else if ((*iter)->getNeedVertexCount() == 0)
+			else if ((*iter)->getDrawItemCount() == 0)
 			{
 				(*iter)->setTexture(_texture);
-
+				(*iter)->setManualRender(_manualRender);
 				mOutOfDate = false;
 
 				return (*iter);
 			}
 		}
-		// не найденно создадим новый
-		RenderItem* item = new RenderItem();
+
+		return pushNewRenderItem(mSecondRenderItems, _texture, _manualRender);
+	}
+
+	RenderItem* LayerNode::newRenderItem(ITexture* _texture, bool _manualRender)
+	{
+		RenderItem* item = new RenderItem(this);
 		item->setTexture(_texture);
 		item->setManualRender(_manualRender);
+		return item;
+	}
 
-		mSecondRenderItems.push_back(item);
+	VectorRenderItem::iterator LayerNode::insertNewRenderItem(ITexture* _texture, bool _manualRender, const VectorDrawItem& _nodes,
+		VectorRenderItem& _array, const VectorRenderItem::iterator& _where)
+	{
+		RenderItem* _item = nullptr;
 
+		if (_array.size())
+		{
+			if (_array.back()->getDrawItemCount() == 0)
+			{
+				_item = _array.back();
+				_array.pop_back();
+				_item->setManualRender(_manualRender);
+				_item->setTexture(_texture);
+			}
+		}
+
+		if (nullptr == _item)
+		{
+			_item = newRenderItem(_texture, _manualRender);
+		}
+
+		VectorDrawItem::const_iterator itf = _nodes.begin();
+		VectorDrawItem::const_iterator endf = _nodes.end();
+		while(itf != endf)
+		{
+			_item->addDrawItem(itf->first, itf->second);
+			++itf;
+		}
+		return _array.insert(_where, _item);
+	}
+
+	RenderItem* LayerNode::pushNewRenderItem(VectorRenderItem& _array, ITexture* _texture, bool _manualRender)
+	{
+		RenderItem* item = newRenderItem(_texture, _manualRender);
 		mOutOfDate = false;
+		_array.push_back(item);
+		return _array.back();
+	}
 
-		return mSecondRenderItems.back();
+	void LayerNode::notifyRenderItemChanged(const VectorDrawItem& _nodes, RenderItem* _old, RenderItem* _new)
+	{
+		VectorDrawItem::const_iterator itt = _nodes.begin();
+		VectorDrawItem::const_iterator endt = _nodes.end();
+		while(itt != endt)
+		{
+			itt->first->onRenderItemChanged(this, _old, _new);
+			++itt;
+		}
 	}
 
 	void LayerNode::attachLayerItem(ILayerItem* _item)
@@ -298,7 +432,7 @@ namespace MyGUI
 			VectorRenderItem::iterator iter2 = iter1 + 1;
 			while (iter2 != mFirstRenderItems.end())
 			{
-				if ((*iter1)->getNeedVertexCount() == 0 && !(*iter1)->getManualRender())
+				if ((*iter1)->getDrawItemCount() == 0)//(*iter1)->getNeedVertexCount() == 0 && !(*iter1)->getManualRender())
 				{
 					RenderItem* tmp = (*iter1);
 					(*iter1) = (*iter2);

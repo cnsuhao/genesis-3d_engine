@@ -68,7 +68,8 @@ namespace App
 		Graphic::RenderToTexture* pRT = self.GetCppObjPtr();
 		n_assert( NULL!=pRT );
 
-		ReleaseCppObjWithMonoObj<Graphic::RenderToTexture>( pRT, pMonoObj );
+		//ReleaseCppObjWithMonoObj<Graphic::RenderToTexture>( pRT, pMonoObj );
+		DelayReleaseCppObjWithMonoObj<Graphic::RenderToTexture>( pRT, pMonoObj );
 	}
 	static const RenderBase::TextureHandle* ICall_RenderToTexture_GetTextureHandlePtr( MonoObject* pMonoObj )
 	{

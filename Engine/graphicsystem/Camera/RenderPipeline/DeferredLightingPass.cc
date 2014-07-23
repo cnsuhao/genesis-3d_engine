@@ -83,24 +83,24 @@ namespace Graphic
 
 	void DeferredLightingPass::RenderActiveLights(PipelineParamters& params)
 	{
-		ActiveLightCollection& active_lights = params.m_activeLights.GetActiveLights();; 
-		const GPtr<RenderToTexture>& light_target = params.m_camera->GetDeferredLightMap();
+		//ActiveLightCollection& active_lights = params.m_activeLights.GetActiveLights();; 
+		//const GPtr<RenderToTexture>& light_target = params.m_camera->GetDeferredLightMap();
 
 
-		GraphicSystem* gs = GraphicSystem::Instance();
-		n_assert(NULL != gs);
+		//GraphicSystem* gs = GraphicSystem::Instance();
+		//n_assert(NULL != gs);
 
-		gs->SetRenderTarget(light_target, 0, RenderBase::RenderTarget::ClearAll);
+		//gs->SetRenderTarget(light_target, 0, RenderBase::RenderTarget::ClearAll);
 
 
 
-		ActiveLightCollection::Iterator it = active_lights.Begin();
-		ActiveLightCollection::Iterator end = active_lights.End();
-		while(it != end)
-		{
-			_renderLight(*it);
-			++it;
-		}
+		//ActiveLightCollection::Iterator it = active_lights.Begin();
+		//ActiveLightCollection::Iterator end = active_lights.End();
+		//while(it != end)
+		//{
+		//	_renderLight(*it);
+		//	++it;
+		//}
 	}
 
 	void DeferredLightingPass::_buildSunLight()

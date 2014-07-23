@@ -716,7 +716,9 @@ namespace App
 				}
 			}
 
-			if(!m_DefaultFinalTrans.IsEmpty())
+			const SizeT bonesCount = skeletonRes->GetBonesCount();
+
+			if(!m_DefaultFinalTrans.IsEmpty() && bonesCount == m_DefaultFinalTrans.Size())
 			{
 				m_FinalTrans = m_DefaultFinalTrans;
 				return true;
@@ -725,8 +727,7 @@ namespace App
 			m_FinalTrans.Clear();
 			m_DefaultFinalTrans.Clear();
 
-			const SizeT bonesCount = skeletonRes->GetBonesCount();
-
+			
 			const SkelBoneContainer& SkelBones = skeletonRes->GetSkelBones();
 
 			m_DefaultFinalTrans.Resize(bonesCount,Math::matrix44::identity());

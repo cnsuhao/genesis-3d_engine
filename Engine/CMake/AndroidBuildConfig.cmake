@@ -22,10 +22,17 @@
 # THE SOFTWARE.
 #****************************************************************************
 
+SET(LINK_ANDRIOD_PHYSX FALSE) # force close
+
+
 ADD_DEFINITIONS(
 	-D__ANDROID__
 	-D__USE_AUDIO__
 	-DANDROID )
+
+IF(${LINK_ANDRIOD_PHYSX})
+	ADD_DEFINITIONS( 	-D__USE_PHYSX__ )
+ENDIF()
 
 #temp definitions	
 ADD_DEFINITIONS(
@@ -64,6 +71,7 @@ SET( ANDROID_GUN_LIB_STD_LIB_PATH_INCLUDE "${ANDROID_NDK_ROOT}/sources/cxx-stl/g
 SET( ANDROID_PLATFORMS_ANDROID14_INCLUDE "${ANDROID_NDK_ROOT}/platforms/android-14/arch-arm/usr/include" )
 SET( ANDROID_PLATFORMS_ANDROID14_LIB "${ANDROID_NDK_ROOT}/platforms/android-14/arch-arm/usr/lib" )
 SET( GENESIS_EXTERNAL_PROJECT_DIR "${CMAKE_SOURCE_DIR}/../../genesis_externals/Externals")
+
 	
 MESSAGE( STATUS "ANDROID_NDK_ROOT:" ${ANDROID_NDK_ROOT} )
 

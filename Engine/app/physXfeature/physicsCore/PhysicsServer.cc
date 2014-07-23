@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-#if __USE_PHYSX__ || __GENESIS_EDITOR__
+#if defined (__USE_PHYSX__) || defined (__GENESIS_EDITOR__)
 #include "stdneb.h"
 #include "GraphicSystem.h"
 #include "PhysicsServer.h"
@@ -256,7 +256,7 @@ namespace App
 		m_bEnableOnMoveAfter(false),
 #endif
 		m_Gravity(Math::float3(0.0f, -9.81f, 0.0f)),
-		m_SleepThreshold(0.5f),
+		m_SleepThreshold(0.05f),
 		m_MaxAngularVelocity(7.0f),
 		m_bRecordMemoryAllocations(true)
 	{

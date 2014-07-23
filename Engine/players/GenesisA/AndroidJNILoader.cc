@@ -54,8 +54,6 @@ static Util::String g_apklocation = "";
 
 
 JNIEnv* gEnv = NULL;
-#define KEYCODE_BACK 4
-#define KEYCODE_MENU 52
 
 
 enum StorageType
@@ -224,6 +222,7 @@ extern "C" {
 	JNIEXPORT void JNICALL Java_org_genesis_lib_GenesisRenderer_nativeTouchesEnd(JNIEnv * env, jobject obj, jint pIDs, jfloat pXs, jfloat pYs);
 	JNIEXPORT void JNICALL Java_org_genesis_lib_GenesisRenderer_nativeTouchesCancel(JNIEnv * env, jobject obj, jintArray pIDs, jfloatArray pXs, jfloatArray pYs);
 	JNIEXPORT void JNICALL Java_org_genesis_lib_GenesisRenderer_nativeKeyDown(JNIEnv * env, jobject obj, jint pKeyCode);
+	JNIEXPORT void JNICALL Java_org_genesis_lib_GenesisRenderer_nativeKeyUp(JNIEnv * env, jobject obj, jint pKeyCode);
 	JNIEXPORT void JNICALL Java_org_genesis_lib_GenesisRenderer_nativeInsertText(JNIEnv* env, jobject obj, jstring text);
 	JNIEXPORT void JNICALL Java_org_genesis_lib_GenesisRenderer_nativeDeleteBackward(JNIEnv* env, jobject thiz);
 	JNIEXPORT jstring JNICALL Java_org_genesis_lib_GenesisRenderer_nativeGetContentText();
@@ -343,13 +342,50 @@ JNIEXPORT void Java_org_genesis_lib_GenesisRenderer_nativeKeyDown(JNIEnv * env, 
 
 	switch (pKeyCode)
 	{
-	case KEYCODE_BACK:
+	case Input::InputKey::KEYCODE_BACK:
 		g_pApp->OnExited();
+		return;
 		break;
 	default:
 		break;
 	}
 
+	n_warning("android key down");
+	Input::MobileKeyboardEvent keyboardEvent;
+	keyboardEvent.SetType(Input::MoibleInputEvent::INPUT_EVENT_TYPE_KEY);
+	keyboardEvent.SetMotionType(Input::MobileKeyboardEvent::MOTION_EVENT_KEY_DOWN);
+
+	Input::InputKey::Code keyCode;
+	keyCode = Input::InputKey::TranslateAndoridToWin32((Input::InputKey::AndroidKeyCode)pKeyCode);
+
+	keyboardEvent.SetKeycode(keyCode);
+
+	const GPtr<Input::InputSource>& pInputSource = g_pApp->GetInputSource();
+	if (pInputSource.isvalid())
+	{
+		pInputSource.downcast<AndroidInput::AndroidInputSource>()->OnAndroidProc(&keyboardEvent);
+	}
+}
+
+JNIEXPORT void Java_org_genesis_lib_GenesisRenderer_nativeKeyUp(JNIEnv * env, jobject obj, jint pKeyCode)
+{
+	LOGI("-----------------------------nativeKeyUp-----------------------------");
+
+	n_warning("android key up");
+	Input::MobileKeyboardEvent keyboardEvent;
+	keyboardEvent.SetType(Input::MoibleInputEvent::INPUT_EVENT_TYPE_KEY);
+	keyboardEvent.SetMotionType(Input::MobileKeyboardEvent::MOTION_EVENT_KEY_UP);
+
+	Input::InputKey::Code keyCode;
+	keyCode = Input::InputKey::TranslateAndoridToWin32((Input::InputKey::AndroidKeyCode)pKeyCode);
+
+	keyboardEvent.SetKeycode(keyCode);
+
+	const GPtr<Input::InputSource>& pInputSource = g_pApp->GetInputSource();
+	if (pInputSource.isvalid())
+	{
+		pInputSource.downcast<AndroidInput::AndroidInputSource>()->OnAndroidProc(&keyboardEvent);
+	}
 }
 
 JNIEXPORT void Java_org_genesis_lib_GenesisRenderer_nativeOnStop(JNIEnv * env, jobject obj)

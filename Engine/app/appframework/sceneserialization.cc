@@ -252,7 +252,7 @@ namespace App
 			}
 			else
 			{
-#if  __USE_PHYSX__ || __GENESIS_EDITOR__
+#if defined (__USE_PHYSX__) || defined (__GENESIS_EDITOR__)
 
 				PhysicsServer::Instance()->SetAllCollisionMaskMatrix( layerIDArray );
 #endif
@@ -442,14 +442,14 @@ namespace App
 
 		// environment shader param
 		{
-			const Scene::Environment& environment = pScene->GetEnvironment();
+			const SceneEnvironment& environment = pScene->GetEnvironment();
 			pSerialize->SerializeFloat4(s_GShaderVecAmbientColor, environment.ambientColor);
 			pSerialize->SerializeFloat4(s_GShaderVecFogColor, environment.fogColor);
 			pSerialize->SerializeFloat4(s_GShaderVecFogParam, environment.fogParam);
 			pSerialize->SerializeFloat4(s_SoftShadowParam, environment.softShadowParam);
 			pSerialize->SerializeFloat4(s_ShadowStrength, environment.shadowStrength);
 		}
-#if  __USE_PHYSX__ || __GENESIS_EDITOR__
+#if defined (__USE_PHYSX__) || defined (__GENESIS_EDITOR__)
 		// phyx layer filter
 		{
 			Util::Array<uint> layerIDArray = PhysicsServer::Instance()->GetAllCollisionMask();
@@ -517,14 +517,6 @@ namespace App
 				pSerialize->SerializeObject( pActor );
 			}
 		}
-
-		//// 没找到合适的地方，先放这儿了
-		/*GPtr<Graphic::MaterialInstanceManager>& manager = GraphicObjectManager::Instance()->GetMaterialInstanceManager();
-		if ( manager )
-		{
-		manager->SaveMaterial();
-		}*/
-
 
 	}
 }

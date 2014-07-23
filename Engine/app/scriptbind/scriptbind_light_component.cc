@@ -45,7 +45,8 @@ namespace App
 	static void ICall_LightComponent_SetLightType(MonoObject* pMonoObj, int lightType)
 	{
 		ScriptObjWrapper<LightComponent> self( pMonoObj );
-		return self->SetLightType(LightTypeConvert::Conver(lightType));
+		self->SetLightType(LightTypeConvert::Conver(lightType));
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
 	static void ICall_LightComponent_GetPosition( MonoObject* pMonoObj, Math::float3& outPos )
@@ -58,6 +59,7 @@ namespace App
 	{
 		ScriptObjWrapper<LightComponent> self( pMonoObj );
 		self->SetLightPos(pos);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
 	static void ICall_LightComponent_GetDirection( MonoObject* pMonoObj, Math::float3& dir )
@@ -70,6 +72,7 @@ namespace App
 	{
 		ScriptObjWrapper<LightComponent> self( pMonoObj );
 		self->SetLightDir(dir);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
 	static void ICall_LightComponent_GetColorF( MonoObject* pMonoObj, Math::float4& color )
@@ -82,6 +85,7 @@ namespace App
 	{
 		ScriptObjWrapper<LightComponent> self( pMonoObj );
 		self->SetLightColorF(color);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
 	static float ICall_LightComponent_GetIntensity( MonoObject* pMonoObj)
@@ -94,6 +98,7 @@ namespace App
 	{
 		ScriptObjWrapper<LightComponent> self( pMonoObj );
 		self->SetLightIntensity(inensitiy);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	static float ICall_LightComponent_GetRange( MonoObject* pMonoObj)
 	{
@@ -105,12 +110,14 @@ namespace App
 	{
 		ScriptObjWrapper<LightComponent> self( pMonoObj );
 		return self->SetLightRange(range);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
 	static void ICall_LightComponent_SetDistanceFallOff( MonoObject* pMonoObj, float falloff)
 	{
 		ScriptObjWrapper<LightComponent> self( pMonoObj );
 		return self->SetFalloff(falloff);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	static float ICall_LightComponent_GetDistanceFallOff( MonoObject* pMonoObj)
 	{

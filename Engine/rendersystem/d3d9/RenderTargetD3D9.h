@@ -63,7 +63,7 @@ public:
 
 	D3DPOOL GetD3D9PoolType();
 
-	IDirect3DSurface9* GetD3DRT()	{ return d3d9RenderTarget ; }
+	IDirect3DSurface9* GetD3DRT() const	{ return d3d9RenderTarget ; }
 
 	IDirect3DSwapChain9* GetD3D9SwapChain() const { return d3d9swapChain ; }
 
@@ -73,8 +73,8 @@ protected:
     friend class RenderDeviceD3D9;
 
     /// setup compatible multisample type
-    void SetupMultiSampleType();
-                                                      
+    void setupMultiSampleType();
+
     IDirect3DSurface9* d3d9RenderTarget;
     IDirect3DSurface9* d3d9DepthStencil;
     IDirect3DTexture9* d3d9ResolveTexture;

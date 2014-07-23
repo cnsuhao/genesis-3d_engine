@@ -49,6 +49,7 @@ namespace App
 	{
 		ScriptObjWrapper<SoundEchoFilterComponent> self( pMonoObj );
 		return self->SetEchoParam(SoundEchoFilterComponent::Delay, pvalue);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//------------------------------------------------------------------------
 	static float ICall_SoundEchoFilterComponent_GetLRDelay(MonoObject* pMonoObj)
@@ -60,7 +61,8 @@ namespace App
 	static void ICall_SoundEchoFilterComponent_SetLRDelay(MonoObject* pMonoObj, float pvalue)
 	{
 		ScriptObjWrapper<SoundEchoFilterComponent> self( pMonoObj );
-		return self->SetEchoParam(SoundEchoFilterComponent::LRDelay, pvalue);
+		self->SetEchoParam(SoundEchoFilterComponent::LRDelay, pvalue);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//------------------------------------------------------------------------
 	static float ICall_SoundEchoFilterComponent_GetDamping(MonoObject* pMonoObj)
@@ -72,7 +74,8 @@ namespace App
 	static void ICall_SoundEchoFilterComponent_SetDamping(MonoObject* pMonoObj, float pvalue)
 	{
 		ScriptObjWrapper<SoundEchoFilterComponent> self( pMonoObj );
-		return self->SetEchoParam(SoundEchoFilterComponent::Damping, pvalue);
+		self->SetEchoParam(SoundEchoFilterComponent::Damping, pvalue);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//------------------------------------------------------------------------
 	static float ICall_SoundEchoFilterComponent_GetFeedBack(MonoObject* pMonoObj)
@@ -84,7 +87,8 @@ namespace App
 	static void ICall_SoundEchoFilterComponent_SetFeedBack(MonoObject* pMonoObj, float pvalue)
 	{
 		ScriptObjWrapper<SoundEchoFilterComponent> self( pMonoObj );
-		return self->SetEchoParam(SoundEchoFilterComponent::FeedBack, pvalue);
+		self->SetEchoParam(SoundEchoFilterComponent::FeedBack, pvalue);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//------------------------------------------------------------------------
 	static float ICall_SoundEchoFilterComponent_GetSpread(MonoObject* pMonoObj)
@@ -96,7 +100,8 @@ namespace App
 	static void ICall_SoundEchoFilterComponent_SetSpread(MonoObject* pMonoObj, float pvalue)
 	{
 		ScriptObjWrapper<SoundEchoFilterComponent> self( pMonoObj );
-		return self->SetEchoParam(SoundEchoFilterComponent::Spread, pvalue);
+		self->SetEchoParam(SoundEchoFilterComponent::Spread, pvalue);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//------------------------------------------------------------------------
 }

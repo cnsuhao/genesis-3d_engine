@@ -68,7 +68,11 @@ namespace App
 
     static MonoObject* ICall_Actor_FindChild(MonoObject* self, uint32 fastId);
 
+	static MonoObject* ICall_Actor_FindChildByName(MonoObject* self, MonoString* name);
+
     static IndexT ICall_Actor_FindChildIndex(MonoObject* self, uint32 fastId);
+
+	static IndexT ICall_Actor_FindChildIndexByName(MonoObject* self, MonoString* name);
 
     static void ICall_Actor_AddChild(MonoObject* self, MonoObject* child);
 
@@ -161,7 +165,9 @@ namespace App
              { "ScriptRuntime.Actor::ICall_Actor_GetChildCount",                                    (void*)&ICall_Actor_GetChildCount},
              { "ScriptRuntime.Actor::ICall_Actor_GetChild",                                         (void*)&ICall_Actor_GetChild},
              { "ScriptRuntime.Actor::ICall_Actor_FindChild",                                        (void*)&ICall_Actor_FindChild},
+			 { "ScriptRuntime.Actor::ICall_Actor_FindChildByName",                                  (void*)&ICall_Actor_FindChildByName},
              { "ScriptRuntime.Actor::ICall_Actor_FindChildIndex",                                   (void*)&ICall_Actor_FindChildIndex},
+			 { "ScriptRuntime.Actor::ICall_Actor_FindChildIndexByName",                             (void*)&ICall_Actor_FindChildIndexByName},
              { "ScriptRuntime.Actor::ICall_Actor_AddChild",                                         (void*)&ICall_Actor_AddChild},
              { "ScriptRuntime.Actor::ICall_Actor_RemoveChild",                                      (void*)&ICall_Actor_RemoveChild},
              { "ScriptRuntime.Actor::ICall_Actor_SetLocalPos",                                      (void*)&ICall_Actor_SetLocalPos},

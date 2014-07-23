@@ -34,9 +34,9 @@ THE SOFTWARE.
 #include "MyGUI_RenderManager.h"
 
 
-namespace Graphic
+namespace Resources
 {
-	class Material;
+	class MaterialResInfo;
 }
 
 namespace MyGUI
@@ -84,7 +84,7 @@ namespace MyGUI
 		virtual void end();
 
 		/** @see IRenderTarget::doRender */
-		virtual void doRender(IVertexBuffer* _buffer, ITexture* _texture, size_t _count);
+		virtual void doRender(IVertexBuffer* _buffer, ITexture* _texture, size_t _count, int _material_type = (int)MyGUI::NORMAL);
 
 		/** @see IRenderTarget::getInfo */
 		virtual const RenderTargetInfo& getInfo();
@@ -110,7 +110,7 @@ namespace MyGUI
 
 		size_t getBatchCount() const;
 
-		static void SetResourcePath(const Util::String& path);
+		Resources::MaterialResInfo* getMaterial() const;
 
 		void  outofDate();
 
@@ -136,24 +136,21 @@ namespace MyGUI
 
 	private:
 		friend class GenesisRTTexture;
-		void _loadShader();					
-		void _checkShader();
+		bool _loadShader(std::string& _name);					
+		//void _checkShader();
 		void _beforeDraw();
-		GPtr<Graphic::Material> m_shader;
+		void SetMaterialByType(int _type);
+		GPtr<Resources::MaterialResInfo> m_shader;
 		RenderBase::GPUProgramHandle* m_shaderHandle;
-		static Util::String s_resourcePath;
-
 		GenesisVertexBufferMgr* m_VertexMgr;
 		GenesisTextureMgr*      m_TextureMgr;
+		int                     m_MateriaType;
 	};
 
-	inline void GenesisRenderManager::_checkShader()
-	{
-		if (NULL == m_shader)
-		{
-			_loadShader();
-		}
-	}
+	//inline void GenesisRenderManager::_checkShader()
+	//{
+	//	SetMaterialByType(m_MateriaType);
+	//}
 
 	inline const IntSize& GenesisRenderManager::getResolution() const
 	{
@@ -173,6 +170,11 @@ namespace MyGUI
 	inline void GenesisRenderManager::outofDate() 
 	{
 		mUpdate = true;
+	}
+
+	inline Resources::MaterialResInfo* GenesisRenderManager::getMaterial() const
+	{
+		return m_shader.get_unsafe();
 	}
 
 } // namespace MyGUI

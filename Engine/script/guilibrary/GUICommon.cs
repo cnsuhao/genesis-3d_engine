@@ -120,6 +120,23 @@ namespace ScriptGUI
         {
             return AutoResolutionHeight();
         }
+        /// <summary>
+        /// 设置控件变灰
+        /// </summary>
+        /// <param name="layout_name">界面名称</param>
+        /// <param name="widget_name">控件名称</param>
+        /// <param name="value">是否变灰</param>
+        /// <returns>结果</returns>
+        public static ExecuteResult SetGrayRender(FString layout_name, FString widget_name, bool value)
+        {
+            Widget widget = null;
+            ExecuteResult ret = FindWidget(layout_name, widget_name, out widget);
+            if (ExecuteResult.Success == ret)
+            {
+                widget.SetGray(value);
+            }
+            return ret;
+        }
 
         // ------------------------------ internal -----------------------------------------------------------------
         #region internal

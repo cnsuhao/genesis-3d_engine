@@ -89,9 +89,11 @@ namespace MyGUI
 		if (mLayerNode)
 		{
 			ILayerNode* node = mLayerNode;
-			// позже сделать детач без текста
-			detachFromLayerItemNode(false);
-			attachToLayerItemNode(node, false);
+			//// позже сделать детач без текста
+			//detachFromLayerItemNode(false);
+			//attachToLayerItemNode(node, false);
+
+			updateTexture(node, _texture);
 		}
 	}
 
@@ -143,6 +145,14 @@ namespace MyGUI
 	void LayerItem::upLayerItem()
 	{
 		if (mLayerNode) mLayerNode->getLayer()->upChildItemNode(mLayerNode);
+	}
+
+	void LayerItem::updateTexture(ILayerNode* _node, ITexture* _texture)
+	{
+		for (VectorSubWidget::iterator skin = mDrawItems.begin(); skin != mDrawItems.end(); ++skin)
+		{
+			(*skin)->updateDrawItem(mTexture, _node);
+		}
 	}
 
 	void LayerItem::attachToLayerItemNode(ILayerNode* _item, bool _deep)

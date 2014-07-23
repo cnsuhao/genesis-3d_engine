@@ -36,6 +36,7 @@ namespace App
 		Util::String sMeshId = Utility_MonoStringToCppString( pMonoStr );
 
 		self->SetMeshID( sMeshId );
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
 	static MonoString* ICall_MeshRenderComponent_GetMeshID( MonoObject* pMonoObj )

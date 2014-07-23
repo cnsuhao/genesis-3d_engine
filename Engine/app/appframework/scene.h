@@ -53,13 +53,24 @@ namespace App
 	private:
 		Scene* mScene;
 	};
-
+	struct SceneEnvironment : public Graphic::RenderScene::Environment
+	{
+		Math::float3 graivty;
+		float skinWidth;
+		float bounce;
+		float sleepVel;
+		float sleepAngular;
+		float maxAngular;
+		Util::String defaultMat;
+		Util::Array<uint> layerIDArray;
+		SceneEnvironment();
+	};
 	class Scene : public Core::RefCounted, public App::ISerialization
 	{
 		__DeclareClass(Scene);
 		__ScriptBind
 	public:
-		typedef Graphic::RenderScene::Environment Environment;
+
 		/// constructor
 		Scene();
 		/// destructor
@@ -69,9 +80,9 @@ namespace App
 
 		Graphic::RenderScene* GetRenderScene() const;
 
-		Environment& GetEnvironment();
+		SceneEnvironment& GetEnvironment();
 
-		const Environment& GetEnvironment() const;
+		const SceneEnvironment& GetEnvironment() const;
 
 		bool IsModified(void) const;
 
@@ -163,7 +174,7 @@ namespace App
 		GPtr<RootActor> mRoot;
 		Graphic::RenderScene* mRenderScene;
 
-		Graphic::RenderScene::Environment mEnvironment;
+		SceneEnvironment mEnvironment;
 
 		friend class SceneSerialization;
 		friend class ActorManager;
@@ -204,7 +215,7 @@ namespace App
 
 	//------------------------------------------------------------------------
 	inline
-	const Scene::Environment&
+	const SceneEnvironment&
 	Scene::GetEnvironment() const
 	{
 		return mEnvironment;
@@ -212,7 +223,7 @@ namespace App
 
 	//------------------------------------------------------------------------
 	inline
-	Scene::Environment&
+	SceneEnvironment&
 	Scene::GetEnvironment()
 	{
 		return mEnvironment;

@@ -97,7 +97,13 @@ namespace ScriptRuntime
         extern private static Actor ICall_Actor_FindChild(Actor self, UInt32 fastId);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        extern private static Actor ICall_Actor_FindChildByName(Actor self, String name);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         extern private static int ICall_Actor_FindChildIndex(Actor self, UInt32 fastId);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        extern private static int ICall_Actor_FindChildIndexByName(Actor self, String name);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         extern private static void ICall_Actor_AddChild(Actor self, Actor child);

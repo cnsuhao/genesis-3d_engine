@@ -134,7 +134,7 @@ namespace Graphic
 	void Light::_SetupMainLightFrustum(GPtr<Camera>& cam)
 	{
 		n_assert(cam.isvalid())
-			const Camera::ViewPort& vp = cam->GetViewport();
+		const Camera::Viewport& vp = cam->GetViewport();
 		CameraSetting cs =	cam->GetCameraSetting();
 		cs.SetupOrthogonal(float(vp.width),float(vp.height),cs.GetZNear(),cs.GetZFar());
 		cam->SetCameraSetting(cs);
@@ -244,8 +244,8 @@ namespace Graphic
 			shadowMap->Setup(shadowMapSize,shadowMapSize,RenderBase::PixelFormat::R32F, RenderBase::RenderTarget::ClearAll,
 				Math::float4(1.f,1.f,1.f,1.f), true,RenderBase::AntiAliasQuality::None);
 
-			GPtr<RenderToTexture> swapTexture = RenderToTexture::Create();
-			swapTexture->Setup(shadowMapSize * splitCount,shadowMapSize,RenderBase::PixelFormat::R32F, RenderBase::RenderTarget::ClearAll,
+			m_lightShadowMap = RenderToTexture::Create();
+			m_lightShadowMap->Setup(shadowMapSize * splitCount,shadowMapSize,RenderBase::PixelFormat::R32F, RenderBase::RenderTarget::ClearAll,
 				Math::float4(1.f,1.f,1.f,1.f), true,RenderBase::AntiAliasQuality::None);
 
 			m_RealShadowmapSize = shadowMapSize;
@@ -257,14 +257,13 @@ namespace Graphic
 
 				Material::GetGlobalMaterialParams()->SetTextureParam( (GlobalTexParamIndex)(i+eGShaderTexShadowMap0), 
 					Util::String("g_ShadowMap") + Util::String::FromInt(i),
-					swapTexture->GetTextureHandle());
+					m_lightShadowMap->GetTextureHandle());
 
 				GPtr<Camera> shadowMapCamera = Camera::Create();
 				_SetupMainLightFrustum(shadowMapCamera);
 				shadowMapCamera->SetRenderToTexture(shadowMap);
-				shadowMapCamera->SetSwapTexture(swapTexture);
 				shadowMapCamera->SetRenderScene(m_renderScene);
-
+				shadowMapCamera->SetPickMark(Camera::PickCullObjects);
 				m_shadowMapCameras.Append(shadowMapCamera);
 			}
 
@@ -288,8 +287,6 @@ namespace Graphic
 
 	void Light::ResetShadowMap(const SizeT nSplit)
 	{
-		
-
 		SizeT nCount = m_shadowMapCameras.Size();
 
 		for (IndexT i = 0; i < nCount; ++i)
@@ -298,11 +295,8 @@ namespace Graphic
 			{
 				Material::GetGlobalMaterialParams()->SetTextureParam( (GlobalTexParamIndex)(iSplit+eGShaderTexShadowMap0), 
 					Util::String("g_ShadowMap") + Util::String::FromInt(iSplit),
-					m_shadowMapCameras[i]->GetSwapTexture()->GetTextureHandle());
-			}
-			
-
-			
+					m_lightShadowMap->GetTextureHandle());
+			}	
 		}
 	}
 }

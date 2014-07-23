@@ -44,7 +44,7 @@ namespace ScriptRuntime
         /// <summary>
         /// 低通过滤器组件的构造函数
         /// </summary>
-        public SoundLowPassFilterComponent()
+        protected SoundLowPassFilterComponent()
         {
             ICall_SoundLowPassFilterComponent_Bind(this);
         }

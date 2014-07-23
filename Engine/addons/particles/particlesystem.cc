@@ -921,26 +921,28 @@ namespace Particles
 		mMobileTime = 0;
 		Math::Color32 _color;
 		Math::bbox _box;
-		float halfSize = 0;
+		float halfXSize = 0;
+		float halfYSize = 0;
 		_box.begin_extend();
 		while (totalPar < quato)
 		{
 			mEmitter->_emit(particle,(float)mDuration*totalPar/quato);
-			halfSize = 0.5f*particle->mSize.x();
+			halfXSize = 0.5f*particle->mSize.x();
+			halfYSize = 0.5f*particle->mSize.y();
 			particleVertex[4*totalPar].mColor = particle->mColor.HexARGB();
 			particleVertex[4*totalPar].mPosition = particle->mPosition;
-			particleVertex[4*totalPar].mTangent.set(-halfSize,halfSize,0,0);
+			particleVertex[4*totalPar].mTangent.set(-halfXSize,halfYSize,0,0);
 			particleVertex[4*totalPar].mNormal = particle->mDirection;
 			particleVertex[4*totalPar].mTexCoord.set(_time,particle->mTotalTimeToLive);
 
 			particleVertex[4*totalPar+1] = particleVertex[4*totalPar];
-			particleVertex[4*totalPar+1].mTangent.set(-halfSize,-halfSize,0,1);
+			particleVertex[4*totalPar+1].mTangent.set(-halfXSize,-halfYSize,0,1);
 
 			particleVertex[4*totalPar+2] = particleVertex[4*totalPar];
-			particleVertex[4*totalPar+2].mTangent.set(halfSize,-halfSize,1,1);
+			particleVertex[4*totalPar+2].mTangent.set(halfXSize,-halfYSize,1,1);
 
 			particleVertex[4*totalPar+3] = particleVertex[4*totalPar];
-			particleVertex[4*totalPar+3].mTangent.set(halfSize,halfSize,1,0);
+			particleVertex[4*totalPar+3].mTangent.set(halfXSize,halfYSize,1,0);
 
 			indicies[6*totalPar]   = 4*totalPar;
 			indicies[6*totalPar+1] = 4*totalPar + 1;

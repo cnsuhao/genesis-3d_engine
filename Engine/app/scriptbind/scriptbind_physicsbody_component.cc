@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-#if __USE_PHYSX__ || __GENESIS_EDITOR__
+#if defined (__USE_PHYSX__) || defined(__GENESIS_EDITOR__)
 
 #include "stdneb.h"
 #include "scriptfeature/inc/script_utility.h"
@@ -40,6 +40,7 @@ namespace App
 		GPtr<PhysicsEntity> pEntity = self->GetEntity();
 		if(pEntity->IsA(PhysicsDynamic::RTTI))
  			pEntity.downcast<PhysicsDynamic>()->SetLinearVelocity(velocity);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
 	static void ICall_PhysicsBodyComponent_GetLinearVelocity(MonoObject* pMonoObj,Math::float3& velocity)
@@ -56,6 +57,7 @@ namespace App
 		GPtr<PhysicsEntity> pEntity = self->GetEntity();
 		if(pEntity->IsA(PhysicsDynamic::RTTI))
 			pEntity.downcast<PhysicsDynamic>()->SetAngularVelocity(velocity);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
 	static void ICall_PhysicsBodyComponent_GetAngularVelocity(MonoObject* pMonoObj,Math::float3& velocity)
@@ -72,6 +74,7 @@ namespace App
 		GPtr<PhysicsEntity> pEntity = self->GetEntity();
 		if(pEntity->IsA(PhysicsDynamic::RTTI))
 			pEntity.downcast<PhysicsDynamic>()->SetLinearDamping(scalar);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
 	static float ICall_PhysicsBodyComponent_GetLinearDamping(MonoObject* pMonoObj)
@@ -89,6 +92,7 @@ namespace App
 		GPtr<PhysicsEntity> pEntity = self->GetEntity();
 		if(pEntity->IsA(PhysicsDynamic::RTTI))
 			pEntity.downcast<PhysicsDynamic>()->SetAngularDamping(damping);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
 	static float ICall_PhysicsBodyComponent_GetAngularDamping(MonoObject* pMonoObj)
@@ -124,6 +128,7 @@ namespace App
 		GPtr<PhysicsEntity> pEntity = self->GetEntity();
 		if(pEntity->IsA(PhysicsDynamic::RTTI))
 			pEntity.downcast<PhysicsDynamic>()->SetKinematic(Utility_MonoBool(Kinematic));
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
 	static mono_bool ICall_PhysicsBodyComponent_GetKinematic(MonoObject* pMonoObj)
@@ -141,6 +146,7 @@ namespace App
 		GPtr<PhysicsEntity> pEntity = self->GetEntity();
 		if(pEntity->IsA(PhysicsDynamic::RTTI))
 			pEntity.downcast<PhysicsDynamic>()->SetUseGravity(Utility_MonoBool(UseGravity));
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
 	static mono_bool ICall_PhysicsBodyComponent_GetUseGravity(MonoObject* pMonoObj)
@@ -156,6 +162,7 @@ namespace App
 	{
 		ScriptObjWrapper<PhysicsBodyComponent> self( pMonoObj );
 		self->EnablePhysicsSimulate(bConllision>0);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
 	static mono_bool ICall_PhysicsBodyComponent_GetCollision(MonoObject* pMonoObj)
@@ -170,6 +177,7 @@ namespace App
 		GPtr<PhysicsEntity> pEntity = self->GetEntity();
 		if(pEntity->IsA(PhysicsDynamic::RTTI))
 			pEntity.downcast<PhysicsDynamic>()->SetConstantForce(force);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
 	static void ICall_PhysicsBodyComponent_GetConstForce(MonoObject* pMonoObj,Math::float3& force)
@@ -186,6 +194,7 @@ namespace App
 		GPtr<PhysicsEntity> pEntity = self->GetEntity();
 		if(pEntity->IsA(PhysicsDynamic::RTTI))
 			pEntity.downcast<PhysicsDynamic>()->SetConstantVelocity(force);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
 	static void ICall_PhysicsBodyComponent_GetConstLineVelocity(MonoObject* pMonoObj,Math::float3& force)
@@ -202,6 +211,7 @@ namespace App
 		GPtr<PhysicsEntity> pEntity = self->GetEntity();
 		if(pEntity->IsA(PhysicsDynamic::RTTI))
 			pEntity.downcast<PhysicsDynamic>()->SetConstantTorques(torque);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
 	static void ICall_PhysicsBodyComponent_GetConstTorque(MonoObject* pMonoObj,Math::float3& torque)
@@ -218,6 +228,7 @@ namespace App
 		GPtr<PhysicsEntity> pEntity = self->GetEntity();
 		if(pEntity->IsA(PhysicsDynamic::RTTI))
 			pEntity.downcast<PhysicsDynamic>()->SetConstantAngularVel(torque);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
 	static void ICall_PhysicsBodyComponent_GetConstAngularVelocity(MonoObject* pMonoObj,Math::float3& torque)
@@ -236,6 +247,7 @@ namespace App
 		{
 			pEntity->Move(pos);
 		}
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
 	static void ICall_PhysicsBodyComponent_RotateRotation( MonoObject* pMonoObj, Math::quaternion& qua)
@@ -410,5 +422,5 @@ namespace App
 		return 0.0f;
 	}
 }
-#include "autogen\scriptbind_PhysicsBodyComponent_register.h"
+#include "autogen/scriptbind_PhysicsBodyComponent_register.h"
 #endif

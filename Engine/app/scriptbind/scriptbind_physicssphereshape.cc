@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
+#if defined (__USE_PHYSX__) || defined(__GENESIS_EDITOR__)
 #include "stdneb.h"
 #include "scriptfeature/inc/script_utility.h"
 #include "physXfeature/physicsCore/PhysicsSphereShape.h"
@@ -43,3 +44,4 @@ namespace App
 	}
 }
 #include "autogen/scriptbind_PhysicsSphere_register.h"
+#endif

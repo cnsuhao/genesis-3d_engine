@@ -26,6 +26,7 @@ THE SOFTWARE.
 #if WIN32
 
 #include "stdneb.h"
+
 #ifdef __OSX__
 #include "../../profilesystem/ProfileSystem.h"
 #else
@@ -37,6 +38,8 @@ THE SOFTWARE.
 #include "D3D9Window.h"
 #include "../foundation/util/stl.h"
 #include "../foundation/memory/memory.h"
+
+
 
 namespace D3D9
 {
@@ -103,7 +106,7 @@ namespace D3D9
 		m_defaultDisplayPresentParams.MultiSampleQuality = 0;
 		m_defaultDisplayPresentParams.Flags = 0;
 
-		m_deviceBehaviourFlags = D3DCREATE_FPU_PRESERVE | D3DCREATE_HARDWARE_VERTEXPROCESSING;
+		m_deviceBehaviourFlags = D3DCREATE_FPU_PRESERVE | D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED;
 	}
 
 	//------------------------------------------------------------------------------
@@ -270,6 +273,19 @@ namespace D3D9
 	{
 		int i = 0;
 
+		SetRenderState(D3DRS_COLORWRITEENABLE,D3D9Types::AsD3D9ColorMask(state.m_colorWriteMask[i]));
+
+		//if (state.m_separateAlphaBlendEnable)
+		//{
+		//	SetRenderState( D3DRS_SEPARATEALPHABLENDENABLE,TRUE);
+		//}
+		//else
+		//{
+		//	SetRenderState( D3DRS_SEPARATEALPHABLENDENABLE,FALSE);
+		//}
+
+		SetRenderState( D3DRS_SEPARATEALPHABLENDENABLE,FALSE);
+
 		if(state.m_alphaBlendEnable[i])
 		{
 			SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
@@ -278,24 +294,13 @@ namespace D3D9
 			SetRenderState(D3DRS_SRCBLEND,D3D9Types::AsD3D9BlendFactor(state.m_srcBlend[i]));
 			SetRenderState(D3DRS_DESTBLEND,D3D9Types::AsD3D9BlendFactor(state.m_destBlend[i]));
 			
-			SetRenderState(D3DRS_BLENDOPALPHA,D3D9Types::AsD3D9BlendOperation(state.m_blendOPAlpha[i]));
-			SetRenderState(D3DRS_SRCBLENDALPHA,D3D9Types::AsD3D9BlendFactor(state.m_srcBlendAlpha[i]));
-			SetRenderState(D3DRS_DESTBLENDALPHA,D3D9Types::AsD3D9BlendFactor(state.m_destBlendAlpha[i]));
-			
-			SetRenderState(D3DRS_COLORWRITEENABLE,D3D9Types::AsD3D9ColorMask(state.m_colorWriteMask[i]));
+			//SetRenderState(D3DRS_BLENDOPALPHA,D3D9Types::AsD3D9BlendOperation(state.m_blendOPAlpha[i]));
+			//SetRenderState(D3DRS_SRCBLENDALPHA,D3D9Types::AsD3D9BlendFactor(state.m_srcBlendAlpha[i]));
+			//SetRenderState(D3DRS_DESTBLENDALPHA,D3D9Types::AsD3D9BlendFactor(state.m_destBlendAlpha[i]));		
 		}
 		else
 		{
 			SetRenderState(D3DRS_ALPHABLENDENABLE,FALSE);
-		}
-
-		if (state.m_separateAlphaBlendEnable)
-		{
-			SetRenderState( D3DRS_SEPARATEALPHABLENDENABLE,TRUE);
-		}
-		else
-		{
-			SetRenderState( D3DRS_SEPARATEALPHABLENDENABLE,FALSE);
 		}
 
 		if (state.m_alphaTestEnable)
@@ -834,7 +839,7 @@ namespace D3D9
 		HRESULT hr;
 		 RenderTargetD3D9* rtd3d9 = _Convert<RenderTarget, RenderTargetD3D9>(rt);
 		IndexT i = rt->GetMRTIndex();
-		if (m_pRenderTargets[i] != rtd3d9)
+		if (m_pRenderTargets[i].get_unsafe() != rtd3d9)
 		{
 			if (m_pRenderTargets[i])
 			{

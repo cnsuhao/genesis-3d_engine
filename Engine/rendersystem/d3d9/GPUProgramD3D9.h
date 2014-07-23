@@ -23,6 +23,7 @@ THE SOFTWARE.
 ****************************************************************************/
 #ifndef GPUProgramD3D9_H_
 #define GPUProgramD3D9_H_
+#include "D3d9Heads.h"
 #include "base/GPUProgram.h"
 
 namespace D3D9

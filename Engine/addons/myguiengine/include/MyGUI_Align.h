@@ -47,6 +47,17 @@ namespace MyGUI
 			Bottom = MYGUI_FLAG(4), /**< value from the bottom (and center horizontally) */
 			VStretch = Top | Bottom, /**< stretch vertically proportionate to parent window (and center horizontally) */
 
+			ProLeft = MYGUI_FLAG(5),
+			ProRight = MYGUI_FLAG(6),
+			ProHStretch = ProLeft | ProRight,
+
+			ProTop = MYGUI_FLAG(7),
+			ProBottom = MYGUI_FLAG(8),
+			ProVStretch = ProTop | ProBottom,
+
+			ProStretch = ProHStretch | ProVStretch,
+			ProDefault = ProLeft | ProTop,
+
 			Stretch = HStretch | VStretch, /**< stretch proportionate to parent window */
 			Default = Left | Top /**< default value (value from left and top) */
 		};
@@ -58,17 +69,17 @@ namespace MyGUI
 
 		bool isHCenter() const
 		{
-			return HCenter == (value & ((int)HStretch));
+			return HCenter == (value & ((int)HStretch)) && HCenter == (value & ((int)ProHStretch));
 		}
 
 		bool isVCenter() const
 		{
-			return VCenter == (value & ((int)VStretch));
+			return VCenter == (value & ((int)VStretch)) && VCenter == (value & ((int)ProVStretch));
 		}
 
 		bool isCenter() const
 		{
-			return Center == (value & ((int)Stretch));
+			return Center == (value & ((int)Stretch)) && Center == (value & ((int)ProStretch));
 		}
 
 		bool isLeft() const
@@ -76,9 +87,19 @@ namespace MyGUI
 			return Left == (value & ((int)HStretch));
 		}
 
+		bool isProLeft() const
+		{
+			return ProLeft == (value & ((int)ProHStretch));
+		}
+
 		bool isRight() const
 		{
 			return Right == (value & ((int)HStretch));
+		}
+
+		bool isProRight() const
+		{
+			return ProRight == (value & ((int)ProHStretch));
 		}
 
 		bool isHStretch() const
@@ -86,9 +107,19 @@ namespace MyGUI
 			return HStretch == (value & ((int)HStretch));
 		}
 
+		bool isProHStretch() const
+		{
+			return ProHStretch == (value & ((int)ProHStretch));
+		}
+
 		bool isTop() const
 		{
 			return Top == (value & ((int)VStretch));
+		}
+
+		bool isProTop() const
+		{
+			return ProTop == (value & ((int)ProVStretch));
 		}
 
 		bool isBottom() const
@@ -96,9 +127,19 @@ namespace MyGUI
 			return (Bottom == (value & ((int)VStretch)));
 		}
 
+		bool isProBottom() const
+		{
+			return (ProBottom == (value & ((int)ProVStretch)));
+		}
+
 		bool isVStretch() const
 		{
 			return (VStretch == (value & ((int)VStretch)));
+		}
+
+		bool isProVStretch() const
+		{
+			return (ProVStretch == (value & ((int)ProVStretch)));
 		}
 
 		bool isStretch() const
@@ -106,9 +147,19 @@ namespace MyGUI
 			return (Stretch == (value & ((int)Stretch)));
 		}
 
+		bool isProStretch() const
+		{
+			return (ProStretch == (value & ((int)ProStretch)));
+		}
+
 		bool isDefault() const
 		{
 			return (Default == (value & ((int)Stretch)));
+		}
+
+		bool isProDefault() const
+		{
+			return (ProDefault == (value & ((int)ProStretch)));
 		}
 
 		Align& operator |= (Align const& _other)
@@ -171,6 +222,18 @@ namespace MyGUI
 			else
 				result = "HCenter";
 
+			if (value & ProLeft)
+			{
+				if (value & ProRight)
+					result = "ProHStretch";
+				else
+					result = "ProLeft";
+			}
+			else if (value & ProRight)
+				result = "ProRight";
+			else
+				result = "HCenter";
+
 			if (value & Top)
 			{
 				if (value & Bottom)
@@ -180,6 +243,18 @@ namespace MyGUI
 			}
 			else if (value & Bottom)
 				result += " Bottom";
+			else
+				result += " VCenter";
+
+			if (value & ProTop)
+			{
+				if (value & ProBottom)
+					result += " ProVStretch";
+				else
+					result += " ProTop";
+			}
+			else if (value & ProBottom)
+				result += " ProBottom";
 			else
 				result += " VCenter";
 
@@ -244,6 +319,15 @@ namespace MyGUI
 				map_names["ALIGN_STRETCH"] = Stretch;
 				map_names["ALIGN_DEFAULT"] = Default;
 
+				map_names["ALIGN_PRO_LEFT"] = ProLeft;
+				map_names["ALIGN_PRO_RIGHT"] = ProRight;
+				map_names["ALIGN_PRO_HSTRETCH"] = ProHStretch;
+				map_names["ALIGN_PRO_TOP"] = ProTop;
+				map_names["ALIGN_PRO_BOTTOM"] = ProBottom;
+				map_names["ALIGN_PRO_VSTRETCH"] = ProVStretch;
+				map_names["ALIGN_PRO_STRETCH"] = ProStretch;
+				map_names["ALIGN_PRO_DEFAULT"] = ProDefault;
+
 				MYGUI_REGISTER_VALUE(map_names, HCenter);
 				MYGUI_REGISTER_VALUE(map_names, VCenter);
 				MYGUI_REGISTER_VALUE(map_names, Center);
@@ -255,6 +339,15 @@ namespace MyGUI
 				MYGUI_REGISTER_VALUE(map_names, VStretch);
 				MYGUI_REGISTER_VALUE(map_names, Stretch);
 				MYGUI_REGISTER_VALUE(map_names, Default);
+
+				MYGUI_REGISTER_VALUE(map_names, ProLeft);
+				MYGUI_REGISTER_VALUE(map_names, ProRight);
+				MYGUI_REGISTER_VALUE(map_names, ProHStretch);
+				MYGUI_REGISTER_VALUE(map_names, ProTop);
+				MYGUI_REGISTER_VALUE(map_names, ProBottom);
+				MYGUI_REGISTER_VALUE(map_names, ProVStretch);
+				MYGUI_REGISTER_VALUE(map_names, ProStretch);
+				MYGUI_REGISTER_VALUE(map_names, ProDefault);
 			}
 
 			return map_names;

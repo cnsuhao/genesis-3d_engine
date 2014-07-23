@@ -99,9 +99,10 @@ namespace App
 
 		PhysicsRoleHitReport* GetHitCallBack() { return m_pCallBack; }
 	protected:
-		Math::bbox _GetLocalBB();
+		Math::bbox	 _GetLocalBB();
 		Math::scalar _GetRealHeight();
 		Math::scalar _GetRealRadius();
+		void		 _OnScaleWithActor();
 	private:
 		Math::scalar m_fHeight;
 		Math::scalar m_fRadius;
@@ -114,6 +115,7 @@ namespace App
 		int		     m_LastCollisionFlags;
 
 		bool		 m_bInheritActor;
+		bool		 m_bDirty;
 
 		PxCapsuleController* m_pController;
 		ControllerHitReport* m_pHitReport;

@@ -31,6 +31,7 @@ THE SOFTWARE.
 #include "util/quadtree.h"
 #include "jobs/job.h"
 
+#define __THREAD_JOB__ 0 // 
 //------------------------------------------------------------------------------
 namespace Vis
 {    

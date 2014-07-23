@@ -35,6 +35,7 @@ namespace App
 
 	//------------------------------------------------------------------------
 	ScriptFeature::ScriptFeature()
+		:m_nSwapIndex(0)
 	{
 		__ConstructImageSingleton;
 
@@ -137,6 +138,17 @@ namespace App
 				}
 			}
 		}
+
+		//release delay object
+		m_CriticalSection.Enter();
+		int currentIndex = m_nSwapIndex;
+		m_nSwapIndex = !m_nSwapIndex;
+		m_CriticalSection.Leave();
+		for ( int i = 0 ; i < m_DelayReleaseArray[currentIndex].Size(); ++ i )
+		{
+			m_DelayReleaseArray[currentIndex][i]->Release();
+		}
+		m_DelayReleaseArray[currentIndex].Clear(false);
 		PROFILER_ADDDTICKEND(scriptsTime);
 	}
 	//------------------------------------------------------------------------
@@ -265,4 +277,32 @@ namespace App
 		AttachScriptCom(pCom);
 		AttachScriptInstances(scriptInstances);
 	}
+
+	void ScriptFeature::PushObjectToDelayRelease( RefCounted* obj )
+	{
+		m_CriticalSection.Enter();
+		m_DelayReleaseArray[m_nSwapIndex].Append( obj );
+		m_CriticalSection.Leave();
+	}
+
+	void ScriptFeature::_ClearObjectBuffers()
+	{
+		m_CriticalSection.Enter();
+		for ( int i = 0 ; i < SC_SWAP_BUFFER_SIZE; ++ i )
+		{
+			for ( int j = 0 ; j < m_DelayReleaseArray[i].Size(); ++ i )
+			{
+				m_DelayReleaseArray[i][j]->Release();
+			}
+			m_DelayReleaseArray[i].Clear(false);
+		}
+		m_CriticalSection.Leave();
+	}
+
+	void ScriptFeature::OnStop()
+	{
+		_ClearObjectBuffers();
+		Feature::OnStop();
+	}
+
 }

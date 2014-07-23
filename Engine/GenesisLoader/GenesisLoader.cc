@@ -498,7 +498,8 @@ bool GenesisLoader::Init( int argc, char *argv[] )
 
 	for (;;)
 	{
-		if(!IsWindowEnabled(this->mh_PluginWnd))break;			
+		if(!IsWindowEnabled(this->mh_PluginWnd))
+			break;			
 
 		if (PeekMessage(&msg,NULL,0,0,PM_REMOVE))
 		{

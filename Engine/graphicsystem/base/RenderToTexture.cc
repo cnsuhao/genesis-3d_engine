@@ -129,6 +129,24 @@ namespace Graphic
 		m_quadRenderable->Setup(width, height);
 	}
 
+	RenderBase::AntiAliasQuality::Code RenderToTexture::GetAntiAliasQuality() const
+	{
+		if (m_RT.isvalid())
+		{
+			return m_RT->GetAntiAliasQuality();
+		}
+		return RenderBase::AntiAliasQuality::None;
+	}
+
+	RenderBase::PixelFormat::Code RenderToTexture::GetColorBufferFormat() const
+	{
+		if (m_RT.isvalid())
+		{
+			return m_RT->GetColorBufferFormat();
+		}
+		return RenderBase::PixelFormat::InvalidPixelFormat;
+	}
+
 	void RenderToTexture::Discard()
 	{
 		if (m_texHandle.IsValid())
@@ -173,16 +191,6 @@ namespace Graphic
 
 		return false;
 	}
-
-#if __WIN32__
-	const D3D9::TextureD3D9& RenderToTexture::GetD3DTexture9()
-	{
-		const RenderBase::TextureHandle handle = this->GetTextureHandle();
-		const Core::RefCounted* Ro = handle.AsObject();
-		const D3D9::TextureD3D9* front = reinterpret_cast<const D3D9::TextureD3D9*>(Ro);
-		return *front;
-	}
-#endif
 
 	void RenderToTexture::ResetQuad()
 	{

@@ -60,6 +60,7 @@ namespace MyGUI
 		void restoreLayerItem();
 
 	protected:
+		void updateTexture(ILayerNode* _node, ITexture* _texture);
 		void attachToLayerItemNode(ILayerNode* _node, bool _deep);
 		void detachFromLayerItemNode(bool _deep);
 

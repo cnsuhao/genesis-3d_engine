@@ -46,8 +46,12 @@ namespace MyGUI
 		ISubWidget() : mVisible(true) { }
 		virtual ~ISubWidget() { }
 
+		virtual void updateDrawItem(ITexture* _texture, ILayerNode* _node) = 0;
 		virtual void createDrawItem(ITexture* _texture, ILayerNode* _node) = 0;
 		virtual void destroyDrawItem() = 0;
+		virtual void onRenderItemChanged(ILayerNode* _sender, RenderItem* _old, RenderItem* _new) = 0;
+
+		virtual size_t getVertexCount() const = 0;
 
 		virtual void setAlpha(float _alpha) { }
 

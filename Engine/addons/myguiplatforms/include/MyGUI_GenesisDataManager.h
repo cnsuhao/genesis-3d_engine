@@ -34,11 +34,21 @@ THE SOFTWARE.
 #include "foundation/util/string.h"
 namespace MyGUI
 {
+	class GenesisGuiGlobal
+	{
+	public:
+		typedef std::vector<std::string> MediaLocations;
+		static void pushMediaLocation(const std::string& path);
+		static const MediaLocations& getMediaLocations();
+	private:
+		static GenesisGuiGlobal::MediaLocations _mediaLocations;
+	};
 
 	class GenesisDataManager :
 		public DataManager
 	{
 	public:
+		typedef std::vector<std::string> MediaLocations;
 		GenesisDataManager();
 
 		void initialise(const std::string& _group);
@@ -52,7 +62,7 @@ namespace MyGUI
 		{
 			return static_cast<GenesisDataManager*>(DataManager::getInstancePtr());
 		}
-		void SetResourcePath(const Util::String& path);
+
 		const std::string& getGroup() const
 		{
 			return mGroup;
@@ -74,10 +84,10 @@ namespace MyGUI
 		const VectorString& getDataListNames(const std::string& _pattern, bool _fullpath);
 
 	private:
+		IDataStream* getDataStream(const std::string& _url);
 		std::string mGroup;
 		bool mAllGroups;
 		bool mIsInitialise;
-		Util::String m_srcPath;
 	};
 
 } // namespace MyGUI

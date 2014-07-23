@@ -44,23 +44,32 @@ THE SOFTWARE.
 #include <assert.h>
 #endif
 
+#ifndef __ANDROID__
+	void log_printf(const char *, ...) __attribute__((format(printf,1,2)));
+	void log_error(const char*, ...) __attribute__((format(printf,1,2)));
+	void log_dbgout(const char*, ...) __attribute__((format(printf,1,2)));
+	void log_warning(const char*, ...) __attribute__((format(printf,1,2)));
+	void log_confirm(const char*, ...) __attribute__((format(printf,1,2)));
+	void log_debuglog(const char*, ...) __attribute__((format(printf,1,2)));
+#endif
+
 
 #if defined( DEBUG ) || defined( _DEBUG ) || defined( __WIN32__ )
 	#if __ANDROID__
-		#define n_printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "ProjectName", __VA_ARGS__)
-		#define n_error(...)  __android_log_print(ANDROID_LOG_ERROR, "ProjectName", __VA_ARGS__)
-		#define n_dbgout(...) __android_log_print(ANDROID_LOG_DEBUG, "ProjectName", __VA_ARGS__)
-		#define n_warning(...)  __android_log_print(ANDROID_LOG_WARN, "ProjectName", __VA_ARGS__)
-		#define n_confirm(...)  __android_log_print(ANDROID_LOG_INFO, "ProjectName", __VA_ARGS__)
-		#define n_debuglog(...)  __android_log_print(ANDROID_LOG_INFO, "ProjectName", __VA_ARGS__)
+		#define n_printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "Genesis3D", __VA_ARGS__)
+		#define n_error(...)  __android_log_print(ANDROID_LOG_ERROR, "Genesis3D", __VA_ARGS__)
+		#define n_dbgout(...) __android_log_print(ANDROID_LOG_DEBUG, "Genesis3D", __VA_ARGS__)
+		#define n_warning(...)  __android_log_print(ANDROID_LOG_WARN, "Genesis3D", __VA_ARGS__)
+		#define n_confirm(...)  __android_log_print(ANDROID_LOG_INFO, "Genesis3D", __VA_ARGS__)
+		#define n_debuglog(...)  __android_log_print(ANDROID_LOG_INFO, "Genesis3D", __VA_ARGS__)
 	#else
-		void n_printf(const char *, ...) __attribute__((format(printf,1,2)));
-		void n_error(const char*, ...) __attribute__((format(printf,1,2)));
-		void n_dbgout(const char*, ...) __attribute__((format(printf,1,2)));
-		void n_warning(const char*, ...) __attribute__((format(printf,1,2)));
-		void n_confirm(const char*, ...) __attribute__((format(printf,1,2)));
+		#define  n_printf(...) log_printf(__VA_ARGS__)
+		#define  n_error(...) log_error(__VA_ARGS__)
+		#define  n_dbgout(...) log_dbgout(__VA_ARGS__)
+		#define  n_warning(...) log_warning(__VA_ARGS__) 
+		#define  n_confirm( ...) log_confirm(__VA_ARGS__)
 		#if defined( DEBUG ) || defined( _DEBUG )
-			void n_debuglog(const char*, ...) __attribute__((format(printf,1,2)));
+			#define	 n_debuglog(...) log_debuglog(__VA_ARGS__)
 		#else
 			#define n_debuglog(...)
 		#endif // _DEBUG
@@ -74,6 +83,19 @@ THE SOFTWARE.
 	#define	 n_debuglog(...)
 #endif
 
+#if __ANDROID__
+	#define script_printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "Genesis3D", __VA_ARGS__)
+	#define script_error(...)  __android_log_print(ANDROID_LOG_ERROR, "Genesis3D", __VA_ARGS__)
+	#define script_dbgout(...) __android_log_print(ANDROID_LOG_DEBUG, "Genesis3D", __VA_ARGS__)
+	#define script_warning(...)  __android_log_print(ANDROID_LOG_WARN, "Genesis3D", __VA_ARGS__)
+	#define script_confirm(...)  __android_log_print(ANDROID_LOG_INFO, "Genesis3D", __VA_ARGS__)
+#else
+	#define script_printf(...) log_printf(__VA_ARGS__)
+	#define script_error(...) log_error(__VA_ARGS__)
+	#define script_dbgout(...) log_dbgout(__VA_ARGS__)
+	#define script_warning(...) log_warning(__VA_ARGS__) 
+	#define script_confirm(...) log_confirm(__VA_ARGS__)
+#endif
 
 typedef void (*__pCustomAssertCallback) (const char* exp_type, const char* msg, const char* file, int line);
 void n_setCustomAssert(__pCustomAssertCallback callback);

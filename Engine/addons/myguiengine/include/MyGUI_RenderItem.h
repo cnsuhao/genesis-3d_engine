@@ -37,7 +37,7 @@ namespace MyGUI
 	class MYGUI_EXPORT RenderItem
 	{
 	public:
-		RenderItem();
+		RenderItem(ILayerNode* _owner);
 		virtual ~RenderItem();
 
 		void renderToTarget(IRenderTarget* _target, bool _update);
@@ -49,12 +49,16 @@ namespace MyGUI
 		bool getManualRender() const;
 
 		void addDrawItem(ISubWidget* _item, size_t _count);
+		void insertDrawItem(size_t index, ISubWidget* _item, size_t _count);
 		void removeDrawItem(ISubWidget* _item);
+		void clearDrawItems();// expand by genesis-3d
 		void reallockDrawItem(ISubWidget* _item, size_t _count);
+		void breakDrawItems(ISubWidget* _break, VectorDrawItem& _fronts, VectorDrawItem& _tails); // expand by genesis-3d
 
 		void outOfDate();
 		bool isOutOfDate() const;
 
+		size_t getDrawItemCount() const;
 		size_t getNeedVertexCount() const;
 		size_t getVertexCount() const;
 
@@ -66,6 +70,12 @@ namespace MyGUI
 		IRenderTarget* getRenderTarget();
 
 		bool getCompression();
+
+
+
+		void setMaterialType(IMaterialType _type);
+
+
 
 	private:
 #if MYGUI_DEBUG_MODE == 1
@@ -89,9 +99,18 @@ namespace MyGUI
 		IVertexBuffer* mVertexBuffer;
 		IRenderTarget* mRenderTarget;
 
+		ILayerNode* mLayerNode; // expand by genesis-3d
+
 		bool mCompression;
 		bool mManualRender;
+
+		int mMaterialType;
 	};
+
+	inline size_t RenderItem::getDrawItemCount() const
+	{
+		return mDrawItems.size();
+	}
 
 } // namespace MyGUI
 

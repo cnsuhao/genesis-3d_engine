@@ -87,6 +87,7 @@ namespace Graphic
 		,m_listener(NULL)
 		,m_renderScene(NULL)
 		,m_targetWindow(NULL)
+
 		,m_bSetup(false)
 		,m_bUseWindowSize(false)
 		,m_bRenderDepthMap(false)
@@ -95,15 +96,17 @@ namespace Graphic
 		,m_bRenderNormal(false)
 		,m_bUseViewPort(true)
 		,m_bRenderSurface(false)
+		,m_bUseBeforeDrawEvent(true)
+		,m_bUseCallBack(true)
+
 		,m_viewType(VT_persp)
 		,m_renderOrder(eCO_InvalidCamera)
 		,m_drawMode(DrawTextured)
 		,m_renderMode(ForwardMode)
 		,m_cullMask(eRLCameraRenderAll)
-		,m_bUseBeforeDrawEvent(true)
-		,m_quadRenderable(NULL)
-		,m_antiAliasQuality(RenderBase::AntiAliasQuality::None)
-		,m_bUseCallBack(true)
+
+		,m_renderSort(Camera::SortDefault)
+		,m_pickMark(Camera::PickAll)
 #if __GENESIS_EDITOR__
 		,m_CamTarget(GAME)
 #endif
@@ -112,8 +115,8 @@ namespace Graphic
 		m_setting.SetupPerspectiveFovRH(Graphic::Camera::PerspNormalFov, float(dm.GetWidth())/float(dm.GetHeight()), 1.0f, S_Camera_Far);// 0.1f
 		m_viewPort.width = dm.GetWidth();
 		m_viewPort.height = dm.GetHeight();
-		m_viewPort.x = dm.GetXPos();
-		m_viewPort.y = dm.GetYPos();
+		m_viewPort.x = 0;
+		m_viewPort.y = 0;
 		m_viewPort.minZ = 0.f;
 		m_viewPort.maxZ = 1.f;
 		m_renderPipelineManager = RenderPipelineManager::Create();
@@ -123,9 +126,6 @@ namespace Graphic
 		m_transform = matrix44::lookatrh(float4(1.27f, 1.2f, -800.4f, 1.f),float4(0.f, 0.f, 0.f, 1.f),float4(0.f,1.f,0.f,0.f));
 		m_transform = matrix44::inverse(m_transform);
 		OnTransformChanged();
-
-		m_quadRenderable = QuadRenderable::Create();
-		m_quadRenderable->Setup(dm.GetWidth(),dm.GetWidth());
 	}
 
 	//------------------------------------------------------------------------------
@@ -134,8 +134,6 @@ namespace Graphic
 	Camera::~Camera()
 	{
 		Discard();
-		m_quadRenderable->Discard();
-		m_quadRenderable = NULL;
 	}
 
 	void Camera::Discard()
@@ -149,28 +147,6 @@ namespace Graphic
 			SetDrawType(DrawTextured);
 		}
 
-		if (m_depthMap.isvalid())
-		{
-			m_depthMap = 0;
-		}
-
-		//if (m_backBuffer.isvalid())
-		//{
-		//	m_backBuffer = 0;
-		//}
-
-		if (m_renderToTexture.isvalid())
-		{
-			m_renderToTexture = 0;
-		}
-		if (m_swapTexture.isvalid())
-		{
-			m_swapTexture = 0;
-		}
-		if (m_lightLitTexture.isvalid())
-		{
-			m_lightLitTexture = 0;
-		}
 		if (m_lightLitMaterial.isvalid())
 		{
 			m_lightLitMaterial = 0;
@@ -203,7 +179,6 @@ namespace Graphic
 		{
 			m_renderPipelineManager = RenderPipelineManager::Create();
 		}
-
 		if (m_renderOrder == eCO_Main)
 		{
 			//			SetRenderMode(DeferredMode);
@@ -212,50 +187,16 @@ namespace Graphic
 			m_bUseWindowSize = true;
 			const RenderBase::DisplayMode& dm = targetWindow->GetDisplayMode();
 
-			//m_backBuffer = RenderToTexture::Create();
-			//m_backBuffer->Setup(dm.GetWidth(),dm.GetHeight(),
-			//	RenderBase::PixelFormat::X8R8G8B8,
-			//	RenderBase::RenderTarget::ClearAll, Math::float4(0.0f,0.0f,1.0f,1.f), 
-			//	true,1.f, RenderBase::AntiAliasQuality::None,Math::rectangle<int>(0,0,0,0),true);
-
-			m_renderToTexture = RenderToTexture::Create();
-			if (DeferredMode == m_renderMode)
-			{
-				m_renderToTexture->Setup(dm.GetWidth(),dm.GetHeight(),
-					RenderBase::PixelFormat::A8R8G8B8, 
-					RenderBase::RenderTarget::ClearAll, Math::float4(0.2f,0.2f,0.2f,1.f), 
-					true,1.f, RenderBase::AntiAliasQuality::None);//RenderBase::AntiAliasQuality::High
-			}
-			else
-			{
-				m_renderToTexture->Setup(dm.GetWidth(),dm.GetHeight(),
-					RenderBase::PixelFormat::A8R8G8B8, 
-					RenderBase::RenderTarget::ClearAll, Math::float4(0.2f,0.2f,0.2f,1.f), 
-					true, 1.f, m_antiAliasQuality);
-			}
-
-
-			//Material::GetGlobalMaterialParams()->SetVectorParam(eGShaderVecScreenSize,float4(float(dm.GetWidth()),float(dm.GetHeight()),float(0.5/dm.GetWidth()),float(0.5/dm.GetHeight())));
-
-			m_swapTexture = RenderToTexture::Create();
-			m_swapTexture->Setup(dm.GetWidth(),dm.GetHeight(),RenderBase::PixelFormat::A8R8G8B8, RenderBase::RenderTarget::ClearAll, Math::float4(0.f,0.f,0.f,1.f),  false,1.f,RenderBase::AntiAliasQuality::None);
-
-
 			m_viewPort.width = dm.GetWidth();
 			m_viewPort.height = dm.GetHeight();
-			m_viewPort.x = dm.GetXPos();
-			m_viewPort.y = dm.GetYPos();
+			m_viewPort.x = 0;
+			m_viewPort.y = 0;
 			m_viewPort.minZ = 0.f;
 			m_viewPort.maxZ = 1.f;
 			m_bUseViewPort = true;
 
 			m_bRenderNormal = true;
-
-			checkDepthMap();
-
 #if __WIN32__ && RENDERDEVICE_D3D9
-			checkLightLitMap();
-
 			Util::StringAtom fileName("sys:Forward_lightLitMap.shader");
 			m_lightLitMaterial = GenesisMaterialMaker::MakeFromShader( fileName );
 
@@ -272,22 +213,7 @@ namespace Graphic
 		{
 			n_error("Custom RenderMode is not implemented right now!");
 		}
-		//else if (m_renderOrder == eCO_Reflection)
-		//{
-		//	n_error("Reflection Camera is not implemented right now!");
-		//}
-		//else if ( m_renderOrder > eCO_CustomBeforeMain && m_renderOrder < eCO_Main)
-		//{
-		//	n_error("customized Cameras,not implemented at this moment!");
-		//}
 
-
-		if (DeferredMode == m_renderMode)
-		{
-			SetRenderDepth(true);
-			setupDeferred();
-			m_renderPipelineManager->SetupDeferred();
-		}
 	}
 
 	void Camera::RenderBegin()
@@ -343,105 +269,57 @@ namespace Graphic
 
 	void Camera::registWindowEvent()
 	{
-		if (m_renderOrder == eCO_Main)
-		{
-			ViewPortWindow* targetWindow = (NULL == m_targetWindow) ? GraphicSystem::Instance()->GetMainViewPortWindow() : m_targetWindow;
-			targetWindow->eventViewportChange += Delegates::newDelegate(this, &Camera::onTargetSizeChange); 
-		}
+		//if (m_renderOrder == eCO_Main)
+		//{
+		//	ViewPortWindow* targetWindow = (NULL == m_targetWindow) ? GraphicSystem::Instance()->GetMainViewPortWindow() : m_targetWindow;
+		//	targetWindow->eventViewportChange += Delegates::newDelegate(this, &Camera::onTargetSizeChange); 
+		//}
 	}
 
 	void Camera::unregistWindowEvent()
 	{
-		if (m_renderOrder == eCO_Main || m_renderOrder == eCO_PuppetMain)
-		{
-			ViewPortWindow* targetWindow = (NULL == m_targetWindow) ? GraphicSystem::Instance()->GetMainViewPortWindow() : m_targetWindow;
-			if(targetWindow)
-			{
-				targetWindow->eventViewportChange -= Delegates::newDelegate(this, &Camera::onTargetSizeChange); 
-			}
-		}
+		//if (m_renderOrder == eCO_Main || m_renderOrder == eCO_PuppetMain)
+		//{
+		//	ViewPortWindow* targetWindow = (NULL == m_targetWindow) ? GraphicSystem::Instance()->GetMainViewPortWindow() : m_targetWindow;
+		//	if(targetWindow)
+		//	{
+		//		targetWindow->eventViewportChange -= Delegates::newDelegate(this, &Camera::onTargetSizeChange); 
+		//	}
+		//}
 	}
 
+	//void Camera::setupDeferred()
+	//{
+	//	const RenderBase::DisplayMode& dm = GraphicSystem::Instance()->GetMainViewPortWindow()->GetDisplayMode();
 
-	void Camera::checkDepthMap()
-	{
-		if (!m_bRenderDepthMap)
-		{
-			m_depthMap = NULL;
-			return;
-		}
+	//	m_deferredNormalMap = RenderToTexture::Create();
+	//	m_deferredNormalMap->SetShareDepthStencilRT(m_renderToTexture->GetRenderTarget());
+	//	m_deferredNormalMap->Setup(dm.GetWidth(),dm.GetHeight(),RenderBase::PixelFormat::G16R16F, 
+	//		RenderBase::RenderTarget::ClearAll, Math::float4(0.0f,0.0f,0.0f,0.0f), 
+	//		true,1.f);
+	//	m_deferredParamMap = RenderToTexture::Create();//ÁÙÊ±
+	//	m_deferredParamMap->SetShareDepthStencilRT(m_renderToTexture->GetRenderTarget());
+	//	m_deferredParamMap->Setup(dm.GetWidth(),dm.GetHeight(),RenderBase::PixelFormat::G16R16F,
+	//		RenderBase::RenderTarget::ClearAll, Math::float4(0.f,0.f,0.f,0.f), 
+	//		true,1.f);
 
-		if (m_renderOrder == eCO_Main)
-		{
-			m_depthMap = NULL;
-			m_depthMap = RenderToTexture::Create();
-			m_depthMap->SetShareDepthStencilRT(m_renderToTexture->GetRenderTarget());
-#if __WIN32__ && RENDERDEVICE_D3D9
-			m_depthMap->Setup(m_viewPort.width,m_viewPort.height,RenderBase::PixelFormat::R32F, 
-				RenderBase::RenderTarget::ClearAll, Math::float4(1.f,1.f,1.f,1.f), 
-				true,1.0f, RenderBase::AntiAliasQuality::None);
-#elif __ANDROID__	|| RENDERDEVICE_OPENGLES
-			m_depthMap->Setup(m_viewPort.width,m_viewPort.height,RenderBase::PixelFormat::A8R8G8B8, 
-				RenderBase::RenderTarget::ClearAll, Math::float4(1.f,1.f,1.f,1.f), 
-				true,1.0f, RenderBase::AntiAliasQuality::None);
-#endif
-			
-		}
-	}
+	//	Material::GetGlobalMaterialParams()->SetTextureParam(eGShaderTexDfNormalMap, "g_DfNormalMap", m_deferredNormalMap->GetTextureHandle());
+	//	Material::GetGlobalMaterialParams()->SetTextureParam(eGShaderTexDfDepthMap, "g_DfDepthMap", m_depthMap->GetTextureHandle());//m_deferredDepthMap
+	//	Material::GetGlobalMaterialParams()->SetTextureParam(eGShaderTexDfParamMap, "g_DfParamMap", m_deferredParamMap->GetTextureHandle());
 
-	void Camera::checkLightLitMap()
-	{
-		if (m_bRenderLightLitMap)
-		{
-			if (!m_lightLitTexture.isvalid())
-			{
-				m_lightLitTexture = RenderToTexture::Create();
-			}
-
-			m_lightLitTexture->Setup(m_viewPort.width, m_viewPort.height, RenderBase::PixelFormat::R16F, 
-				RenderBase::RenderTarget::ClearAll, Math::float4(0.f,0.f,0.f,1.f), 
-				true,1.f);
-		}
-		else
-		{
-			m_lightLitTexture->Setup(1,1,RenderBase::PixelFormat::X8R8G8B8, 
-				RenderBase::RenderTarget::ClearAll, Math::float4(1.0f,1.0f,1.0f,1.0f), 
-				true,1.f);
-		}
-	}
-
-	void Camera::setupDeferred()
-	{
-		const RenderBase::DisplayMode& dm = GraphicSystem::Instance()->GetMainViewPortWindow()->GetDisplayMode();
-
-		m_deferredNormalMap = RenderToTexture::Create();
-		m_deferredNormalMap->SetShareDepthStencilRT(m_renderToTexture->GetRenderTarget());
-		m_deferredNormalMap->Setup(dm.GetWidth(),dm.GetHeight(),RenderBase::PixelFormat::G16R16F, 
-			RenderBase::RenderTarget::ClearAll, Math::float4(0.0f,0.0f,0.0f,0.0f), 
-			true,1.f);
-		m_deferredParamMap = RenderToTexture::Create();//ÁÙÊ±
-		m_deferredParamMap->SetShareDepthStencilRT(m_renderToTexture->GetRenderTarget());
-		m_deferredParamMap->Setup(dm.GetWidth(),dm.GetHeight(),RenderBase::PixelFormat::G16R16F,
-			RenderBase::RenderTarget::ClearAll, Math::float4(0.f,0.f,0.f,0.f), 
-			true,1.f);
-
-		Material::GetGlobalMaterialParams()->SetTextureParam(eGShaderTexDfNormalMap, "g_DfNormalMap", m_deferredNormalMap->GetTextureHandle());
-		Material::GetGlobalMaterialParams()->SetTextureParam(eGShaderTexDfDepthMap, "g_DfDepthMap", m_depthMap->GetTextureHandle());//m_deferredDepthMap
-		Material::GetGlobalMaterialParams()->SetTextureParam(eGShaderTexDfParamMap, "g_DfParamMap", m_deferredParamMap->GetTextureHandle());
-
-		m_deferredLightMap = RenderToTexture::Create();
-		m_deferredLightMap->Setup(dm.GetWidth(),dm.GetHeight(),RenderBase::PixelFormat::A16B16G16R16F, 
-			RenderBase::RenderTarget::ClearAll, Math::float4(0.0f,0.0f,0.0f,0.0f), 
-			false, 1.f);
-		Material::GetGlobalMaterialParams()->SetTextureParam(eGShaderTexDfLightMap0, "g_DfAndSpecMap0",m_deferredLightMap->GetTextureHandle());
-	}
+	//	m_deferredLightMap = RenderToTexture::Create();
+	//	m_deferredLightMap->Setup(dm.GetWidth(),dm.GetHeight(),RenderBase::PixelFormat::A16B16G16R16F, 
+	//		RenderBase::RenderTarget::ClearAll, Math::float4(0.0f,0.0f,0.0f,0.0f), 
+	//		false, 1.f);
+	//	Material::GetGlobalMaterialParams()->SetTextureParam(eGShaderTexDfLightMap0, "g_DfAndSpecMap0",m_deferredLightMap->GetTextureHandle());
+	//}
 	void Camera::onTargetSizeChange(ViewPortWindow* sender)
 	{
-		n_assert( (NULL == m_targetWindow && GraphicSystem::Instance()->GetMainViewPortWindow()) || ( m_targetWindow == sender) );
-		if(m_bSetup)
-		{
-			OnResizeWindow(sender->GetDisplayMode());
-		}
+		//n_assert( (NULL == m_targetWindow && GraphicSystem::Instance()->GetMainViewPortWindow()) || ( m_targetWindow == sender) );
+		//if(m_bSetup)
+		//{
+		//	OnResizeWindow(sender->GetDisplayMode());
+		//}
 	}
 
 	//------------------------------------------------------------------------------
@@ -562,92 +440,22 @@ namespace Graphic
 		}
 	}
 
-	void Camera::OnResizeWindow(const RenderBase::DisplayMode& dm)
+	void Camera::OnResizeWindow(int w, int h)
 	{
-		if(!m_bSetup)
-		{
-			return;
-		}
-		m_quadRenderable->Discard();
-		m_quadRenderable->Setup(dm.GetWidth(),dm.GetHeight());
-		m_viewPort.width = dm.GetWidth();
-		m_viewPort.height = dm.GetHeight();
-		m_viewPort.x = dm.GetXPos();
-		m_viewPort.y = dm.GetYPos();
-		m_viewPort.minZ = 0.f;
-		m_viewPort.maxZ = 1.f;
-
+		m_viewPort.width = w;
+		m_viewPort.height = h;
 		ResetProjMatrix(m_viewPort.width, m_viewPort.height);
-
-		//m_setting.SetupPerspectiveFovRH(m_setting.GetFov(), float(m_viewPort.width)/float(m_viewPort.height),m_setting.GetZNear(),m_setting.GetZFar());
-		//todo: change RTs size
-		if (m_renderOrder == eCO_Main)
+		if (m_targetSuite.isvalid())
 		{
-			//m_backBuffer->Setup(dm.GetWidth(),dm.GetHeight(),
-			//	RenderBase::PixelFormat::X8R8G8B8,
-			//	RenderBase::RenderTarget::ClearAll, Math::float4(0.0f,0.0f,1.0f,1.f), 
-			//	true,1.f, m_antiAliasQuality, Math::rectangle<int>(0,0,0,0), true);
-
-			if (m_renderToTexture.isvalid())
-			{
-				m_renderToTexture->Setup( dm.GetWidth(),dm.GetHeight(),
-					RenderBase::PixelFormat::A8R8G8B8, 
-					RenderBase::RenderTarget::ClearAll, Math::float4(0.2f,0.2f,0.2f,1.f), 
-					true,1.f, m_antiAliasQuality );
-			}
-
-			//Material::GetGlobalMaterialParams()->SetTextureParam(eGShaderTexMainBuffer, "g_MainBuffer",m_renderToTexture->GetTextureHandle());
-			if (m_swapTexture.isvalid())
-			{
-				m_swapTexture->Setup(dm.GetWidth(),dm.GetHeight(),RenderBase::PixelFormat::A8R8G8B8, RenderBase::RenderTarget::ClearAll, Math::float4(0.f,0.f,0.f,1.f),  false,1.f,RenderBase::AntiAliasQuality::None);
-			}
-		
-			//Material::GetGlobalMaterialParams()->SetTextureParam(eGShaderTexSwapBuffer, "g_SwapBuffer",m_swapTexture->GetTextureHandle());
-
-			m_bRenderNormal = true;
-			m_bRenderLightLitMap = true;
-
-			checkDepthMap();
-			checkLightLitMap();
+			m_targetSuite->OnChangeSize(w, h);
 		}
 	}
 
-	void Camera::OnDeviceReset(const RenderBase::DisplayMode& dm)
+	void Camera::OnDeviceReset()
 	{
-		int t_width = dm.GetWidth();
-		int t_height = dm.GetHeight();
-
-		GPtr<RenderToTexture> rt = GetRenderToTexture();
-		rt->ChangeSize(t_width,t_height);
-		rt = GetSwapTexture();
-		rt->ChangeSize(t_width,t_height);
-		if (HasDepthMap())
+		if (m_targetSuite.isvalid())
 		{
-			rt = GetDepthMap();
-			rt->ChangeSize(t_width,t_height);
-		}
-		if (HasLightLitMap())
-		{
-			rt = GetLightLitTexture();
-			rt->ChangeSize(t_width,t_height);
-		}
-		m_quadRenderable->Discard();
-		m_quadRenderable->Setup(dm.GetWidth(), dm.GetHeight());
-	}
-
-
-	void Camera::SetAntiAliasQuality( RenderBase::AntiAliasQuality::Code qua )
-	{
-		m_antiAliasQuality = qua;
-		ViewPortWindow* targetWindow = (NULL == m_targetWindow) ? GraphicSystem::Instance()->GetMainViewPortWindow() : m_targetWindow;
-		const RenderBase::DisplayMode& dm = targetWindow->GetDisplayMode();
-
-		if(m_renderToTexture.isvalid())
-		{
-			m_renderToTexture->Setup( dm.GetWidth(),dm.GetHeight(),
-				RenderBase::PixelFormat::A8R8G8B8, 
-				RenderBase::RenderTarget::ClearAll, Math::float4(0.2f,0.2f,0.2f,1.f), 
-				true,1.f, m_antiAliasQuality );
+			m_targetSuite->OnDeviceReset();
 		}
 	}
 
@@ -656,18 +464,106 @@ namespace Graphic
 		SetProj(type, fovOrHeight, m_setting.GetZNear() , m_setting.GetZFar());
 	}
 
+	void Camera::SetRenderSort(uint sort)
+	{
+		m_renderSort = sort;
+		if (m_renderScene)
+		{
+			m_renderScene->_SortCameraList();
+		}
+	}
+
+	void Camera::SetRenderScene(RenderScene* scene,bool bAddToRenderScene)
+	{
+		if(m_renderScene)
+		{
+			m_renderScene->_RemoveCamera(this);
+		}
+		m_renderScene = scene;
+		if(m_renderScene && bAddToRenderScene )
+		{
+			m_renderScene->_AddCamera(this);
+		}
+	}
+
+	void Camera::SetRenderToTexture(const GPtr<RenderToTexture>& rtt)
+	{
+		m_viewPort.width = rtt->GetWidth();
+		m_viewPort.height = rtt->GetHeight();
+		OnResizeWindow(m_viewPort.width, m_viewPort.height);
+		m_targetWindow = NULL;
+		m_targetSuite = NULL;
+		m_targetSuite = RenderTargetSuite::Create();
+		RenderTargetSuite::Target target = checkTarget();
+
+		target = BIT_FlAG_APPEND(target, RenderTargetSuite::Target_RTT);
+		target = BIT_FlAG_APPEND(target, RenderTargetSuite::Target_Swap);
+
+		m_targetSuite->SetupFormRTT(rtt, target);
+	}
+
 	void Camera::SetLightLitMap(const GPtr<RenderToTexture>& rtt)
 	{
-		m_lightLitTexture = rtt;
-		//Material::GetGlobalMaterialParams()->SetTextureParam(eGShaderTexLightLitMap, "g_LightLitMap",m_lightLitTexture->GetTextureHandle());
+		//empty.
 	}
 
 	void Camera::SetRenderDepth(bool bDepth)
 	{
-		m_bRenderDepthMap = bDepth;
-		if (m_bSetup)
+		if (m_bRenderDepthMap != bDepth)
 		{
-			checkDepthMap();
+			if (m_targetSuite.isvalid())
+			{
+				RenderTargetSuite::Target target = m_targetSuite->GetTargetSetting();
+				if (bDepth)
+				{
+					target = BIT_FlAG_APPEND(target, RenderTargetSuite::Target_Depth);
+				}
+				else
+				{
+					target = BIT_FlAG_DELETE(target, RenderTargetSuite::Target_Depth);
+				}
+				m_targetSuite->ChangeTargetSetting(target);	
+			}	
 		}
+	
+		m_bRenderDepthMap = bDepth;
+	}
+	void Camera::SetRenderLightLitMap(bool enable)
+	{
+		if (m_bRenderLightLitMap != enable)
+		{
+			if (m_targetSuite.isvalid())
+			{
+				RenderTargetSuite::Target target = m_targetSuite->GetTargetSetting();
+				if (enable)
+				{
+					target = BIT_FlAG_APPEND(target, RenderTargetSuite::Target_LightLit);
+				}
+				else
+				{
+					target = BIT_FlAG_DELETE(target, RenderTargetSuite::Target_LightLit);
+				}
+				m_targetSuite->ChangeTargetSetting(target);	
+			}	
+		}
+		m_bRenderLightLitMap = enable;
+	}
+
+	RenderTargetSuite::Target Camera::checkTarget() const
+	{
+		RenderTargetSuite::Target target = RenderTargetSuite::Target_None;
+		if (m_bRenderDepthMap)
+		{
+			target = BIT_FlAG_APPEND(target, RenderTargetSuite::Target_Depth);
+		}
+		if (m_bRenderLightLitMap)
+		{
+			target = BIT_FlAG_APPEND(target, RenderTargetSuite::Target_LightLit);
+		}
+		if (m_bRenderDepthMap)
+		{
+			target = BIT_FlAG_APPEND(target, RenderTargetSuite::Target_Depth);
+		}
+		return target;
 	}
 }

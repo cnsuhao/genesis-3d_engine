@@ -42,6 +42,12 @@ namespace ScriptRuntime
         extern private static Scene ICall_Application_GetCurrentScene();
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        extern private static int ICall_Application_GetCurrentSceneState();
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        extern private static int ICall_Application_GetSceneState(String sceneResID);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         extern private static string ICall_Application_GetAssetPath();
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]

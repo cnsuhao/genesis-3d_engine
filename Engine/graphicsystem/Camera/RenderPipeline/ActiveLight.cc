@@ -39,7 +39,7 @@ namespace Graphic
 	{
 
 	}
-	void ActiveLightManager::_reset()
+	void ActiveLightManager::Reset()
 	{
 		mActiveLights.Clear();
 		mAttLightBeginIndex = 0;
@@ -47,21 +47,41 @@ namespace Graphic
 		mTempObj = NULL;
 	}
 
+
+	inline bool _lightActive(Light* light)
+	{
+		return light->IsEnabled() && (light->GetLightmapType() != Light::eLM_JustForBaked);
+	}
+
 	void ActiveLightManager::CameraCull(Camera* camera)
 	{
-		_reset();
-		switch(camera->GetCameraOrder())
+		RenderScene* camera_scene = camera->GetRenderScene();
+		const RenderScene::Lights& lights = camera_scene->GetLights();
+		if (lights.Size() == 0)
 		{
-		case eCO_Main:
+			return;
+		}
+		RenderScene::Lights::Iterator it = lights.Begin();
+		RenderScene::Lights::Iterator end = lights.End();
+
+		// the lights are sorted by type, the first of them is sunlight , then the directional light
+		// others the attenuation lights
+
+		if (_lightActive(*it) && (*it)->GetLightType() == Light::eSunLight)
+		{
+			if (camera->IsPick(Camera::PickSunLight))
 			{
-				break;
+				ActiveLightInfo& outLight = mActiveLights.PushBack();
+				_setActiveDirectionallight(*it, outLight);
 			}
-		default:
-			{
-				return;
-			}
+			++it;
 		}
 
+
+		if (!camera->IsPick(Camera::PickOtherLights))
+		{
+			return;
+		}
 
 		frustum view_frustum;
 		view_frustum.setmatrix(camera->GetViewProjTransform());
@@ -72,33 +92,35 @@ namespace Graphic
 		plane camera_plane(camera_pos, view_dir);
 		float zfar = camera->GetCameraSetting().GetZFar();
 
-		RenderScene* camera_scene = camera->GetRenderScene();
-
-		const RenderScene::Lights& lights = camera_scene->GetLights();
-
-		RenderScene::Lights::Iterator it = lights.Begin();
-		RenderScene::Lights::Iterator end = lights.End();
-		// sort the light type, the first of them is sunlight , then the directional light
-		// others the attenuation lights
 		for( ; it != end; ++it )
 		{
 			Light* light = *it;
-			if (!light->IsEnabled() 
-				|| light->GetLightmapType() == Light::eLM_JustForBaked ) //
+			if (!_lightActive(light)) //
 			{
 				continue;
 			}
 			Light::LightType lightType = light->GetLightType();
 
-			// sort the light type, the first of them is sunlight , then the directional light
-			// others the attenuation lights
-			if (Light::eSunLight == lightType || Light::eDirectionalLight == lightType)
+			if (Light::eDirectionalLight == lightType)
 			{			
 				ActiveLightInfo& outLight = mActiveLights.PushBack();
 				_setActiveDirectionallight(light, outLight);
 				continue;
 			}
+			else
+			{
+				break;
+			}
+		}
 
+		for( ; it != end; ++it )
+		{
+			Light* light = *it;
+			if (!_lightActive(light)) //
+			{
+				continue;
+			}
+			Light::LightType lightType = light->GetLightType();
 			float4 temp = light->GetTransform().get_position();
 			point lightPos(temp.x(), temp.y(), temp.z());
 			float lightRange = light->GetLightRange();

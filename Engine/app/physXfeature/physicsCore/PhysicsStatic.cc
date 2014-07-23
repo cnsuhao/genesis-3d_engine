@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-#if __USE_PHYSX__ || __GENESIS_EDITOR__
+#if defined (__USE_PHYSX__) || defined (__GENESIS_EDITOR__)
 #include "PhysicsStatic.h"
 #include "PhysicsServer.h"
 #include "PhysicsUtil.h"
@@ -99,11 +99,13 @@ namespace App
 	{
 		if ( m_pPxActor )
 		{
+			PhysicsServer::Instance()->GetPhysXScene()->removeActor(*m_pPxActor);
 			PxTransform _pos = m_pPxActor->getGlobalPose();
 			_pos.p.x += dir.x();
 			_pos.p.y += dir.y();
 			_pos.p.z += dir.z();
 			m_pPxActor->setGlobalPose(_pos);
+			PhysicsServer::Instance()->GetPhysXScene()->addActor(*m_pPxActor);
 		}
 	}
 
@@ -111,11 +113,13 @@ namespace App
 	{
 		if ( m_pPxActor )
 		{
+			PhysicsServer::Instance()->GetPhysXScene()->removeActor(*m_pPxActor);
 			PxTransform _pos = m_pPxActor->getGlobalPose();
 			_pos.p.x = pos.x();
 			_pos.p.y = pos.y();
 			_pos.p.z = pos.z();
 			m_pPxActor->setGlobalPose(_pos);
+			PhysicsServer::Instance()->GetPhysXScene()->addActor(*m_pPxActor);
 		}
 	}
 
@@ -123,6 +127,7 @@ namespace App
 	{
 		if ( m_pPxActor )
 		{
+			PhysicsServer::Instance()->GetPhysXScene()->removeActor(*m_pPxActor);
 			PxTransform _pos = m_pPxActor->getGlobalPose();
 			Math::quaternion _quat = Math::quaternion::multiply(PxQuatToQuat(_pos.q), quat);
 			_pos.q.x = _quat.x();
@@ -130,6 +135,7 @@ namespace App
 			_pos.q.z = _quat.z();
 			_pos.q.w = _quat.w();
 			m_pPxActor->setGlobalPose(_pos);
+			PhysicsServer::Instance()->GetPhysXScene()->addActor(*m_pPxActor);
 		}
 	}
 
@@ -137,12 +143,14 @@ namespace App
 	{
 		if ( m_pPxActor )
 		{
+			PhysicsServer::Instance()->GetPhysXScene()->removeActor(*m_pPxActor);
 			PxTransform _pos = m_pPxActor->getGlobalPose();
 			_pos.q.x = quat.x();
 			_pos.q.y = quat.y();
 			_pos.q.z = quat.z();
 			_pos.q.w = quat.w();
 			m_pPxActor->setGlobalPose(_pos);
+			PhysicsServer::Instance()->GetPhysXScene()->addActor(*m_pPxActor);
 		}
 	}
 

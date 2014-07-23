@@ -49,7 +49,7 @@ THE SOFTWARE.
 #include "scriptfeature/script_root_instance.h"
 #include <stdexcept>
 
-#if __USE_PHYSX__ || __GENESIS_EDITOR__
+#if defined (__USE_PHYSX__) || defined (__GENESIS_EDITOR__)
 #include "physXfeature/PhysicsBodyComponent.h"
 #endif // __USE_PHYSX__ || __GENESIS_EDITOR__
 
@@ -82,6 +82,7 @@ ALL_MONO_API(MONO_API_DECL)
 
 #ifdef __OSX__
 #include "RegisterMonoModules.h"
+#include "script_IAP_instance.h"
 #endif
 
 static bool gEnableMonoDebugger = false;
@@ -153,6 +154,11 @@ namespace App
 		// - setup script global instance
 		ScriptRootInstance::CreateSingleton();
 		ScriptRootInstance::Instance()->Init();
+
+#if __OSX__
+		ScriptIAPInstance::CreateSingleton();
+		ScriptIAPInstance::Instance()->Init();
+#endif
 		return true;
 	}
 	//------------------------------------------------------------------------
@@ -530,7 +536,7 @@ namespace App
 			return &( SoundListener::RTTI );
 		}
 #endif // __USE_AUDIO__ || __GENESIS_EDITOR__
-#if __USE_PHYSX__ || __GENESIS_EDITOR__
+#if defined (__USE_PHYSX__) || defined (__GENESIS_EDITOR__)
 		else if ( sName=="PhysicsBody" ||
                  sName=="PhysicsBodyComponent")
 		{

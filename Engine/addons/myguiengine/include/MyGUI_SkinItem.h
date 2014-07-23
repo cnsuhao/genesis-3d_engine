@@ -52,6 +52,7 @@ namespace MyGUI
 		void _setSkinItemAlign(const IntSize& _size);
 		void _setSkinItemVisible(bool _value);
 		void _setSkinItemColour(const Colour& _value);
+		void _setSkinItemGray(bool _value);
 		void _setSkinItemAlpha(float _value);
 		void _correctSkinItemView();
 		void _updateSkinItemView();

@@ -76,6 +76,15 @@ class GameApplication : public Application
 public:
 	typedef Delegates::delegates::CDelegate1<const Application&> EventHandle_Exit;//CDelegate1
 
+	enum SceneState
+	{
+		Loading = 0,
+		Loaded  = 1,
+		Closing = 2,
+		Closed  = 3,
+		Unknown = 4,
+	};
+
     /// constructor
     GameApplication();
     /// destructor
@@ -93,11 +102,14 @@ public:
 
 	virtual void Quit();
 
-	virtual bool IsQuit();
-	/// open a scence
+	virtual bool IsQuit() const;
+	/// open a scene
 	virtual bool OpenScene(const Util::String& sceneName, bool force = true);
-	/// close a scence
+	/// close a scene
 	virtual bool CloseScene(const Util::String& sceneName, bool force = true);
+	/// check the state of a scene
+	virtual int GetCurrentSceneState();
+	virtual int GetSceneState(const Util::String& sceneName);
 
 	/// called when the game stopped
 	virtual void OnStopped();
@@ -138,6 +150,8 @@ public:
 	unsigned int GetGameHeight();
 	const GPtr<Input::InputSource>& GetInputSource() const;
 
+	void* GetWndHandle() const;
+
 	EventHandle_Exit eventExit;
 
 	void SetDeviceLost();
@@ -169,17 +183,17 @@ protected:
 
 	virtual void setupProjectAssigns();
 
+	virtual void initGui();
+
+	virtual void exitGui();
+
+	virtual void initGuiScript();
+
+	virtual void exitGuiScript();
+
 	void setupSciptSystem();
 
 	void scriptRootLoad();
-
-	void initGui();
-
-	void initGuiScript();
-
-	void exitGuiScript();
-
-	void exitGui();
 
 	bool openScene(const Util::String& sceneName);
 	bool closeScene(const Util::String& sceneName);
@@ -226,7 +240,7 @@ protected:
     TFontFeaturePtr mFontFeature;
 	GPtr<GUIServer> mGuiServer;
 	TSoundFeaturePtr mSoundFeature;
-#ifndef __OSX__
+#if defined (__USE_PHYSX__) || defined (__GENESIS_EDITOR__)
 	//TNetworkFeaturePtr mNetworkFeature;
 	TPhysicsFeaturePtr mPhysicsFeature;
 #endif
@@ -269,6 +283,8 @@ protected:
 	bool mOpenSceneDirty;
 	bool mCloseSceneDirty;
 	void* mWinHandle;
+
+	SceneState	mCurSceneState;
 
 	IO::AssignRegistry* mAssignRegistry;
 
@@ -381,6 +397,12 @@ inline const Util::String& GameApplication::GetResourceBaseDir() const
 {
 	return mResourceBaseDir;
 }
+
+inline void* GameApplication::GetWndHandle() const
+{
+	return mWinHandle;
+}
+
 #if __ANDROID__
 inline void GameApplication::SetNeedReadAPK(bool need)
 {

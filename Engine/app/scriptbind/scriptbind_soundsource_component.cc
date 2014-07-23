@@ -111,6 +111,7 @@ namespace App
 		}
 
 		self->SetLoop( b );
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
     //------------------------------------------------------------------------
@@ -125,6 +126,7 @@ namespace App
 	{
 		ScriptObjWrapper<SoundSource> self( pMonoObj );
 		self->SetVolume(volume);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
     //------------------------------------------------------------------------
@@ -153,6 +155,7 @@ namespace App
 		}
 
 		self->SetMute(b);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
     //------------------------------------------------------------------------
@@ -168,6 +171,7 @@ namespace App
 		}
 
 		self->Init(name, b);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
     //------------------------------------------------------------------------
@@ -195,6 +199,7 @@ namespace App
 			b = true;
 		}
         self->Set3D(b);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
     //------------------------------------------------------------------------
@@ -211,6 +216,7 @@ namespace App
 		ScriptObjWrapper<SoundSource> self( pMonoObj );
 		Util::String name = Utility_MonoStringToCppString( pMonoString );
         self->SetName(name, loadpriority);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
     //------------------------------------------------------------------------
@@ -224,6 +230,7 @@ namespace App
 	{
 		ScriptObjWrapper<SoundSource> self( pMonoObj );
 		self->SetPitch(pitch);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//------------------------------------------------------------------------
 	static float ICall_SoundSource_GetPitch(MonoObject* pMonoObj)
@@ -236,6 +243,7 @@ namespace App
 	{
 		ScriptObjWrapper<SoundSource> self( pMonoObj );
 		self->SetDopplerLevel(level);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//------------------------------------------------------------------------
 	static float ICall_SoundSource_GetDopplerLevel(MonoObject* pMonoObj)
@@ -248,6 +256,7 @@ namespace App
 	{
 		ScriptObjWrapper<SoundSource> self( pMonoObj );
 		self->SetSpread(spread);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//------------------------------------------------------------------------
 	static float ICall_SoundSource_GetSpread(MonoObject* pMonoObj)
@@ -260,6 +269,7 @@ namespace App
 	{
 		ScriptObjWrapper<SoundSource> self( pMonoObj );
 		self->SetPriority(priority);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//------------------------------------------------------------------------
 	static int ICall_SoundSource_GetPriority(MonoObject* pMonoObj)
@@ -272,6 +282,7 @@ namespace App
 	{
 		ScriptObjWrapper<SoundSource> self( pMonoObj );
 		self->SetMinDistance(minDistance);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//------------------------------------------------------------------------
 	static float ICall_SoundSource_GetMinDistance(MonoObject* pMonoObj)
@@ -284,6 +295,7 @@ namespace App
 	{
 		ScriptObjWrapper<SoundSource> self( pMonoObj );
 		self->SetMaxDistance(maxDistance);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//------------------------------------------------------------------------
 	static float ICall_SoundSource_GetMaxDistance(MonoObject* pMonoObj)
@@ -296,6 +308,7 @@ namespace App
 	{
 		ScriptObjWrapper<SoundSource> self( pMonoObj );
 		self->SetPan(pan);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//------------------------------------------------------------------------
 	static float ICall_SoundSource_GetPan(MonoObject* pMonoObj)
@@ -308,6 +321,7 @@ namespace App
 	{
 		ScriptObjWrapper<SoundSource> self( pMonoObj );
 		self->SetPosition(position);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//------------------------------------------------------------------------
 	static uint ICall_SoundSource_GetPosition(MonoObject* pMonoObj)
@@ -325,6 +339,7 @@ namespace App
 			b = true;
 		}
 		self->SetPlayOnActive(b);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//------------------------------------------------------------------------
 	static mono_bool ICall_SoundSource_GetAutoPlay(MonoObject* pMonoObj)
@@ -358,6 +373,7 @@ namespace App
 	{
 		ScriptObjWrapper<SoundSource> self( pMonoObj );
 		self->SetRolloffMode((RolloffMode)rolloffMode);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//------------------------------------------------------------------------
 	static mono_bool ICall_SoundSource_IsAllLoaded(MonoObject* pMonoObj)

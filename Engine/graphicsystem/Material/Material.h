@@ -89,6 +89,7 @@ namespace Graphic
 
 		static GlobalMaterialParam* GetGlobalMaterialParams();
 		static void RemoveGlobalMaterialParams();
+		static void SetupGlobalMaterialParams();
 
 		static GPtr<Material> s_defaultFallBackMat;
 
@@ -176,10 +177,15 @@ namespace Graphic
 	{
 		if (!pGMP.isvalid())
 		{
-			pGMP = GlobalMaterialParam::Create();
+			SetupGlobalMaterialParams();
 		}
 
 		return GlobalMaterialParam::Instance();
+	}
+
+	inline void Material::SetupGlobalMaterialParams()
+	{
+		pGMP = GlobalMaterialParam::Create();
 	}
 
 	inline void Material::RemoveGlobalMaterialParams()

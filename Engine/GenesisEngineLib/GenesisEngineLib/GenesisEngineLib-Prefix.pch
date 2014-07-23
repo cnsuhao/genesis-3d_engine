@@ -10,5 +10,5 @@
 //#define __PROJECTOR_COMMIT__
 #define __APP_BUILD_COMMIT__
 //#define __SOUND_COMMIT__
-#define __PHYSX_COMMIT__
+//#define __USE_PHYSX__
 //#define __SCRIPT_COMMIT__

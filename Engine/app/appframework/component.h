@@ -145,7 +145,7 @@ protected:
 	/// Setup all internal transform when BeginFrame
 	virtual void _SetInternalTransform();
 
-	void Component_force_compiler();
+//	void Component_force_compiler();
 
 protected:
 

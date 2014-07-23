@@ -124,7 +124,7 @@ GameServer::Close()
 	mGameFeatures["Script"]     = NULL;
 #endif
 
-#if __USE_PHYSX__ || __GENESIS_EDITOR__
+#if defined (__USE_PHYSX__) || defined (__GENESIS_EDITOR__)
 	mGameFeatures["Physics"]    = NULL;
 #endif
 	

@@ -36,6 +36,8 @@ namespace Graphic
 	class Light;
 	class ForwardShadingRenderPipeline;
 	class DeferredLightingRenderPipeline;
+	class ViewPortWindow;
+	class RenderTargetSuite;
 	typedef Util::Array<RenderObject*> RenderCallBacks;
 
 	enum RenderingPiplineType
@@ -51,14 +53,16 @@ namespace Graphic
 	class PipelineParamters 
 	{
 	public:
-		RenderConfig    m_renderConfig;
-		Camera*			m_camera;
-		RenderPipelineManager* m_renderPipelineManager;
+		RenderConfig			m_renderConfig;
+		Camera*					m_camera;
+		ViewPortWindow*			m_targetWindows;
+		RenderTargetSuite*		m_targetSuite;
+		RenderPipelineManager*	m_renderPipelineManager;
 
-		RenderCallBacks m_callBacks;
-		VisibleNodeCollection m_visibleNodes;
-		RenderDataManager m_renderDatas;
-		ActiveLightManager m_activeLights;
+		RenderCallBacks			m_callBacks;
+		VisibleNodeCollection	m_visibleNodes;
+		RenderDataManager		m_renderDatas;
+		ActiveLightManager		m_activeLights;
 	};
 
 	class RenderPipeline;

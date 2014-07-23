@@ -24,6 +24,7 @@ THE SOFTWARE.
 ****************************************************************************/
 #ifndef INDEXBUFFERD3D9_H_
 #define INDEXBUFFERD3D9_H_
+#include "D3d9Heads.h"
 #include "base/IndexBuffer.h"
 #include "base/BufferData.h"
 

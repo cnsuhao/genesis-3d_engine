@@ -101,7 +101,7 @@ StringAtom::operator!=(const char* rhs) const
     }
     else
     {
-        return (0 == strcmp(this->content, rhs));
+        return (0 != strcmp(this->content, rhs));
     }
 }
 

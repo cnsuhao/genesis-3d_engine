@@ -28,6 +28,10 @@
 
 namespace MyGUI
 {
+	enum IMaterialType{
+		NORMAL = 0,
+		GRAY   = 1 << 0,
+	};
 
 	class ITexture;
 	class IVertexBuffer;
@@ -41,7 +45,7 @@ namespace MyGUI
 		virtual void begin() = 0;
 		virtual void end() = 0;
 
-		virtual void doRender(IVertexBuffer* _buffer, ITexture* _texture, size_t _count) = 0;
+		virtual void doRender(IVertexBuffer* _buffer, ITexture* _texture, size_t _count, int _material_type) = 0;
 
 		virtual const RenderTargetInfo& getInfo() = 0;
 	};

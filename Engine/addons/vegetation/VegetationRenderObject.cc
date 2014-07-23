@@ -129,6 +129,10 @@ namespace Vegetation
 					pGMP->SetMatrixParam(eGShaderMatMVP, mvp);
 					pGMP->SetMatrixParam(eGShaderMatM, _mat);
 
+					Math::matrix44 mv = Math::matrix44::multiply(pCamera->GetViewTransform(), _mat);
+					pGMP->SetMatrixParam(eGShaderMatMV, mv);
+
+
 					Math::matrix44 Inverse, InvTranspose;
 					Inverse      = Math::matrix44::inverse(_mat);
 					InvTranspose = Math::matrix44::transpose(Inverse);
@@ -204,6 +208,9 @@ namespace Vegetation
 							Math::matrix44 mvp = Math::matrix44::multiply(pCamera->GetViewProjTransform(), _mat);
 							pGMP->SetMatrixParam(eGShaderMatMVP, mvp);
 							pGMP->SetMatrixParam(eGShaderMatM, _mat);
+
+							Math::matrix44 mv = Math::matrix44::multiply(pCamera->GetViewTransform(), _mat);
+							pGMP->SetMatrixParam(eGShaderMatMV, mv);
 
 							_Render(renderable, passType,
 								mOwner->GetPrimHandle(),			
@@ -331,7 +338,7 @@ namespace Vegetation
 				pMarcro->TurnOnLight();
 			}
 
-			if (m_pRenderScene->GetEnvironment()->fogColor.w() > 0.0f)
+			if (m_pRenderScene->GetEnvironment() && m_pRenderScene->GetEnvironment()->fogColor.w() > 0.0f)
 			{
 				pMarcro->TurnOn(ShaderProgramCompiler::ShaderMarcro::m_sFog);
 			}

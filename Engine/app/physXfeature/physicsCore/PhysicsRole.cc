@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-#if __USE_PHYSX__ || __GENESIS_EDITOR__
+#if defined (__USE_PHYSX__) || defined (__GENESIS_EDITOR__)
 #include "stdneb.h"
 #include "PhysicsRole.h"
 #include "PhysicsUtil.h"
@@ -154,7 +154,8 @@ namespace App
 		m_LastCollisionFlags(0),
 		m_vScaleFactor(1.0f,1.0f,1.0f),
 		m_vLocalCenter(0.f,0.f,0.f),
-		m_bInheritActor(true)
+		m_bInheritActor(true),
+		m_bDirty(false)
 	{
 		m_eType = PHYSICSCONTROLLER;
 		m_pHitReport = new ControllerHitReport(this);
@@ -290,7 +291,7 @@ namespace App
 		return true;
 	}
 
-	void PhysicsRole::OnScaleWithActor()
+	void PhysicsRole::_OnScaleWithActor()
 	{
 		Math::scalar height = _GetRealHeight();
 		Math::scalar radius = _GetRealRadius();
@@ -599,6 +600,10 @@ namespace App
 // 			Math::quaternion _rot = Math::quaternion::identity();
 // 			_rot = _rot * Math::vector(_GlobalRot.x,_GlobalRot.y,_GlobalRot.z);//(_GlobalRot.x, _GlobalRot.y, _GlobalRot.z, 1.0f);
 		}
+		if (m_bDirty)
+		{
+			_OnScaleWithActor();
+		}
 	}
 
 	void PhysicsRole::Save( AppWriter* pSerialize )
@@ -674,6 +679,11 @@ namespace App
 			oldCenter.z() = (Math::scalar)position.z - oldCenter.z();
 			MoveToPostion(oldCenter);
 		}
+	}
+
+	void PhysicsRole::OnScaleWithActor()
+	{
+		m_bDirty = true;
 	}
 
 }

@@ -65,10 +65,11 @@ namespace Graphic
 
 		const int GetWidth() const;
 		const int GetHeight() const;
-
-#if __WIN32__
-		const D3D9::TextureD3D9& GetD3DTexture9();
-#endif
+		RenderBase::PixelFormat::Code GetColorBufferFormat() const;
+		RenderBase::AntiAliasQuality::Code GetAntiAliasQuality() const;
+//#if __WIN32__
+//		const D3D9::TextureD3D9& GetD3DTexture9();
+//#endif
 
 		void ResetQuad();
 

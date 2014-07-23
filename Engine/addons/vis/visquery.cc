@@ -63,7 +63,7 @@ VisQuery::Run()
 		return;
 	}
 
-#ifdef __WIN32__
+#if __THREAD_JOB__
 
 	this->mJobPort = Jobs::JobPort::Create();
 	this->mJobPort->Setup();
@@ -90,7 +90,7 @@ VisQuery::Run()
         if (newJob.isvalid())
         {
 			mJobs.Append( newJob );
-#ifdef __WIN32__
+#if __THREAD_JOB__
 			this->mJobPort->PushJob( newJob );
 #endif
         }        

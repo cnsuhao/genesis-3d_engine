@@ -149,6 +149,7 @@ SET ( _HEADER_FILES
 	GraphicObjectManager.h	
 	stdneb.h
 	ViewPortWindow.h
+	RenderTargetSuite.h
 	RenderUnit.h
 )
 
@@ -158,6 +159,7 @@ SET ( _SOURCE_FILES
 	GraphicObjectManager.cc	
 	stdneb.cc
 	ViewPortWindow.cc
+	RenderTargetSuite.cc
 	RenderUnit.cc
 
 )

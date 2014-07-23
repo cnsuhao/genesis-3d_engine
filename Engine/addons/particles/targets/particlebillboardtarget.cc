@@ -291,13 +291,9 @@ namespace Particles
 				HorizontalPlane_OP op;
 				op.bt = HorizontalPlane_OP::ALIGN_XZ;
 				op.bat = this->GetBillBoardAlignType();
-				op.parentQuaternion = Math::quaternion::identity();
+				op.parentQuaternion = outquaternion;
 				op.parentScale = scaleVector;
 
-				if (mParentSystem)
-				{
-					op.parentQuaternion = mParentSystem->GetDerivedRotation();
-				}
 				numParticle = _updateTarget_BillBoard(pool,particleVertex, indicies, op, false);
 			}
 			break;
@@ -306,13 +302,9 @@ namespace Particles
 				HorizontalPlane_OP op;
 				op.bt = HorizontalPlane_OP::ALIGN_YZ;
 				op.bat = this->GetBillBoardAlignType();
-				op.parentQuaternion = Math::quaternion::identity();
+				op.parentQuaternion = outquaternion;
 				op.parentScale = scaleVector;
 
-				if (mParentSystem)
-				{
-					op.parentQuaternion = mParentSystem->GetDerivedRotation();
-				}
 				numParticle = _updateTarget_BillBoard(pool,particleVertex, indicies, op, false);
 			}
 			break;
@@ -321,13 +313,9 @@ namespace Particles
 				HorizontalPlane_OP op;
 				op.bt = HorizontalPlane_OP::ALIGN_XY;
 				op.bat = this->GetBillBoardAlignType();
-				op.parentQuaternion = Math::quaternion::identity();
+				op.parentQuaternion = outquaternion;
 				op.parentScale = scaleVector;
 
-				if (mParentSystem)
-				{
-					op.parentQuaternion = mParentSystem->GetDerivedRotation();
-				}
 				numParticle = _updateTarget_BillBoard(pool,particleVertex, indicies, op, false);
 			}
 			break;

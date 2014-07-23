@@ -46,7 +46,7 @@ namespace MyGUI
 		virtual void begin();
 		virtual void end();
 
-		virtual void doRender(IVertexBuffer* _buffer, ITexture* _texture, size_t _count);
+		virtual void doRender(IVertexBuffer* _buffer, ITexture* _texture, size_t _count,int _material_type);
 
 		virtual const RenderTargetInfo& getInfo()
 		{
@@ -57,12 +57,13 @@ namespace MyGUI
 
 	private:
 		RenderTargetInfo mRenderTargetInfo;
-		GPtr<Graphic::RenderToTexture> m_rtt;
+		GPtr<Graphic::RenderToTexture> mRtt;
+		RenderBase::RenderTargetHandle mSaveRT;
 	};
 
 	inline const GPtr<Graphic::RenderToTexture>& GenesisRTTexture::getRenderToTexture() const
 	{
-		return m_rtt;
+		return mRtt;
 	}
 
 } // namespace MyGUI

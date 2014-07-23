@@ -54,6 +54,8 @@ namespace MyGUI
 		// метод для отрисовки себя
 		virtual void doRender();
 
+		virtual size_t getVertexCount() const;
+
 		void setCaption(const UString& _value);
 		const UString& getCaption() const;
 
@@ -69,8 +71,10 @@ namespace MyGUI
 		virtual void setFontHeight(int _value);
 		virtual int getFontHeight() const;
 
+		virtual void updateDrawItem(ITexture* _texture, ILayerNode* _node);
 		virtual void createDrawItem(ITexture* _texture, ILayerNode* _node);
 		virtual void destroyDrawItem();
+		virtual void onRenderItemChanged(ILayerNode* _sender, RenderItem* _old, RenderItem* _new);
 
 		virtual void setTextAlign(Align _value);
 		virtual Align getTextAlign() const;

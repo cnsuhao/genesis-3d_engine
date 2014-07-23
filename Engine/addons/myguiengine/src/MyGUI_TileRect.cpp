@@ -224,6 +224,7 @@ namespace MyGUI
 		float right = window_left;
 		float top = window_top;
 		float bottom = window_top;
+		IMaterialType type = mGray ? MyGUI::GRAY : MyGUI::NORMAL;
 
 		for (int y = 0; y < mCoord.height; y += mTileSize.height)
 		{
@@ -334,6 +335,25 @@ namespace MyGUI
 		}
 
 		mRenderItem->setLastVertexCount(VertexQuad::VertexCount * count);
+
+		mRenderItem->setMaterialType(type);
+	}
+
+	void TileRect::onRenderItemChanged(ILayerNode* _sender, RenderItem* _old, RenderItem* _new)
+	{
+		if (mNode == _sender)
+		{
+			mRenderItem = _new;
+		}
+	}
+
+	void TileRect::updateDrawItem(ITexture* _texture, ILayerNode* _node)
+	{
+		MYGUI_ASSERT(mRenderItem, "mRenderItem must not be nullptr");
+
+		mNode = _node;
+		mRenderItem = mNode->updateRenderItem(this, mRenderItem, _texture, true, false);
+		//mRenderItem->addDrawItem(this, mCountVertex);
 	}
 
 	void TileRect::createDrawItem(ITexture* _texture, ILayerNode* _node)
@@ -341,8 +361,13 @@ namespace MyGUI
 		MYGUI_ASSERT(!mRenderItem, "mRenderItem must be nullptr");
 
 		mNode = _node;
-		mRenderItem = mNode->addToRenderItem(_texture, true, false);
-		mRenderItem->addDrawItem(this, mCountVertex);
+		mRenderItem = mNode->addToRenderItem(this, _texture, true, false);
+		//mRenderItem->addDrawItem(this, mCountVertex);
+	}
+
+	size_t TileRect::getVertexCount() const
+	{
+		return mCountVertex;
 	}
 
 	void TileRect::destroyDrawItem()
@@ -362,6 +387,17 @@ namespace MyGUI
 		mTileH = data->getTileH();
 		mTileV = data->getTileV();
 		_setUVSet(data->getRect());
+	}
+
+	void TileRect::_setGray(bool _gray)
+	{
+		if (mGray == _gray)
+			return;
+
+		mGray = _gray;
+
+		if (nullptr != mNode)
+			mNode->outOfDate(mRenderItem);
 	}
 
 	void TileRect::_setColour(const Colour& _value)

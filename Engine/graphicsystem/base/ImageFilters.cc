@@ -68,7 +68,7 @@ namespace Graphic
 	}
 	void ImageFiltrationSystem::Shutdown()
 	{
-		if (sImageCopyMaterial.isvalid())
+		if (sImageCopyMaterial.isvalid()) 
 		{
 			sImageCopyMaterial->Discard();
 			sImageCopyMaterial = NULL;
@@ -94,8 +94,8 @@ namespace Graphic
 		}
 		else
 		{
-
-			renderable = gs->GetRenderingCamera()->GetQuadRenderable().get();
+			renderable = gs->GetMainViewPortWindow()->GetBackBuffer()->GetRenderable();
+			//renderable = gs->GetRenderingCamera()->GetQuadRenderable().get();
 
 			gs->SetRenderTarget(sNullTarget, 0, clearflag);
 

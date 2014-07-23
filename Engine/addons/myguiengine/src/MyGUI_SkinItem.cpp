@@ -48,6 +48,16 @@ namespace MyGUI
 			(*skin)->setVisible(_value);
 	}
 
+	void SkinItem::_setSkinItemGray(bool _value)
+	{
+		for (VectorSubWidget::iterator skin = mSubSkinChild.begin(); skin != mSubSkinChild.end(); ++skin)
+		{
+			ISubWidgetRect* rect = (*skin)->castType<ISubWidgetRect>(false);
+			if (rect)
+				rect->_setGray(_value);
+		}
+	}
+
 	void SkinItem::_setSkinItemColour(const Colour& _value)
 	{
 		for (VectorSubWidget::iterator skin = mSubSkinChild.begin(); skin != mSubSkinChild.end(); ++skin)

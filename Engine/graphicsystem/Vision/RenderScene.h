@@ -60,6 +60,19 @@ namespace Graphic
 	class RenderScene : public IRenderScene
 	{
 	public:
+		enum RenderSort
+		{
+			SortBackground = 1000,
+			SortRTT = 2000,
+			SortScene = 3000,
+			SortTop = 4000,
+			SortSuperTop = 5000,
+			SortUI = 6000,		
+			SortSuperUI = 7000,
+			SortDebugInfo = 8000,
+			SortDefault = SortScene,
+		};
+
 		struct Environment
 		{
 			Math::float4 fogColor;
@@ -67,14 +80,6 @@ namespace Graphic
 			Math::float4 ambientColor;
 			Math::float4 softShadowParam;
 			Math::float4 shadowStrength;//nerver be used. defined in light class.
-			Math::float3 graivty;
-			float skinWidth;
-			float bounce;
-			float sleepVel;
-			float sleepAngular;
-			float maxAngular;
-			Util::String defaultMat;
-			Util::Array<uint> layerIDArray;
 			Environment();
 		};
 		typedef Util::Array<Light*> Lights;
@@ -84,6 +89,10 @@ namespace Graphic
 
 		void Setup();
 		void Destroy();
+
+		void SetRenderSort(uint sort);
+
+		uint GetRenderSort() const;
 
 		const Util::Array<RenderObject*>& GetNotCullRenderObjects() const;
 
@@ -128,6 +137,7 @@ namespace Graphic
 		Lights mLights;
 		CameraList mCameraList;
 		GPtr<Camera> mDefaultCamera;
+		uint mRenderSort;
 		Environment* mEnvironment;
 	};
 
@@ -164,6 +174,11 @@ namespace Graphic
 	inline Camera* RenderScene::GetDefaultCamera() const
 	{
 		return mDefaultCamera.get_unsafe();
+	}
+
+	inline uint RenderScene::GetRenderSort() const
+	{
+		return mRenderSort;
 	}
 }
 

@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-#if __USE_PHYSX__ || __GENESIS_EDITOR__
+#if defined (__USE_PHYSX__) || defined(__GENESIS_EDITOR__)
 #include "stdneb.h"
 #include "appframework/actor.h"
 #include "PhysicsBoxShape.h"
@@ -70,15 +70,11 @@ namespace App
 
 	void PhysicsBoxShape::OnResize(const Math::bbox& bb)
 	{
-		const Math::bbox& _box = bb;
-		Math::vector _value = _box.size();
+		Math::vector _value = bb.size();
 		if (!Math::n_nearequal(_value.length(),0.0f,0.001f))
 		{
 			m_Dimension.set(_value.x(), _value.y(), _value.z());
 		}
-		Math::vector _center(_box.center().x(), _box.center().y(), _box.center().z());
-		_value = _center*m_ActorScale;
-		m_Center.set(_value.x(), _value.y(), _value.z());
 	}
 
 	void PhysicsBoxShape::SetDimension( const Math::float3& dimension )

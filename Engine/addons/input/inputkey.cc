@@ -406,5 +406,33 @@ InputKey::KeyCodesByGroup(InputKey::Group group)
     return keys;
 }
 
+#ifdef __ANDROID__
+InputKey::Code InputKey::TranslateAndoridToWin32( InputKey::AndroidKeyCode androidCode )
+{
+	switch (androidCode)
+	{
+	case KEYCODE_HOME            : return Home;
+	case KEYCODE_BACK            : return Back;
+	case KEYCODE_ENTER           : return Return;
+	case KEYCODE_MENU            : return Menu;
+
+	case KEYCODE_DPAD_UP         : return Up;
+	case KEYCODE_DPAD_DOWN       : return Down;
+	case KEYCODE_DPAD_LEFT       : return Left;
+	case KEYCODE_DPAD_RIGHT      : return Right;
+	case KEYCODE_DPAD_CENTER     : return Return;
+
+	case KEYCODE_VOLUME_UP       : return VolumeUp;
+	case KEYCODE_VOLUME_DOWN     : return VolumeDown;
+	case KEYCODE_MUTE            : return VolumeMute;
+	case KEYCODE_VOLUME_MUTE     : return VolumeMute; 
+	default:
+		break;
+	}
+	n_error("Invalid or Unsupported key code!");
+	return InvalidKey;
+}
+#endif
+
 
 } // namespace Input

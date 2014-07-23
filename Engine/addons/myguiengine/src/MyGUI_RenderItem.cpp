@@ -31,7 +31,7 @@
 namespace MyGUI
 {
 
-	RenderItem::RenderItem() :
+	RenderItem::RenderItem(ILayerNode* _owner) :
 		mTexture(nullptr),
 		mNeedVertexCount(0),
 		mOutOfDate(false),
@@ -42,7 +42,9 @@ namespace MyGUI
 		mVertexBuffer(nullptr),
 		mRenderTarget(nullptr),
 		mCompression(false),
-		mManualRender(false)
+		mManualRender(false),
+		mLayerNode(_owner),
+		mMaterialType(MyGUI::NORMAL)
 	{
 		mVertexBuffer = RenderManager::getInstance().createVertexBuffer();
 	}
@@ -105,7 +107,7 @@ namespace MyGUI
 			}
 			else
 			{
-				_target->doRender(mVertexBuffer, mTexture, mCountVertex);
+				_target->doRender(mVertexBuffer, mTexture, mCountVertex,mMaterialType);
 			}
 		}
 	}
@@ -135,6 +137,17 @@ namespace MyGUI
 		MYGUI_EXCEPT("DrawItem not found");
 	}
 
+	void RenderItem::clearDrawItems()
+	{
+		mNeedVertexCount =0;
+		mDrawItems.clear();
+		mOutOfDate = true;
+		mVertexBuffer->setVertexCount(mNeedVertexCount);
+
+		mTexture = nullptr;
+		mCompression = true;
+	}
+
 	void RenderItem::addDrawItem(ISubWidget* _item, size_t _count)
 	{
 
@@ -147,6 +160,22 @@ namespace MyGUI
 #endif
 
 		mDrawItems.push_back(DrawItemInfo(_item, _count));
+		mNeedVertexCount += _count;
+		mOutOfDate = true;
+
+		mVertexBuffer->setVertexCount(mNeedVertexCount);
+	}
+
+	void RenderItem::insertDrawItem(size_t index, ISubWidget* _item, size_t _count)
+	{
+		// проверяем только в дебаге
+#if MYGUI_DEBUG_MODE == 1
+		for (VectorDrawItem::iterator iter = mDrawItems.begin(); iter != mDrawItems.end(); ++iter)
+		{
+			MYGUI_ASSERT((*iter).first != _item, "DrawItem exist");
+		}
+#endif
+		mDrawItems.insert(mDrawItems.begin() + index, DrawItemInfo(_item, _count));
 		mNeedVertexCount += _count;
 		mOutOfDate = true;
 
@@ -173,6 +202,30 @@ namespace MyGUI
 			}
 		}
 		MYGUI_EXCEPT("DrawItem not found");
+	}
+
+	void RenderItem::breakDrawItems(ISubWidget* _break, VectorDrawItem& _fronts, VectorDrawItem& _tails)
+	{
+		VectorDrawItem::const_iterator it = mDrawItems.begin();
+		while(it != mDrawItems.end())
+		{
+			if (it->first != _break)
+			{
+				_fronts.push_back(*it);
+			}
+			else
+			{
+				++it;
+				break;
+			}
+			++it;
+		}
+
+		while(it != mDrawItems.end())
+		{
+			_tails.push_back(*it);
+			++it;
+		}
 	}
 
 	void RenderItem::setTexture(ITexture* _value)
@@ -250,6 +303,16 @@ namespace MyGUI
 	IRenderTarget* RenderItem::getRenderTarget()
 	{
 		return mRenderTarget;
+	}
+
+	void RenderItem::setMaterialType(IMaterialType _type)
+	{
+		if(mMaterialType == _type)
+		{
+			return;
+		}
+
+		mMaterialType = mMaterialType | _type;
 	}
 
 } // namespace MyGUI

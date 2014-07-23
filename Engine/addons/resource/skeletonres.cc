@@ -105,8 +105,10 @@ namespace Resources
 		SkeletonRes::UnLoadImpl(void)
 	{
 		mSkelBones.Clear();
+		mSkelNames.Clear();
 		mSkelTree.Clear();
 		mSkelTreeArray.Clear();
+		mSkelKeyPair.Clear();
 	}
 	//------------------------------------------------------------------------
 	bool

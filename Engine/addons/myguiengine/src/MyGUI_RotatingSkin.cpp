@@ -159,13 +159,34 @@ namespace MyGUI
 			mNode->outOfDate(mRenderItem);
 	}
 
+	size_t RotatingSkin::getVertexCount() const
+	{
+		return (GEOMETRY_VERTICIES_TOTAL_COUNT - 2) * 3;
+	}
+
+	void RotatingSkin::onRenderItemChanged(ILayerNode* _sender, RenderItem* _old, RenderItem* _new)
+	{
+		if (mNode == _sender)
+		{
+			mRenderItem = _new;
+		}
+	}
+
 	void RotatingSkin::createDrawItem(ITexture* _texture, ILayerNode* _node)
 	{
 		MYGUI_ASSERT(!mRenderItem, "mRenderItem must be nullptr");
 
 		mNode = _node;
-		mRenderItem = mNode->addToRenderItem(_texture, true, false);
-		mRenderItem->addDrawItem(this, (GEOMETRY_VERTICIES_TOTAL_COUNT - 2) * 3);
+		mRenderItem = mNode->addToRenderItem(this, _texture, true, false);
+		//mRenderItem->addDrawItem(this, (GEOMETRY_VERTICIES_TOTAL_COUNT - 2) * 3);
+	}
+
+	void RotatingSkin::updateDrawItem(ITexture* _texture, ILayerNode* _node)
+	{
+		MYGUI_ASSERT(mRenderItem, "mRenderItem must not be nullptr");
+
+		mNode = _node;
+		mRenderItem = mNode->updateRenderItem(this, mRenderItem, _texture, true, false);
 	}
 
 	void RotatingSkin::destroyDrawItem()
@@ -194,6 +215,7 @@ namespace MyGUI
 			mGeometryOutdated = false;
 		}
 
+		IMaterialType type = mGray ? MyGUI::GRAY : MyGUI::NORMAL;
 		for (int i = 1; i < GEOMETRY_VERTICIES_TOTAL_COUNT - 1; ++i)
 		{
 			verticies[3 * i - 3].set(mResultVerticiesPos[0].left, mResultVerticiesPos[0].top, vertex_z, mResultVerticiesUV[0].left, mResultVerticiesUV[0].top, mCurrentColour);
@@ -202,6 +224,19 @@ namespace MyGUI
 		}
 
 		mRenderItem->setLastVertexCount((GEOMETRY_VERTICIES_TOTAL_COUNT - 2) * 3);
+
+		mRenderItem->setMaterialType(type);
+	}
+
+	void RotatingSkin::_setGray(bool _gray)
+	{
+		if (mGray == _gray)
+			return;
+
+		mGray = _gray;
+
+		if (nullptr != mNode)
+			mNode->outOfDate(mRenderItem);
 	}
 
 	void RotatingSkin::_setColour(const Colour& _value)

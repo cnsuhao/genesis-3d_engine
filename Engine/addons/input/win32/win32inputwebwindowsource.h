@@ -89,6 +89,11 @@ namespace Win32Input
 		/// compute normalized mouse position from absolute mouse pos
 		Math::float2 ComputeNormMousePos(const Math::float2& absMousePos) const;
 
+
+		void SetLockWindowSize(bool value);
+
+		bool GetLockWindowSize() const;
+
 		/// translate a Windows virtual key code into a Nebula3 key code
 		Input::InputKey::Code TranslateKeyCode(WPARAM wParam) const;
 
@@ -112,21 +117,28 @@ namespace Win32Input
 		Math::float2 mMousePostion;
 
 		HWND mWnd;
+		bool mLockWinodwsSize;
 	};
 	//------------------------------------------------------------------------
-	inline
-	void 
-	Win32InputWebWindowSource::SetWnd( HWND hWnd )
+	inline void Win32InputWebWindowSource::SetWnd( HWND hWnd )
 	{
 		mWnd = hWnd;
 	}
 
 	//------------------------------------------------------------------------
-	inline
-	HWND 
-	Win32InputWebWindowSource::GetWnd(void) const
+	inline HWND Win32InputWebWindowSource::GetWnd(void) const
 	{
 		return mWnd;
+	}
+
+	inline void Win32InputWebWindowSource::SetLockWindowSize(bool value)
+	{
+		mLockWinodwsSize = value;
+	}
+
+	inline bool Win32InputWebWindowSource::GetLockWindowSize() const
+	{
+		return mLockWinodwsSize;
 	}
 }
 

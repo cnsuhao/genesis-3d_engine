@@ -37,6 +37,19 @@ namespace App
 {
 	__ImplementClass(App::LightprobeComponent, 'LPOM', App::RenderComponent)
 
+
+#if RENDERDEVICE_D3D9
+	const D3D9::TextureD3D9* GetD3DTexture9(const GPtr<Graphic::RenderToTexture>& rtt)
+	{
+		const RenderBase::TextureHandle handle = rtt->GetTextureHandle();
+		const Core::RefCounted* Ro = handle.AsObject();
+		const D3D9::TextureD3D9* front = reinterpret_cast<const D3D9::TextureD3D9*>(Ro);
+		return front;
+	}
+
+#endif
+
+
 LightprobeComponent::LightprobeComponent():
 	 rendertime(0)
     ,m_RenderTime(-1)
@@ -146,89 +159,89 @@ void LightprobeComponent::Save( AppWriter* pWriter ) const
 
 void LightprobeComponent::SaveRenderResult( const Util::String& path )
 {
-#ifdef	__WIN32__
+#if	RENDERDEVICE_D3D9
 	m_pExportCubeTex = D3D9::TextureD3D9::Create();
 	
-	const D3D9::TextureD3D9& front = m_pXPosTexture->GetD3DTexture9();
-	const D3D9::TextureD3D9& back = m_pXNegTexture->GetD3DTexture9();
+	const D3D9::TextureD3D9* front = GetD3DTexture9(m_pXPosTexture);
+	const D3D9::TextureD3D9* back = GetD3DTexture9(m_pXNegTexture);
 
-	const D3D9::TextureD3D9& top = m_pYPosTexture->GetD3DTexture9();
-	const D3D9::TextureD3D9& under = m_pYNegTexture->GetD3DTexture9();
+	const D3D9::TextureD3D9* top = GetD3DTexture9(m_pYPosTexture);
+	const D3D9::TextureD3D9* under = GetD3DTexture9(m_pYNegTexture);
 
-	const D3D9::TextureD3D9& right = m_pZPosTexture->GetD3DTexture9();
-	const D3D9::TextureD3D9&  left = m_pZNegTexture->GetD3DTexture9();
+	const D3D9::TextureD3D9* right = GetD3DTexture9(m_pZPosTexture);
+	const D3D9::TextureD3D9* left = GetD3DTexture9(m_pZNegTexture);
 	
 	ubyte* CubeData = NULL;
-	CubeData = n_new_array(ubyte,front.GetTextureSize()*6);  
+	CubeData = n_new_array(ubyte,front->GetTextureSize()*6);  
 	n_assert(CubeData!=NULL);
 
 //front
-	SizeT levelPixelSize =front.GetTextureSize();
+	SizeT levelPixelSize = front->GetTextureSize();
 	ubyte* dataFront = new ubyte[levelPixelSize];
 	n_assert(dataFront!=NULL);
-	front.GetTextureData(dataFront);
+	front->GetTextureData(dataFront);
 
-	Resources::ImageOperations::HorizontalFlipImage(dataFront,levelPixelSize,front.GetHeight(),front.GetWidth());
+	Resources::ImageOperations::HorizontalFlipImage(dataFront,levelPixelSize,front->GetHeight(),front->GetWidth());
 //back
-	levelPixelSize =back.GetTextureSize();
+	levelPixelSize =back->GetTextureSize();
 	ubyte* dataBack = new ubyte[levelPixelSize];
 	n_assert(dataBack!=NULL);
-	back.GetTextureData(dataBack);
+	back->GetTextureData(dataBack);
 
-	Resources::ImageOperations::HorizontalFlipImage(dataBack,levelPixelSize,front.GetHeight(),front.GetWidth());
+	Resources::ImageOperations::HorizontalFlipImage(dataBack,levelPixelSize,front->GetHeight(),front->GetWidth());
 //left
-	levelPixelSize =left.GetTextureSize();
+	levelPixelSize =left->GetTextureSize();
 	ubyte* dataLeft = new ubyte[levelPixelSize];
 	n_assert(dataLeft!=NULL);
-	left.GetTextureData(dataLeft);
+	left->GetTextureData(dataLeft);
 
-	Resources::ImageOperations::HorizontalFlipImage(dataLeft,levelPixelSize,front.GetHeight(),front.GetWidth());
+	Resources::ImageOperations::HorizontalFlipImage(dataLeft,levelPixelSize,front->GetHeight(),front->GetWidth());
 //right
-	levelPixelSize =front.GetTextureSize();
+	levelPixelSize =front->GetTextureSize();
 	ubyte* dataRight = new ubyte[levelPixelSize];
 	n_assert(dataRight!=NULL);
-	right.GetTextureData(dataRight);
+	right->GetTextureData(dataRight);
 
-	Resources::ImageOperations::HorizontalFlipImage(dataRight,levelPixelSize,front.GetHeight(),front.GetWidth());
+	Resources::ImageOperations::HorizontalFlipImage(dataRight,levelPixelSize,front->GetHeight(),front->GetWidth());
 
 //up
-	levelPixelSize =front.GetTextureSize();
+	levelPixelSize =front->GetTextureSize();
 	ubyte* dataUp = new ubyte[levelPixelSize];
 	n_assert(dataUp!=NULL);
-	top.GetTextureData(dataUp);
+	top->GetTextureData(dataUp);
 
-	Resources::ImageOperations::HorizontalFlipImage(dataUp,levelPixelSize,front.GetHeight(),front.GetWidth());
+	Resources::ImageOperations::HorizontalFlipImage(dataUp,levelPixelSize,front->GetHeight(),front->GetWidth());
 
 //down
-	levelPixelSize =front.GetTextureSize();
+	levelPixelSize =front->GetTextureSize();
 	ubyte* dataDown = new ubyte[levelPixelSize];
 	n_assert(dataDown!=NULL);
-	under.GetTextureData(dataDown);
+	under->GetTextureData(dataDown);
 
-	Resources::ImageOperations::HorizontalFlipImage(dataDown,levelPixelSize,front.GetHeight(),front.GetWidth());
+	Resources::ImageOperations::HorizontalFlipImage(dataDown,levelPixelSize,front->GetHeight(),front->GetWidth());
 
 //data generate
 	ubyte* srcDataOffset = NULL;
 	srcDataOffset = CubeData;
 	Memory::CopyToGraphicsMemory(dataFront,srcDataOffset,levelPixelSize);
 
-	srcDataOffset += front.GetTextureSize();
+	srcDataOffset += front->GetTextureSize();
 	Memory::CopyToGraphicsMemory(dataBack,srcDataOffset,levelPixelSize);
 
-	srcDataOffset += front.GetTextureSize();
+	srcDataOffset += front->GetTextureSize();
 	Memory::CopyToGraphicsMemory(dataUp,srcDataOffset,levelPixelSize);
 
-	srcDataOffset += front.GetTextureSize();
+	srcDataOffset += front->GetTextureSize();
 	Memory::CopyToGraphicsMemory(dataDown,srcDataOffset,levelPixelSize);
 
-	srcDataOffset += front.GetTextureSize();
+	srcDataOffset += front->GetTextureSize();
 	Memory::CopyToGraphicsMemory(dataRight,srcDataOffset,levelPixelSize);
 
-	srcDataOffset += front.GetTextureSize();
+	srcDataOffset += front->GetTextureSize();
 	Memory::CopyToGraphicsMemory(dataLeft,srcDataOffset,levelPixelSize);
 
 	
-	Resources::ImageOperations::SaveDDSCubeImage(front.GetHeight(),front.GetWidth(),path,CubeData,front.GetTextureSize()*6);
+	Resources::ImageOperations::SaveDDSCubeImage(front->GetHeight(),front->GetWidth(),path,CubeData,front->GetTextureSize()*6);
 
 	n_delete_array(CubeData);
 

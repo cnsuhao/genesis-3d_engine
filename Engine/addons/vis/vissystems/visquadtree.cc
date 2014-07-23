@@ -223,7 +223,7 @@ VisQuadtree::CreateVisJob(const GPtr<ObserverContext>& observer, Util::Array<GPt
     // create new job           
     GPtr<Jobs::Job> visibilityJob = Jobs::Job::Create();
 
-#ifdef __WIN32__
+#if __THREAD_JOB__// 
     // input data for job  
     // function
     JobFuncDesc jobFunction(VisCellJobFunc);        

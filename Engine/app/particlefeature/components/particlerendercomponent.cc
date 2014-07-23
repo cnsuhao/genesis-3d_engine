@@ -416,6 +416,9 @@ namespace App
 			mRenderObject = RenderObjectType::Create();
 		}
 		mRenderObject->SetOwner(this);
+#ifdef __GENESIS_EDITOR__
+		mRenderObject->SetEditorVisible(m_bEidtorVis);
+#endif
 		mRenderObject->SetTransform(mActor->GetWorldTransform());
 		_AttachRenderObject();
 		mIsBuild = true;
@@ -480,7 +483,7 @@ namespace App
 	 void ParticleRenderComponent::SetEditorVisible(bool bVis)
 	 {
 		 Super::SetEditorVisible(bVis);
-		 if (IsActive())
+		 if (IsActive() && mRenderObject.isvalid())
 		 {
 			 mRenderObject->SetEditorVisible(bVis);
 		 }

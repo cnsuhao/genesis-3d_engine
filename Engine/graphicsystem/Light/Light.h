@@ -161,11 +161,13 @@ namespace Graphic
 
 		void ResetShadowMap(const SizeT nSplit);
 
+		const GPtr<RenderToTexture>& GetLightShadowMap() const;
 	protected:		
 
 		//void* m_owner;
 		LightListener* m_listener;
 		RenderScene* m_renderScene;
+		GPtr<RenderToTexture> m_lightShadowMap;
 		ShadowMapCameraList m_shadowMapCameras;
 		Util::Array<GPtr<RenderToTexture> > m_dummyShadowRTs;
 
@@ -402,6 +404,11 @@ namespace Graphic
 		Light::Attached() const
 	{
 		return (m_renderScene != NULL);
+	}
+	inline const GPtr<RenderToTexture>&
+		Light::GetLightShadowMap() const
+	{
+		return m_lightShadowMap;
 	}
 }
 #endif//_LIGHT_H_

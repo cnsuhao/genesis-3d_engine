@@ -226,13 +226,27 @@ namespace MyGUI
 			mNode->outOfDate(mRenderItem);
 	}
 
+	size_t PolygonalSkin::getVertexCount() const
+	{
+		return mVertexCount;
+	}
+
 	void PolygonalSkin::createDrawItem(ITexture* _texture, ILayerNode* _node)
 	{
 		MYGUI_ASSERT(!mRenderItem, "mRenderItem must be nullptr");
 
 		mNode = _node;
-		mRenderItem = mNode->addToRenderItem(_texture, true, false);
-		mRenderItem->addDrawItem(this, mVertexCount);
+		mRenderItem = mNode->addToRenderItem(this, _texture, true, false);
+		//mRenderItem->addDrawItem(this, mVertexCount);
+	}
+
+	void PolygonalSkin::updateDrawItem(ITexture* _texture, ILayerNode* _node)
+	{
+		MYGUI_ASSERT(mRenderItem, "mRenderItem must not be nullptr");
+
+		mNode = _node;
+		mRenderItem = mNode->updateRenderItem(this, mRenderItem, _texture, true, false);
+		//mRenderItem->addDrawItem(this, mVertexCount);
 	}
 
 	void PolygonalSkin::destroyDrawItem()
@@ -242,6 +256,14 @@ namespace MyGUI
 		mNode = nullptr;
 		mRenderItem->removeDrawItem(this);
 		mRenderItem = nullptr;
+	}
+
+	void PolygonalSkin::onRenderItemChanged(ILayerNode* _sender, RenderItem* _old, RenderItem* _new)
+	{
+		if (mNode == _sender)
+		{
+			mRenderItem = _new;
+		}
 	}
 
 	void PolygonalSkin::doRender()
@@ -262,12 +284,26 @@ namespace MyGUI
 
 		size_t size = mResultVerticiesPos.size();
 
+		IMaterialType type = mGray ? MyGUI::GRAY : MyGUI::NORMAL;
 		for (size_t i = 0; i < size; ++i)
 		{
 			verticies[i].set(mResultVerticiesPos[i].left, mResultVerticiesPos[i].top, vertex_z, mResultVerticiesUV[i].left, mResultVerticiesUV[i].top, mCurrentColour);
 		}
 
 		mRenderItem->setLastVertexCount(size);
+
+		mRenderItem->setMaterialType(type);
+	}
+
+	void PolygonalSkin::_setGray(bool _gray)
+	{
+		if (mGray == _gray)
+			return;
+
+		mGray = _gray;
+
+		if (nullptr != mNode)
+			mNode->outOfDate(mRenderItem);
 	}
 
 	void PolygonalSkin::_setColour(const Colour& _value)

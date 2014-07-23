@@ -26,6 +26,7 @@ THE SOFTWARE.
 #include "input/input_stdneb.h"
 #include "input/android/androidinputserver.h"
 #include "input/inputtouchscreen.h"
+#include "input/inputkeyboard.h"
 
 namespace AndroidInput
 {
@@ -54,6 +55,9 @@ namespace AndroidInput
 		// create a default keyboard and mouse handler
 		this->defaultTouchScreen = InputTouchScreen::Create();
 		this->AttachInputHandler(InputPriority::Game, this->defaultTouchScreen.upcast<InputHandler>());
+
+		this->defaultKeyboard = InputKeyboard::Create();
+		this->AttachInputHandler(InputPriority::Game, this->defaultKeyboard.upcast<InputHandler>()); 
 	}
 
 	void AndroidInputServer::Close()

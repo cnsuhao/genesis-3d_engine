@@ -1286,6 +1286,12 @@ namespace App
 
 		if (findAnim != InvalidIndex)
 		{
+			if(layer < 0)
+			{
+				n_warning("Invalid layer, layer must be equal or greater than 0.\n");
+				return;
+			}
+
 			AnimResParam& animParam = m_AnimInfos.animMap[findAnim];
 
 			if (animParam.animRes.isvalid() && animParam.animRes->GetState() == Resource::Loaded)

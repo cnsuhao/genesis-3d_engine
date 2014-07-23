@@ -136,7 +136,7 @@ namespace App
 		ICallReg_ScriptRuntime_IO();
 		ICallReg_ScriptRuntime_XmlWriter();
 
-#if __USE_PHYSX__ || __GENESIS_EDITOR__
+#if defined (__USE_PHYSX__) || defined (__GENESIS_EDITOR__)
 		ICallReg_ScriptRuntime_PhysicsScene();
 		ICallReg_ScriptRuntime_PhysicsShape();
 		ICallReg_ScriptRuntime_PhysicsBoxShape();

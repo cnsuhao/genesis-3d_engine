@@ -93,6 +93,7 @@ namespace App
 				Math::matrix44 vp = camera->GetViewProjTransform();
 				gModleMaterix = Math::matrix44::multiply(vp,gModleMaterix);
 				particleRC->GetParticleSystem()->SetShaderParam();
+				rightVec4.set_w(0.0);
 				pGMP->SetVectorParam(eGShaderParticleUpVec,Math::float4::normalize(upVector4));
 				pGMP->SetVectorParam(eGShaderParticleRightVec,Math::float4::normalize(rightVec4));
 			}

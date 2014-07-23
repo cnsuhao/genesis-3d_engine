@@ -46,24 +46,54 @@ namespace Graphic
 
 	void RenderPipelineManager::PreRender(Camera* camera)
 	{
+		// reset
+		m_pipelineContext.m_renderConfig = RenderConfig();
+		m_pipelineContext.m_camera = NULL;
+		m_pipelineContext.m_targetWindows = NULL;
+		m_pipelineContext.m_targetSuite = NULL;
+		m_pipelineContext.m_callBacks.Clear(false);
+		m_pipelineContext.m_visibleNodes.Clear();
+		m_pipelineContext.m_activeLights.Reset();
+		m_pipelineContext.m_renderDatas.Reset(eCO_Main == camera->GetCameraOrder());
+
+		// init
+
 		m_pipelineContext.m_camera = camera;
-		//if(camera->UseViewport())
-		//{
-		//	const Camera::ViewPort& vp = camera->GetViewport();
-		//	GraphicSystem::Instance()->SetViewPort(vp);
-		//}
+		m_pipelineContext.m_targetSuite = camera->GetRenderTargetSuite();
+		const Camera::Viewport& vp = camera->GetViewport();
+
+		if (m_pipelineContext.m_targetSuite)
+		{
+			m_pipelineContext.m_targetWindows = NULL;
+			const GPtr<RenderToTexture>& rtt = m_pipelineContext.m_targetSuite->GetRenderToTexture();
+			if (vp.width != rtt->GetWidth() || vp.height != rtt->GetHeight())
+			{
+				camera->OnResizeWindow(rtt->GetWidth(), rtt->GetHeight());
+			}
+		}
+		else
+		{
+			m_pipelineContext.m_targetWindows = camera->GetTargetWindow();
+			if (m_pipelineContext.m_targetWindows == NULL)
+			{
+				m_pipelineContext.m_targetWindows = GraphicSystem::Instance()->GetMainViewPortWindow();
+			}
+			m_pipelineContext.m_targetSuite = m_pipelineContext.m_targetWindows->_GetRTTSuite();
+
+			const RenderBase::DisplayMode& dm = m_pipelineContext.m_targetWindows->GetDisplayMode();
+			if (vp.width != dm.GetWidth() || vp.height != dm.GetHeight())
+			{
+				camera->OnResizeWindow(dm.GetWidth(), dm.GetHeight());
+			}
+		}
+
 	}
 
 	void RenderPipelineManager::AfterRender()
 	{
-		//if (m_pipelineContext.m_camera->UseViewport() && m_pipelineContext.m_camera->GetCameraOrder() != eCO_Main)
-		//{
-		//	GPtr<Camera> mainCam = GraphicSystem::Instance()->GetCameraByType(eCO_Main);
-		//	n_assert(mainCam.isvalid());
-		//	GraphicSystem::Instance()->SetViewPort(mainCam->GetViewport());
-		//}
-
-		m_pipelineContext.m_camera = 0;
+		m_pipelineContext.m_targetSuite = NULL;
+		m_pipelineContext.m_camera = NULL;
+		m_pipelineContext.m_targetWindows = NULL;
 	}
 
 	void RenderPipelineManager::Open()
@@ -108,7 +138,14 @@ namespace Graphic
 		}
 
 		RenderScene* camera_scene = camera->GetRenderScene();
-		renderpipemanager->m_pipelineContext.m_renderConfig.bFog = camera_scene->GetEnvironment()->fogColor.w() > 0.0f;
+		if (camera_scene->GetEnvironment() && camera_scene->GetEnvironment()->fogColor.w() > 0.0f)
+		{
+			renderpipemanager->m_pipelineContext.m_renderConfig.bFog = true;
+		}
+		else
+		{
+			renderpipemanager->m_pipelineContext.m_renderConfig.bFog = false;
+		}
 
 		AssignEffectiveLight(renderpipemanager->m_pipelineContext);
 		AssignRenderDatas(renderpipemanager->m_pipelineContext);
@@ -120,7 +157,6 @@ namespace Graphic
 	void RenderPipelineManager::renderPipeline(GPtr<RenderPipelineManager>& renderpipemanager)
 	{
 		Camera::RenderMode rm = renderpipemanager->m_pipelineContext.m_camera->GetRenderMode();
-
 		switch (rm)
 		{
 		case Camera::ForwardMode:
@@ -152,36 +188,45 @@ namespace Graphic
 	void RenderPipelineManager::AssignVisibleNodes(PipelineParamters& params)
 	{
 		Camera* camera = params.m_camera;
-		params.m_callBacks.Clear();
-		params.m_visibleNodes.Clear();
-
-		GPtr<Vis::VisQuery> pVisQuery = camera->Cull();
-		n_assert( pVisQuery.isvalid() );
-
-		bool mainCamera = eCO_Main == camera->GetCameraOrder();
-		const Util::Array<GPtr<Vis::VisEntity> >& viEnityList = pVisQuery->GetQueryResult();
 
 		Math::float4 camPos = camera->GetTransform().get_position();
 		Math::float4 camDir = -camera->GetTransform().get_zaxis();
 
-		for (IndexT i = 0; i < viEnityList.Size(); ++i)
+		if (camera->IsPick(Camera::PickCullObjects))
 		{
-			const GPtr<Vis::VisEntity>& visEnt = viEnityList[i];
-			n_assert( visEnt.isvalid() );
-			Graphic::GraphicObject* obj = visEnt->GetUserData();
-			n_assert( obj && obj->GetRtti()->IsDerivedFrom( RenderObject::RTTI ) );
-
-			RenderObject* renderObj = static_cast<RenderObject*>(obj);
-
-			uint mark = renderObj->GetRenderCullMark() & (uint)camera->GetCullMask();
-
-			if (mark)
+			bool callbackable = camera->GetUseCallBack();
+			GPtr<Vis::VisQuery> pVisQuery = camera->Cull();
+			n_assert( pVisQuery.isvalid() );
+			const Util::Array<GPtr<Vis::VisEntity> >& viEnityList = pVisQuery->GetQueryResult();
+			for (IndexT i = 0; i < viEnityList.Size(); ++i)
 			{
+				const GPtr<Vis::VisEntity>& visEnt = viEnityList[i];
+				n_assert( visEnt.isvalid() );
+				Graphic::GraphicObject* obj = visEnt->GetUserData();
+				n_assert( obj && obj->GetRtti()->IsDerivedFrom( RenderObject::RTTI ) );
+
+				RenderObject* renderObj = static_cast<RenderObject*>(obj);
+
+				uint mark = renderObj->GetRenderCullMark() & (uint)camera->GetCullMask();
+
+				if (mark)
+				{
 
 #if __GENESIS_EDITOR__
-				if (renderObj->IsEditorVisible() || camera->GetCameraTarget() == Camera::GAME)
-				{
-					if (mainCamera && renderObj->GetNeedCullCallBack())
+					if (renderObj->IsEditorVisible() || camera->GetCameraTarget() == Camera::GAME)
+					{
+						if (callbackable && renderObj->GetNeedCullCallBack())
+						{
+							params.m_callBacks.Append(renderObj);
+						}
+						Math::float4 renderablePos = renderObj->GetTransform().get_position();
+						Math::float4 camToObj = renderablePos - camPos;
+						VisibleNode& node = params.m_visibleNodes.PushBack();
+						node.object = renderObj;
+						node.distance = Math::float4::dot3(camDir,camToObj);
+					}
+#else
+					if (callbackable && renderObj->GetNeedCullCallBack())
 					{
 						params.m_callBacks.Append(renderObj);
 					}
@@ -190,23 +235,13 @@ namespace Graphic
 					VisibleNode& node = params.m_visibleNodes.PushBack();
 					node.object = renderObj;
 					node.distance = Math::float4::dot3(camDir,camToObj);
-				}
-#else
-				if (mainCamera && renderObj->GetNeedCullCallBack())
-				{
-					params.m_callBacks.Append(renderObj);
-				}
-				Math::float4 renderablePos = renderObj->GetTransform().get_position();
-				Math::float4 camToObj = renderablePos - camPos;
-				VisibleNode& node = params.m_visibleNodes.PushBack();
-				node.object = renderObj;
-				node.distance = Math::float4::dot3(camDir,camToObj);
 #endif
-				
-			}
 
+				}
+			}
 		}
-		if (mainCamera)
+
+		if (camera->IsPick(Camera::PickNoCullObjects))
 		{
 			const Util::Array<RenderObject*>& notCullList = camera->GetRenderScene()->GetNotCullRenderObjects();
 			Util::Array<RenderObject*>::Iterator it = notCullList.Begin();
@@ -233,22 +268,24 @@ namespace Graphic
 				++it;
 			}
 		}
-		const Util::Array<RenderObject*>& notCullList = camera->GetNotCullRenderObjects();
-		Util::Array<RenderObject*>::Iterator it = notCullList.Begin();
-		Util::Array<RenderObject*>::Iterator end = notCullList.End();
-		while(it != end)
+
+		if (camera->IsPick(Camera::PickSelfObjects))
 		{
-			uint mark = (*it)->GetRenderCullMark() & (uint)camera->GetCullMask();
-			if (mark)
+			const Util::Array<RenderObject*>& notCullList = camera->GetNotCullRenderObjects();
+			Util::Array<RenderObject*>::Iterator it = notCullList.Begin();
+			Util::Array<RenderObject*>::Iterator end = notCullList.End();
+			while(it != end)
 			{
-				VisibleNode& node = params.m_visibleNodes.PushBack();
-				node.object = *it;
-				node.distance = 0;
+				uint mark = (*it)->GetRenderCullMark() & (uint)camera->GetCullMask();
+				if (mark)
+				{
+					VisibleNode& node = params.m_visibleNodes.PushBack();
+					node.object = *it;
+					node.distance = 0;
+				}
+				++it;
 			}
-			++it;
 		}
-
-
 
 	}
 
@@ -256,7 +293,6 @@ namespace Graphic
 	{
 		RenderDataManager* renderDatas = &params.m_renderDatas;
 		const RenderConfig* renderConfig = &params.m_renderConfig;
-		renderDatas->Reset(eCO_Main == params.m_camera->GetCameraOrder() );
 		VisibleNodeCollection::Iterator it = params.m_visibleNodes.Begin();
 		VisibleNodeCollection::Iterator end = params.m_visibleNodes.End();
 		while(it != end)
@@ -273,7 +309,9 @@ namespace Graphic
 		params.m_activeLights.CameraCull(params.m_camera);
 		params.m_renderConfig.bLight = (params.m_activeLights.GetActiveLightCount() > 0);
 
-		if (params.m_camera->HasLightLitMap() && params.m_camera->HasDepthMap())
+		GlobalMaterialParam* pGMP = Material::GetGlobalMaterialParams();
+
+		if (params.m_camera->IsRenderLightLitMap() && params.m_camera->IsRenderDepthMap())
 		{
 			const ActiveLightInfo* sun_light = params.m_activeLights.FindSunLight();
 			params.m_renderConfig.bShadowMap = sun_light && sun_light->light->IsEnableShadow();
@@ -287,7 +325,7 @@ namespace Graphic
 		{
 			params.m_renderConfig.bShadowMap = false;
 		}
-		GlobalMaterialParam* pGMP = Material::GetGlobalMaterialParams();
+
 		pGMP->SetVectorParam(eGShaderVecShadowMapSize, Math::float4(0.0f, 0.0f, 0.0f, 0.0f));
 	}
 	void RenderPipelineManager::renderShadowMap(const ActiveLightInfo* aLight)
@@ -301,6 +339,8 @@ namespace Graphic
 			GraphicSystem::Instance()->_PushRenderCamera(camera.get());
 			camera->SetCullMask(cullmark);
 			GPtr<RenderPipelineManager>& mgr = camera->GetRenderPipelineManager();
+			mgr->PreRender(camera);
+
 			mgr->m_pipelineContext.m_camera = camera.get();
 			mgr->m_pipelineContext.m_renderDatas.SetUseFor(RenderDataCollection::Shadow);
 			mgr->m_pipelineContext.m_renderConfig.bFog = false;
@@ -310,12 +350,14 @@ namespace Graphic
 			GlobalMaterialParam* pGMP = Material::GetGlobalMaterialParams();
 			n_assert(NULL != pGMP);
 			const Math::float4& shadowMapParam = pGMP->GetVectorParam(Graphic::eGShaderVecShadowMapSize);
-			Math::float4 srcRect(0,0,shadowMapParam.x(),shadowMapParam.y());
+			Math::float4 srcRect(0, 0, shadowMapParam.x(), shadowMapParam.y());
 			Math::float4 desRect = srcRect;
 			desRect.x() = shadowMapParam.x() * i;
 			desRect.z() = desRect.x() + shadowMapParam.x();
-			GraphicSystem::Instance()->CopyRenderTarget(camera->GetRenderToTexture()->GetTargetHandle(),srcRect,camera->GetSwapTexture()->GetTargetHandle(),desRect);
-			mgr->m_pipelineContext.m_camera = NULL;
+			GraphicSystem::Instance()->CopyRenderTarget(camera->GetRenderTargetSuite()->GetRenderToTexture()->GetTargetHandle(), srcRect,
+				aLight->light->GetLightShadowMap()->GetTargetHandle(), desRect);
+			
+			mgr->AfterRender();
 			GraphicSystem::Instance()->_PopRenderCamera();
 		}
 	}

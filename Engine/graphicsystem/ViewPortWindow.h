@@ -26,6 +26,7 @@ THE SOFTWARE.
 #include "Camera/Camera.h"
 #include "rendersystem/base/RenderDisplay.h"
 #include "foundation/delegates/delegatetype.h"
+#include "graphicsystem/RenderTargetSuite.h"
 
 namespace RenderBase
 {
@@ -55,18 +56,20 @@ namespace Graphic
 
 		//void SetDisplay();
 
-		void ChangeSize(SizeT width, SizeT height);
+		void ChangeSize(SizeT width, SizeT height, bool force = false);
 
 		const RenderBase::DisplayMode& GetDisplayMode(void) const;
 
 		void SetDeviceWindow(RenderBase::RenderWindow*);
 		RenderBase::RenderWindow* GetRenderWindow(void) const;
 
-		void ApplyGlobalShaderParam() const;
-
 		void Setup();
 
 		void Destroy();
+
+		void ChangeAntiAliasQuality(RenderBase::AntiAliasQuality::Code alias);
+
+		RenderBase::AntiAliasQuality::Code GetAntiAliasQuality() const;
 
 		void BeginRender();
 
@@ -83,12 +86,16 @@ namespace Graphic
 
 		const GPtr<RenderToTexture>& GetBackBuffer() const; 
 
+
+		// internal call
+
+		RenderTargetSuite* _GetRTTSuite() const;
+
 		bool _IsDirty() const;
 		void _OnChangeSize();
 
 		void _SetType(ViewportType type);
 		void _SetDisplayMode(const RenderBase::DisplayMode& mode);
-
 
 		EventHandle_ViewportChange eventViewportChange;
 	private:
@@ -96,6 +103,7 @@ namespace Graphic
 		void setupBackBuffer();
 
 		GPtr<RenderToTexture>			m_backBuffer;
+		GPtr<RenderTargetSuite>			mRTSuite;			
 		ViewportType					mViewportType;
 		RenderBase::RenderWindow*		mpWindow;
 		RenderBase::DisplayMode			mDisplayMode;
@@ -152,6 +160,17 @@ namespace Graphic
 	inline bool ViewPortWindow::IsValid() const
 	{
 		return m_backBuffer.isvalid() && (NULL != mpWindow);
+	}
+
+	inline RenderTargetSuite* ViewPortWindow::_GetRTTSuite() const
+	{
+		return mRTSuite.get_unsafe();
+	}
+
+	inline RenderBase::AntiAliasQuality::Code 
+		ViewPortWindow::GetAntiAliasQuality() const
+	{
+		 return mRTSuite->GetAntiAliasQuality();
 	}
 }
 #endif // __ViewPortWindow_H__

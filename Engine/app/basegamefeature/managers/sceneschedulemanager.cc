@@ -189,15 +189,16 @@ namespace App
 				}
 			}
 
-			if (!privateScene)
+			if (privateScene)
 			{
-				_SetMainScene(scene->GetName());
-				scene->_ApplyEnvironment(true);
-				
+
+				scene->_ApplyEnvironment();		
 			}
 			else
 			{
-				scene->_ApplyEnvironment();
+				_SetMainScene(scene->GetName());
+				scene->_ApplyEnvironment(true);
+
 			}
 		}
 #ifdef __PROFILER_IO__

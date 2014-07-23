@@ -52,31 +52,51 @@ namespace Graphic
 		}
 	};
 
-	struct CameraSort : public std::binary_function<const GPtr<Camera>, const GPtr<Camera>, std::size_t>
+	struct CameraSort : public std::binary_function<const GPtr<Camera>&, const GPtr<Camera>&, std::size_t>
 	{
-		bool operator() (const GPtr<Camera> lhs, const GPtr<Camera> rhs) const
+		bool operator() (const GPtr<Camera>& lhs, const GPtr<Camera>& rhs) const
 		{
+			//ViewPortWindow* lhvp = (NULL == lhs->GetTargetWindow()) ? default_window : lhs->GetTargetWindow();
+			//ViewPortWindow* rhvp = (NULL == rhs->GetTargetWindow()) ? default_window : rhs->GetTargetWindow();
+
+			//if(default_camera && lhs == default_camera)
+			//	return false;
+
+			//if(default_camera && rhs == default_camera)
+			//	return true;
+
+			//if (lhvp != rhvp)
+			//{
+			//	return lhvp->GetType() < rhvp->GetType();
+			//}
+			//return lhs->GetCameraOrder() < rhs->GetCameraOrder();
+
+			const Camera* lc = lhs.get_unsafe();
+			const Camera* rc = rhs.get_unsafe();
+			if (lc->GetRenderSort() != rc->GetRenderSort())
+			{
+				return lc->GetRenderSort() < rc->GetRenderSort();
+			}
+			
+			if ( NULL != lc->GetRenderTargetSuite() || rc->GetRenderTargetSuite() != NULL )
+			{
+				return (uint)lc->GetRenderTargetSuite() < (uint)rc->GetRenderTargetSuite();
+			}
+
 			ViewPortWindow* lhvp = (NULL == lhs->GetTargetWindow()) ? default_window : lhs->GetTargetWindow();
 			ViewPortWindow* rhvp = (NULL == rhs->GetTargetWindow()) ? default_window : rhs->GetTargetWindow();
-
-			if(default_camera && lhs == default_camera)
-				return false;
-
-			if(default_camera && rhs == default_camera)
-				return true;
-
 			if (lhvp != rhvp)
 			{
 				return lhvp->GetType() < rhvp->GetType();
 			}
-			return lhs->GetCameraOrder() < rhs->GetCameraOrder();
+			return lc->GetCameraOrder() < rc->GetCameraOrder();
 		}
 		ViewPortWindow* default_window;
-		GPtr<Camera>    default_camera;
-		CameraSort(ViewPortWindow* _default,GPtr<Camera> _camera)
+		//GPtr<Camera>    default_camera;
+		CameraSort(ViewPortWindow* _default)//,GPtr<Camera> _camera)
 		{
 			default_window = _default;
-			default_camera = _camera;
+			//default_camera = _camera;
 		}
 	};
 
@@ -87,21 +107,16 @@ namespace Graphic
 		,ambientColor(AmbientColorOfDefaultLight)	
 		,softShadowParam(0.3f,1.0f,0.f,0.f)
 		,shadowStrength(0.f,0.f,0.f,1.f)
-		,graivty(0.0f,-9.81f,0.0f)
-		,skinWidth(0.025f)
-		,bounce(0.0f)
-		,sleepVel(0.5f)
-		,sleepAngular(0.5f)
-		,maxAngular(7.0f)
-		,defaultMat("")
+
 	{
-		layerIDArray.Resize(32,0xffffffff);
+
 	}
 
 
 	RenderScene::RenderScene()
 		:mEnvironment(NULL)
 		,mDefaultCamera(NULL)
+		,mRenderSort(RenderScene::SortScene)
 	{
 
 	}
@@ -109,6 +124,15 @@ namespace Graphic
 	RenderScene::~RenderScene()
 	{
 
+	}
+
+	void RenderScene::SetRenderSort(uint sort)
+	{
+		mRenderSort = sort;
+		if(GraphicSystem::HasInstance())
+		{
+			GraphicSystem::Instance()->SortRenderScene();
+		}
 	}
 
 	void RenderScene::Setup()
@@ -126,9 +150,9 @@ namespace Graphic
 
 	void RenderScene::ApplyEnvironment() const
 	{
-		if (mEnvironment)
+		Graphic::GlobalMaterialParam* globalMaterialParam = Graphic::Material::GetGlobalMaterialParams();
+		if (mEnvironment && globalMaterialParam)
 		{
-			Graphic::GlobalMaterialParam* globalMaterialParam = Graphic::Material::GetGlobalMaterialParams();
 			if (globalMaterialParam)
 			{
 				globalMaterialParam->SetVectorParam(Graphic::eGShaderVecAmbientColor, mEnvironment->ambientColor);
@@ -137,9 +161,15 @@ namespace Graphic
 				globalMaterialParam->SetVectorParam(Graphic::eGShaderVecSoftShadowParam, mEnvironment->softShadowParam);
 				//globalMaterialParam->SetVectorParam(Graphic::eGShaderVecShadowColor, mEnvironment->shadowStrength);
 			}
-			else
+		}
+		else
+		{
+			if (globalMaterialParam)
 			{
-				n_warning("WARNING! GlobalMaterialParam is null.");
+				globalMaterialParam->SetVectorParam(Graphic::eGShaderVecAmbientColor, Math::float4(0.0f, 0.0f, 0.0f, 0.0f));
+				globalMaterialParam->SetVectorParam(Graphic::eGShaderVecFogColor, Math::float4(0.0f, 0.0f, 0.0f, 0.0f));
+				globalMaterialParam->SetVectorParam(Graphic::eGShaderVecFogParam, Math::float4(0.0f, 0.0f, 0.0f, 0.0f));
+				globalMaterialParam->SetVectorParam(Graphic::eGShaderVecSoftShadowParam, Math::float4(0.0f, 0.0f, 0.0f, 0.0f));
 			}
 		}
 
@@ -309,9 +339,11 @@ namespace Graphic
 	void RenderScene::_AddCamera(Camera* camera)
 	{
 		n_assert(camera);
-
-		mCameraList.Append(camera);
-		_SortCameraList();
+		if (InvalidIndex == mCameraList.FindIndex(camera))
+		{
+			mCameraList.Append(camera);
+			_SortCameraList();
+		}
 	}
 
 	//------------------------------------------------------------------------
@@ -322,6 +354,7 @@ namespace Graphic
 			if (camera == mCameraList[i])
 			{
 				mCameraList.EraseIndex(i);
+				return;
 			}
 		}
 	}
@@ -329,7 +362,7 @@ namespace Graphic
 	//------------------------------------------------------------------------
 	void RenderScene::_SortCameraList()
 	{
-		CameraSort order(GraphicSystem::Instance()->GetMainViewPortWindow(),mDefaultCamera);
+		CameraSort order(GraphicSystem::Instance()->GetMainViewPortWindow());//,mDefaultCamera);
 		Util::CustomSortArray<GPtr<Camera>, CameraSort>(mCameraList, order);
 	}
 

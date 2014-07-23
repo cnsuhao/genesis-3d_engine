@@ -31,6 +31,7 @@ THE SOFTWARE.
 #include "base/RenderToTexture.h"
 #include "util/stl.h"
 #include "base/ImageFilters.h"
+#include "graphicsystem/RenderTargetSuite.h"
 #include "graphicsystem/Material/Material.h"
 #include "graphicsystem/Vision/RenderScene.h"
 #include "Camera/RenderPipeline/RenderPipeline.h"
@@ -87,10 +88,8 @@ namespace Graphic
 
 	class Camera : public GraphicObject
 	{
-		__DeclareSubClass(Camera,GraphicObject)
-			__ScriptBind
+		__DeclareSubClass(Camera,GraphicObject);
 	public:
-
 		static float S_Camera_Far;	//	hack code for demo shadow map 
 		enum RenderMode
 		{
@@ -99,7 +98,30 @@ namespace Graphic
 			CustomedMode
 		};
 
-		struct ViewPort
+		enum RenderSort
+		{
+			SortBackground = 1000,
+			SortRTT = 2000,
+			SortScene = 3000,
+			SortTop = 4000,
+			SortSuperTop = 5000,
+			SortUI = 6000,		
+			SortSuperUI = 7000,
+			SortDefault = SortScene,
+		};
+
+		enum Pick
+		{
+			PickNone = BIT_FLAG_NONE,
+			PickCullObjects = BIT_FLAG(0),
+			PickNoCullObjects = BIT_FLAG(1),
+			PickSelfObjects = BIT_FLAG(2),
+			PickSunLight = BIT_FLAG(3),
+			PickOtherLights = BIT_FLAG(4),
+			PickAll = BIT_FLAG_ALL,
+		};
+
+		struct Viewport
 		{
 			SizeT x;
 			SizeT y;
@@ -147,9 +169,14 @@ namespace Graphic
 		/// get drawmode
 		const DrawType& GetDrawType() const;
 
+		void SetViewType(ViewType type, float fovOrHeight);
+
 		ViewType GetViewType() const;
 
-		void SetViewType(ViewType type, float fovOrHeight);
+		void SetRenderSort(uint sort);
+
+		uint GetRenderSort() const;
+
 		/// set
 		void SetRenderMode(RenderMode mode);
 		/// get
@@ -194,32 +221,12 @@ namespace Graphic
 
 		/// set rendertotexture
 		void SetRenderToTexture(const GPtr<RenderToTexture>& rtt);
-		/// get rendertotexture
-		const GPtr<RenderToTexture>& GetRenderToTexture() const;	
-		/// set swap texture
-		void SetSwapTexture(const GPtr<RenderToTexture>& rtt);
-		/// get swap texture
-		const GPtr<RenderToTexture>& GetSwapTexture() const;
 		///set lightlit map
 		void SetLightLitMap(const GPtr<RenderToTexture>& rtt);
 		
 		bool IsRenderDepthMap() const;
-		/// render depth map
-		bool HasDepthMap() const;
-		/// get depth map
-		const GPtr<RenderToTexture>& GetDepthMap() const;
-
-		const GPtr<RenderToTexture>& GetDeferredNormalMap() const;
-
-		const GPtr<RenderToTexture>& GetDeferredParamMap() const;
-
-		const GPtr<RenderToTexture>& GetDeferredLightMap() const;
 
 		bool IsRenderLightLitMap() const;
-		/// render light lit map
-		bool HasLightLitMap() const;
-		/// get light lit map
-		const GPtr<RenderToTexture>& GetLightLitTexture() const;
 		/// get light lit material
 		const GPtr<Material>& GetLightLitMaterial() const;
 		/// get shadow blur material
@@ -232,19 +239,15 @@ namespace Graphic
 		const bool UseViewport() const;
 
 		/// set viewport
-		void SetViewport(const ViewPort& vp);
+		void SetViewport(const Viewport& vp);
 		/// get viewport
-		const ViewPort& GetViewport() const;
+		const Viewport& GetViewport() const;
 
 		void SetTargetWindow(ViewPortWindow* target);
 
 		ViewPortWindow* GetTargetWindow() const;
 		/// get custom material
 		const GPtr<Material>& GetCustomMaterial() const;
-		/// get wire material
-		//const GPtr<Material>& GetWireMaterial() const;
-		/// set wire color
-		//void SetWireColor(const float4& color) const;
 
 		const bool IsRenderNormal() const;
 
@@ -259,6 +262,12 @@ namespace Graphic
 		const RenderLayer& GetCullMask() const;
 		/// set cull mask
 		void SetCullMask(const RenderLayer& rl);
+
+		void SetPickMark(Pick mark);
+
+		Pick GetPickMark() const;
+
+		bool IsPick(Pick pck) const;
 
 		void SetRenderSurface(bool bRenderSurface);
 
@@ -278,9 +287,9 @@ namespace Graphic
 
 		const bool IsUsingWindowSize() const;
 
-		void OnResizeWindow(const RenderBase::DisplayMode& dm);
+		void OnResizeWindow(int w, int h);
 
-		void OnDeviceReset(const RenderBase::DisplayMode& dm);
+		void OnDeviceReset();
 
 		void ResetProjMatrix(int w, int h);
 
@@ -312,13 +321,11 @@ namespace Graphic
 		//临时处理让摄影机不参与shadow map的渲染
 		void SetRenderLightLitMap(bool enable);
 
-		void SetAntiAliasQuality(RenderBase::AntiAliasQuality::Code qua);
-
-		RenderBase::AntiAliasQuality::Code GetAntiAliasQuality();
+		RenderTargetSuite* GetRenderTargetSuite() const;
 
 		void SetUseCallBack(bool bUse);
 
-		bool GetUseCallBack();
+		bool GetUseCallBack() const;
 
 #if __GENESIS_EDITOR__
 
@@ -334,25 +341,18 @@ namespace Graphic
 #endif
 
 	private: 
-
+		RenderTargetSuite::Target checkTarget() const;
 		void registWindowEvent();
 
 		void unregistWindowEvent();
 
-		void setupDeferred();
+		//void setupDeferred();
 		void onTargetSizeChange(ViewPortWindow* sender);
-		void checkDepthMap();
-		void checkLightLitMap();
 		Core::RefCounted* m_owner;
-
-		GPtr<QuadRenderable>  m_quadRenderable;				//use for blit image,if we use same quad,dx has a 0.5 
 
 		GPtr<RenderPipelineManager> m_renderPipelineManager;
 
-		GPtr<RenderToTexture> m_renderToTexture;
-		GPtr<RenderToTexture> m_lightLitTexture;
-		GPtr<RenderToTexture> m_swapTexture;
-		GPtr<RenderToTexture> m_depthMap;
+		GPtr<RenderTargetSuite> m_targetSuite;
 		//GPtr<RenderToTexture> m_backBuffer;
 		GPtr<Material>        m_lightLitMaterial;
 		GPtr<Material>		 m_customMaterial;
@@ -362,12 +362,11 @@ namespace Graphic
 		GPtr<RenderToTexture> m_deferredLightMap;
 
 		RenderScene*				m_renderScene;
-		ViewPortWindow*		m_targetWindow;
-		CameraListener*		m_listener;
-
-		_simple_scene		m_cameraScene;
+		ViewPortWindow*				m_targetWindow;
+		CameraListener*				m_listener;
+		_simple_scene				m_cameraScene;
 		CameraSetting				m_setting;
-		ImageFilterManager				m_postEffects;
+		ImageFilterManager			m_postEffects;
 
 		Math::float4				m_debugColor;
 		Math::float4				m_ClipPlane;
@@ -376,9 +375,11 @@ namespace Graphic
 		RenderLayer		m_cullMask;
 		DrawType		m_drawMode;
 		ViewType		m_viewType;
-		ViewPort		m_viewPort;
+		Viewport		m_viewPort;
 		RenderMode		m_renderMode;
-		RenderBase::AntiAliasQuality::Code m_antiAliasQuality;
+		Pick			m_pickMark;
+		uint			m_renderSort;
+
 		bool m_bSetup;
 		bool m_bUseViewPort;
 		bool m_bRenderDepthMap;
@@ -468,76 +469,17 @@ namespace Graphic
 		return m_renderMode;
 	}
 
-	inline void Camera::SetRenderToTexture(const GPtr<RenderToTexture>& rtt)
-	{
-		m_renderToTexture = rtt;
-		m_viewPort.width = rtt->GetWidth();
-		m_viewPort.height = rtt->GetHeight();
-	}
-
-	inline const GPtr<RenderToTexture>& Camera::GetRenderToTexture() const
-	{
-		return m_renderToTexture;
-	}
-
-	//inline const RenderBase::RenderResourceHandle& Camera::GetBackBuffer() const
+	//inline void Camera::SetSwapTexture(const GPtr<RenderToTexture>& rtt)
 	//{
-	//	return m_backBuffer ? m_backBuffer->GetTargetHandle() : dummyhandle;
+	//	
 	//}
-
-	inline void Camera::SetSwapTexture(const GPtr<RenderToTexture>& rtt)
-	{
-		m_swapTexture = rtt;
-	}
-
-	inline const GPtr<RenderToTexture>& Camera::GetSwapTexture() const
-	{
-		return m_swapTexture;
-	}
-
 	inline bool Camera::IsRenderDepthMap() const
 	{
 		return m_bRenderDepthMap;
 	}
-
-	inline bool Camera::HasDepthMap() const
-	{
-		return m_bRenderDepthMap && m_depthMap.isvalid();
-	}
-
-	inline const GPtr<RenderToTexture>& Camera::GetDepthMap() const
-	{
-		return m_depthMap;
-	}
-
-	inline const GPtr<RenderToTexture>& Camera::GetDeferredNormalMap() const
-	{
-		return m_deferredNormalMap;
-	}
-
-	inline const GPtr<RenderToTexture>& Camera::GetDeferredParamMap() const
-	{
-		return m_deferredParamMap;
-	}
-
-	inline const GPtr<RenderToTexture>& Camera::GetDeferredLightMap() const
-	{
-		return m_deferredLightMap;
-	}
-
 	inline bool Camera::IsRenderLightLitMap() const
 	{
-		return m_bRenderLightLitMap;
-	}
-
-	inline bool Camera::HasLightLitMap() const
-	{
-		return m_bRenderLightLitMap && m_lightLitTexture.isvalid();
-	}
-
-	inline const GPtr<RenderToTexture>& Camera::GetLightLitTexture() const
-	{
-		return m_lightLitTexture;
+		return m_bRenderLightLitMap && m_lightLitMaterial.isvalid();
 	}
 
 	inline const GPtr<Material>& Camera::GetLightLitMaterial() const
@@ -580,6 +522,21 @@ namespace Graphic
 		return m_cullMask;
 	}
 
+	inline void Camera::SetPickMark(Pick mark)
+	{
+		m_pickMark = mark;
+	}
+
+	inline bool Camera::IsPick(Pick pck) const
+	{
+		return BIT_FLAG_IS_OPEN(m_pickMark, pck);
+	}
+
+	inline Camera::Pick Camera::GetPickMark() const
+	{
+		return m_pickMark;
+	}
+
 	inline const bool Camera::IsRenderSurface() const
 	{
 		return m_bRenderSurface;
@@ -595,13 +552,13 @@ namespace Graphic
 		return m_bUseViewPort;
 	}
 
-	inline void Camera::SetViewport(const ViewPort& vp)
+	inline void Camera::SetViewport(const Viewport& vp)
 	{
 		m_viewPort     = vp;
 		m_bUseViewPort = true;
 	}
 
-	inline const Camera::ViewPort& Camera::GetViewport() const
+	inline const Camera::Viewport& Camera::GetViewport() const
 	{
 		return m_viewPort;
 	}
@@ -660,6 +617,12 @@ namespace Graphic
 	{
 		return m_viewType;
 	}
+
+	inline uint Camera::GetRenderSort() const
+	{
+		return m_renderSort;
+	}
+
 	//---------------------------------------------------------------------------------
 	inline ImageFilterManager& Camera::GetPostEffectFilters()
 	{
@@ -682,19 +645,6 @@ namespace Graphic
 	inline CameraListener* Camera::GetListener() const
 	{
 		return m_listener;
-	}
-
-	inline void Camera::SetRenderScene(RenderScene* scene,bool bAddToRenderScene)
-	{
-		if(m_renderScene)
-		{
-			m_renderScene->_RemoveCamera(this);
-		}
-		m_renderScene = scene;
-		if(m_renderScene && bAddToRenderScene )
-		{
-			m_renderScene->_AddCamera(this);
-		}
 	}
 	//---------------------------------------------------------------------------------
 	inline void Camera::SetShadowDistence(float shadowDis)
@@ -727,22 +677,6 @@ namespace Graphic
 		return m_bUseBeforeDrawEvent;
 	}
 
-	inline const GPtr<QuadRenderable>&  Camera::GetQuadRenderable() const
-	{
-		return m_quadRenderable;
-	}
-
-	inline void Camera::SetRenderLightLitMap(bool enable)
-	{
-		m_bRenderLightLitMap = enable;
-	}
-
-
-	inline RenderBase::AntiAliasQuality::Code Camera::GetAntiAliasQuality()
-	{
-		return m_antiAliasQuality;
-	}
-
 	inline RenderScene* Camera::GetRenderScene() const
 	{
 		return m_renderScene;
@@ -753,9 +687,14 @@ namespace Graphic
 		m_bUseCallBack = bUse;
 	}
 
-	inline bool Camera::GetUseCallBack()
+	inline bool Camera::GetUseCallBack() const
 	{
 		return m_bUseCallBack;
+	}
+
+	inline RenderTargetSuite* Camera::GetRenderTargetSuite() const
+	{
+		return m_targetSuite.get_unsafe();
 	}
 	//---------------------------------------------------------------------------------
 #if __GENESIS_EDITOR__

@@ -318,7 +318,7 @@ namespace App
 		}
 		if (vpw->GetNeedUpdate())
 		{
-			Graphic::GraphicSystem::Instance()->SetCurrentTargetWindow(vpw, RenderBase::RenderTarget::ClearNone);
+			Graphic::GraphicSystem::Instance()->_SetRenderWindow(vpw);
 
 			Util::Dictionary< int, GPtr<StaticText> >::Iterator itBegin = mStaticText.Begin();
 			Util::Dictionary< int, GPtr<StaticText> >::Iterator itEnd = mStaticText.End();

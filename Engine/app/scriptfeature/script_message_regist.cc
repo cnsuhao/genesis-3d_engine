@@ -23,7 +23,7 @@ THE SOFTWARE.
 ****************************************************************************/
 #include "stdneb.h"
 #include "script_message_regist.h"
-#if __USE_PHYSX__ || __GENESIS_EDITOR__
+#if defined (__USE_PHYSX__) || defined (__GENESIS_EDITOR__)
 #include "physXfeature/physicsCore/PhysicsDeclaration.h"
 #endif
 
@@ -33,7 +33,7 @@ namespace App
 
 	void Reg_ScriptRuntime_Message()
 	{
-#if __USE_PHYSX__ || __GENESIS_EDITOR__
+#if defined (__USE_PHYSX__) || defined (__GENESIS_EDITOR__)
 		MESSAGE_REGIST( OnControllerShapeCollision, "*:OnControllerShapeCollision(UserReportPair)", UserReportPair );
 		MESSAGE_REGIST( OnTriggerEnter, "*:OnTriggerEnter(UserReportPair)", UserReportPair );
 		MESSAGE_REGIST( OnTriggerStay, "*:OnTriggerStay(UserReportPair)", UserReportPair );

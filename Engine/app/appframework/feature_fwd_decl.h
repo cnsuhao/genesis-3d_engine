@@ -48,8 +48,11 @@ namespace App
     class SoundFeature;
     class ScriptFeature;
     class GUIServer;
-#ifndef __OSX__
+#if defined (__USE_PHYSX__) || defined (__GENESIS_EDITOR__)
 	class PhysicsFeature;
+#endif
+    
+#ifndef __OSX__
     class NetworkFeature;
 #endif
     class FontFeature;
@@ -74,8 +77,10 @@ namespace App
    	typedef GPtr<SoundFeature> TSoundFeaturePtr;
    	typedef GPtr<FontFeature> TFontFeaturePtr;
     typedef GPtr<ALSystemFeature> TALSystemFeaturePtr;
-#ifndef __OSX__
+#if defined (__USE_PHYSX__) || defined (__GENESIS_EDITOR__)
     typedef GPtr<PhysicsFeature> TPhysicsFeaturePtr;
+#endif
+#ifndef __OSX__
 	typedef GPtr<NetworkFeature> TNetworkFeaturePtr;
 #endif
 }

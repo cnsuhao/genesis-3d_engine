@@ -79,6 +79,7 @@ SET ( CONFIG_HEADER_FILES
 
 #d3d9 folder
 SET ( D3D9_HEADER_FILES 
+    d3d9/D3d9Heads.h
 	d3d9/D3D9Types.h
 	d3d9/GPUProgramD3D9.h
 	d3d9/IndexBufferD3D9.h

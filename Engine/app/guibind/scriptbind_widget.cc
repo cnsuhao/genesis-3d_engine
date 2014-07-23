@@ -24,6 +24,7 @@ THE SOFTWARE.
 #include "stdneb.h"
 #include "scriptfeature/inc/script_utility.h"
 #include "guifeature/guiutility.h"
+
 namespace App
 {
 
@@ -352,6 +353,11 @@ namespace App
 		return widget->getRootKeyFocus();
 	}
 
+	static void ICall_setGray(gconstpointer widget_ptr, bool value)
+	{
+		MyGUI::Widget* widget = static_cast<MyGUI::Widget*>(widget_ptr);
+		widget->setGray(value);
+	}
 
 
 	void ICallReg_ScriptGUI_Widget()
@@ -408,8 +414,9 @@ namespace App
 			,{ "ScriptGUI.Widget::ICall_getInheritsPick",			(void*)&ICall_getInheritsPick}
 			,{ "ScriptGUI.Widget::ICall_setMaskPick",				(void*)&ICall_setMaskPick}
 			,{ "ScriptGUI.Widget::ICall_isMaskPickInside",			(void*)&ICall_isMaskPickInside}
-			,{ "ScriptGUI.Widget::ICall_getRootMouseFocus",		(void*)&ICall_getRootMouseFocus}
+			,{ "ScriptGUI.Widget::ICall_getRootMouseFocus",		    (void*)&ICall_getRootMouseFocus}
 			,{ "ScriptGUI.Widget::ICall_getRootKeyFocus",			(void*)&ICall_getRootKeyFocus}
+			,{ "ScriptGUI.Widget::ICall_setGray",				    (void*)&ICall_setGray}
 		};
 
 		int size = sizeof(s_cScriptBindInternalCallDetail)/sizeof(InternalCallDetail);

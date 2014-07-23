@@ -37,6 +37,7 @@ namespace App
 		ScriptObjWrapper<AnimationComponent> self( pMonoObj );
 		const Util::String& name = Utility_MonoStringToCppString( pMonoString );
 		self->SetAnimationID( name );
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//------------------------------------------------------------------------
 	static bool ICall_AnimationComponent_ContainAnimationID( MonoObject* pMonoObj, MonoString* pMonoString )
@@ -94,6 +95,7 @@ namespace App
 		ScriptObjWrapper<AnimationComponent> self( pMonoObj );
 		Util::String name = Utility_MonoStringToCppString( pMonoString );
 		self->SetWrapMode(name,iWrapMode);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//------------------------------------------------------------------------
 	static void ICall_AnimationComponent_SetAnimationLayer( MonoObject* pMonoObj, MonoString* pMonoString, int layer )

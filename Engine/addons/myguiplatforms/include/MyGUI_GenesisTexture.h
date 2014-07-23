@@ -87,10 +87,11 @@ namespace MyGUI
 		static RenderBase::PixelFormat::Code FormatMyGuiToWj(PixelFormat format);
 		static RenderBase::RenderResource::Usage UsageMyGuiToWj(TextureUsage usage);
 
-		static void SetResourcePath(const Util::String& path);
 
 	private:
-
+		void createManualTexture(int _width, int _height, TextureUsage _usage, PixelFormat _format);
+		void createManualRenderToTexture(int _width, int _height, TextureUsage _usage, PixelFormat _format);
+		void loadTextureFromFile(const std::string& _filename);
 		void setFormat(PixelFormat format);
 		std::string mName;
 		std::string mGroup;
@@ -107,7 +108,6 @@ namespace MyGUI
 		TextureBuffer m_texStream;
 		GPtr<Resources::TextureResInfo> m_texRes;
 		bool m_bManualCreate;
-		static Util::String s_resourcePath;
 	};
 
 	inline GenesisTexture::TextureBuffer& GenesisTexture::GetBuffer()

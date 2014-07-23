@@ -83,7 +83,9 @@ void GameIap::onStoreKitPurchaseSucceed(const Util::String & productIdentifier,
 	//		拿着sk返回的receipt再去appStore做验证，但我们的iap是build-in，而不是server-base，因此没必要这样做
 	*/
 
-	
+	ScriptIAPInstance::Instance()->onStoreKitPurchaseSucceed(productIdentifier,transactionIdentifier,transactionReceipt);
+
+	NALSystem::ALSystem::getInstance()->storeKitFinishTransaction(transactionIdentifier);
 };
 
 

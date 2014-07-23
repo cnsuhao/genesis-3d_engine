@@ -39,7 +39,7 @@ namespace MyGUI
 
 	GenesisRTTexture::GenesisRTTexture(GPtr<Graphic::RenderToTexture>& rtt)
 	{
-		m_rtt = rtt;
+		mRtt = rtt;
 		const GPtr<RenderBase::RenderTarget>& renderTarget = rtt->GetRenderTarget();
 
 		size_t width = renderTarget->GetWidth();
@@ -55,25 +55,29 @@ namespace MyGUI
 		mRenderTargetInfo.pixScaleY = 1.0f / float(height);
 	}
 
+
+
 	GenesisRTTexture::~GenesisRTTexture()
 	{
-		m_rtt = NULL;
+		mRtt = NULL;
 	}
 
 	void GenesisRTTexture::begin()
 	{
 		GenesisRenderManager::getInstance()._beforeDraw();
-		Graphic::GraphicSystem::Instance()->SetRenderTarget(m_rtt->GetTargetHandle(), 0);	
+		mSaveRT = Graphic::GraphicSystem::Instance()->GetRenderTarget();
+		Graphic::GraphicSystem::Instance()->SetRenderTarget(mRtt->GetTargetHandle(), 0, RenderBase::RenderTarget::ClearAll);	
 	}
 
 	void GenesisRTTexture::end()
 	{
-		Graphic::GraphicSystem::Instance()->SetRenderTarget(RenderBase::TextureHandle(NULL), 0);	
+		Graphic::GraphicSystem::Instance()->SetRenderTarget(mSaveRT, 0, RenderBase::RenderTarget::ClearNone);
+		mSaveRT = NULL;
 	}
 
-	void GenesisRTTexture::doRender(IVertexBuffer* _buffer, ITexture* _texture, size_t _count)
+	void GenesisRTTexture::doRender(IVertexBuffer* _buffer, ITexture* _texture, size_t _count,int _material_type)
 	{
-		GenesisRenderManager::getInstance().doRender(_buffer, _texture, _count);
+		GenesisRenderManager::getInstance().doRender(_buffer, _texture, _count,_material_type);
 	}
 
 } // namespace MyGUI

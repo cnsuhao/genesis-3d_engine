@@ -29,7 +29,7 @@ THE SOFTWARE.
 #include "stdneb.h"
 #include "graphicsystem/GraphicSystem.h"
 #include "rendersystem/RenderSystem.h"
-#include "materialmaker/parser/GenesisShaderParser.h"
+#include "resource/resourcemanager.h"
 #include "foundation/io/ioserver.h"
 
 #include "MyGUI_GenesisDataManager.h"
@@ -51,8 +51,11 @@ namespace MyGUI
 {
 	using namespace Graphic;
 
-	Util::String GenesisRenderManager::s_resourcePath = "";
-	Util::String g_shaderName = "gui.shader";
+	std::string g_NormalShaderName = "sys:gui.shader";
+	std::string g_GrayShaderName = "sys:gui_gray.shader";
+
+	std::string g_NormalShaderNameOld = "asset:UIMedia/gui.shader";
+	std::string g_GrayShaderNameOld = "asset:UIMedia/gui_gray.shader";
 
 	GenesisRenderManager& GenesisRenderManager::getInstance()
 	{
@@ -72,6 +75,7 @@ namespace MyGUI
 		, m_shaderHandle(NULL)
 		,m_VertexMgr(NULL)
 		,m_TextureMgr(NULL)
+		,m_MateriaType(MyGUI::NORMAL)
 	{
 #if RENDERDEVICE_D3D9
 		mVertexFormat = VertexColourType::ColourARGB;
@@ -87,11 +91,16 @@ namespace MyGUI
 	void GenesisRenderManager::initialise(int width, int height, int bufferWidth, int bufferHeight)
 	{
 		mIsInitialise = true;
-		_checkShader();
+		//_checkShader();
 
 		m_VertexMgr  = MyGUI::GenesisVertexBufferMgr::Create();
 		m_TextureMgr = MyGUI::GenesisTextureMgr::Create();
 		setResolution(width, height, bufferWidth, bufferHeight);
+
+		if(!_loadShader(g_NormalShaderName))
+		{
+			_loadShader(g_NormalShaderNameOld);
+		}
 	}
 
 	void GenesisRenderManager::shutdown()
@@ -187,29 +196,27 @@ namespace MyGUI
 		outofDate();
 	}
 
-	void GenesisRenderManager::doRender(IVertexBuffer* _buffer, ITexture* _texture, size_t _count)
+	void GenesisRenderManager::doRender(IVertexBuffer* _buffer, ITexture* _texture, size_t _count,int _material_type)
 	{
 		GraphicSystem* gs = GraphicSystem::Instance();
 		if (gs)
-		{		
-			GenesisTexture* tex = static_cast<GenesisTexture*>(_texture);
-			if (tex)
+		{
+			if(_material_type != m_MateriaType)
 			{
-				if (tex->GetTextureHandle().IsValid())
+				SetMaterialByType(_material_type);
+			}
+
+			GenesisTexture* tex = static_cast<GenesisTexture*>(_texture);
+			if (tex && tex->GetTextureHandle().IsValid())
+			{
+				GenesisVertexBuffer* vb = static_cast<GenesisVertexBuffer*>(_buffer);
+				RenderBase::PrimitiveHandle handle = vb->GetPrimitiveHandle();
+				if (handle.IsValid())
 				{
 					gs->SetTexture(0,tex->GetTextureHandle());
-
+					gs->SetRenderState(m_shader->GetHandle()->GetTech()->GetDefaultPass()->GetRenderStateObject(), 0);
+					gs->DrawPrimitive(handle, 0, _count, 0 , 0);
 				}
-				else
-				{
-					return;
-				}	
-			}
-			GenesisVertexBuffer* vb = static_cast<GenesisVertexBuffer*>(_buffer);
-			RenderBase::PrimitiveHandle handle = vb->GetPrimitiveHandle();
-			if (vb)
-			{
-				gs->DrawPrimitive(handle, 0, _count, 0 , 0);
 			}
 		}
 	}
@@ -335,35 +342,65 @@ namespace MyGUI
 	{
 		GraphicSystem* gs = GraphicSystem::Instance();
 		gs->SetShaderProgram(*m_shaderHandle);
-		gs->SetRenderState(m_shader->GetTech()->GetDefaultPass()->GetRenderStateObject(), 0);
 	}
-	void GenesisRenderManager::_loadShader()
+	bool GenesisRenderManager::_loadShader(std::string& _name)
 	{		
 		m_shaderHandle = nullptr;
-		//static Util::String file_name("mygui.cg");
-		Util::StringAtom fileName(s_resourcePath + g_shaderName);//
-		if(IO::IoServer::Instance()->FileExists(fileName))
+		Resources::ResourceId id = _name.c_str();
+		if(IO::IoServer::Instance()->FileExists(id))
 		{
-			m_shader = GenesisMaterialMaker::MakeFromShader(fileName);
+			m_shader = Resources::ResourceManager::Instance()->CreateMaterialInfo(id, false);//GenesisMaterialMaker::MakeFromShader(fileName);
 			if (m_shader)
 			{
-				m_shaderHandle = const_cast<RenderBase::GPUProgramHandle*>(&m_shader->GetTech(0)->GetDefaultPass()->GetGPUProgramHandle(0));
+				m_shaderHandle = const_cast<RenderBase::GPUProgramHandle*>(&m_shader->GetHandle()->GetTech(0)->GetDefaultPass()->GetGPUProgramHandle(0));
 				//assert(NULL != m_shader);
 				//assert(NULL != m_shaderHandle);
-				GPtr<RenderBase::RenderStateDesc>& rso = m_shader->GetTech()->GetDefaultPass()->GetRenderStateObject();
+				GPtr<RenderBase::RenderStateDesc>& rso = m_shader->GetHandle()->GetTech()->GetDefaultPass()->GetRenderStateObject();
 				RenderBase::DeviceDepthAndStencilState state;
 				state = rso->GetDepthAndStencilState();
 				state.m_stencilTwoEnable = false;
 				state.m_depthEnable = false;
 				state.m_depthWriteMask = false;
 				rso->SetDepthAndStencilState(state);
+				return true;
 			}
 		}
+		return false;
 	}
 
-	void GenesisRenderManager::SetResourcePath(const Util::String& path)
+	void GenesisRenderManager::SetMaterialByType(int _type)
 	{
-		s_resourcePath = path;
-	}
+		//‘› ± Œﬁ”√°£
+		//switch(_type)
+		//{
+		//case MyGUI::NORMAL:
+		//	{
+		//		if(!_loadShader(g_NormalShaderName))
+		//		{
+		//			_loadShader(g_NormalShaderNameOld);
+		//		}
+		//	}
+		//	break;
+		//case MyGUI::GRAY:
+		//	{
+		//		if(!_loadShader(g_GrayShaderName))
+		//		{
+		//			_loadShader(g_GrayShaderNameOld);
+		//		}
+		//	}			
+		//	break;
+		//default:
+		//	{
+		//		if(!_loadShader(g_NormalShaderName))
+		//		{
+		//			_loadShader(g_NormalShaderNameOld);
+		//		}
+		//	}
+		//	break;
+		//}
 
+		//_beforeDraw();
+
+		m_MateriaType = _type;
+	}
 } // namespace MyGUI

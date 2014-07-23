@@ -41,7 +41,6 @@ namespace Graphic
 
 	ForwardShadingRenderPipeline::~ForwardShadingRenderPipeline()
 	{
-		m_currentRT = NULL;
 	}
 
 	void ForwardShadingRenderPipeline::Render(PipelineParamters& context)
@@ -80,17 +79,7 @@ namespace Graphic
 		const Camera* camera = context.m_camera;
 		if(!camera->IsRenderNormal())
 			return;
-		GraphicRenderer::ResetCache();
-//#if __WIN32__
-//		GraphicSystem::Instance()->SetRenderTarget(camera->GetBackBuffer(),0,RenderBase::RenderTarget::ClearAll);
-//		m_currentRT = 0;
-//#endif
-		const GPtr<RenderToTexture>& rtt= camera->GetRenderToTexture();
-		if (rtt.isvalid())
-		{
-			GraphicSystem::Instance()->SetRenderTarget(rtt->GetTargetHandle(),0,RenderBase::RenderTarget::ClearAll);
-			m_currentRT = rtt;
-		}
+		setTargetWindow(context);
 
 		renderRenderableList(context, RenderData::Background, eForward, NULL);//没有灯光的东西。在这里渲染。
 

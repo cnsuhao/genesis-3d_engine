@@ -44,14 +44,18 @@ namespace MyGUI
 		SubSkin();
 		virtual ~SubSkin();
 
+		virtual size_t getVertexCount() const;
+
 		virtual void setAlpha(float _alpha);
 
 		virtual void setVisible(bool _visible);
 
 		virtual void setStateData(IStateInfo* _data);
 
+		virtual void updateDrawItem(ITexture* _texture, ILayerNode* _node);
 		virtual void createDrawItem(ITexture* _texture, ILayerNode* _node);
 		virtual void destroyDrawItem();
+		virtual void onRenderItemChanged(ILayerNode* _sender, RenderItem* _old, RenderItem* _new);
 
 		// метод для отрисовки себя
 		virtual void doRender();
@@ -64,6 +68,7 @@ namespace MyGUI
 
 		virtual void _setUVSet(const FloatRect& _rect);
 		virtual void _setColour(const Colour& _value);
+		virtual void _setGray(bool _gray);
 
 	protected:
 		FloatRect mRectTexture;

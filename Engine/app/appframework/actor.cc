@@ -40,7 +40,7 @@ THE SOFTWARE.
 #include "scriptfeature/inc/script_component.h"
 #include "graphicfeature/components/rendercomponent.h"
 #include "graphicfeature/components/spriterendercomponent.h"
-#if __USE_PHYSX__ || __GENESIS_EDITOR__
+#if defined (__USE_PHYSX__) || defined (__GENESIS_EDITOR__)
 #include "physXfeature/PhysicsBodyComponent.h"
 #endif
 
@@ -167,7 +167,7 @@ void Actor::SetLayerID(LayerID id)
 	n_assert(0 <= id);
 	mLayerID = id;
 
-#if __USE_PHYSX__ || __GENESIS_EDITOR__
+#if defined (__USE_PHYSX__) || defined (__GENESIS_EDITOR__)
 	//从脚本设置的话，需要更新物理形状的groupId
 	GPtr<PhysicsBodyComponent> com = FindComponent<PhysicsBodyComponent>();
 	if(com.isvalid() && com->GetEntity()->IsValid())
@@ -1500,9 +1500,9 @@ void Actor::CopyFrom( const GPtr<Actor>& pSource,const ActorPropertySet& actorPr
 void Actor::_CopyFrom_MustProperty( const GPtr<Actor>& pSource, bool needRecurVFL)
 {
 	//更新 新加入的Component的显示属性
-	SetVisible(pSource->GetVisible(), needRecurVFL);
+	SetVisible(pSource->GetVisible(), false);
 #ifdef __GENESIS_EDITOR__
-	SetFrozen(pSource->GetFrozen(), needRecurVFL);
+	SetFrozen(pSource->GetFrozen(), false);
 #endif
 	SetLocalBoundingBox(pSource->GetLocalBoundingBox());
 	SetTemplateName( pSource->GetTemplateName() );
@@ -1681,6 +1681,21 @@ Actor::FindChildIndex(FastId id) const
 	for ( IndexT index = 0; index < count; ++index )
 	{
 		if ( mChildren[index]->GetFastId() == id )
+		{
+			return index;
+		}
+	}
+	return InvalidIndex;
+}
+//------------------------------------------------------------------------
+IndexT 
+Actor::FindChildIndex(const Util::String& name) const
+{
+	// @todo may be need optimize, eg. Binary Search
+	SizeT count = mChildren.Size();
+	for ( IndexT index = 0; index < count; ++index )
+	{
+		if ( mChildren[index]->GetName() == name )
 		{
 			return index;
 		}

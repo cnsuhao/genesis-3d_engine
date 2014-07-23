@@ -25,6 +25,7 @@ THE SOFTWARE.
 #define __ANDROIDMEMORYCONFIG_H__
 
 #include "core/config.h"
+#include <malloc.h>
 
 namespace Memory
 {
@@ -72,8 +73,55 @@ extern void SetupHeaps();
     Returns a human readable name for a heap type.
 */
 extern const char* GetHeapTypeName(HeapType heapType);
-    
+
+
+inline unsigned char* __AlignPointerAndWritePadding16(unsigned char* ptr)
+{
+	unsigned char paddingMask = (unsigned long)(ptr) & 15;
+	ptr = (unsigned char*)((unsigned long)(ptr + 16) & ~15);
+	ptr[-1] = paddingMask;
+	return ptr;
+}
+
+inline unsigned char* __UnalignPointer16(unsigned char* ptr)
+{
+	return (unsigned char*)((unsigned long)(ptr - 16) | ptr[-1]);
 }
 
 
+inline void* __Alloc16(size_t bytes)
+{
+	unsigned char* ptr = (unsigned char*)malloc(bytes + 16);
+
+	if (ptr != NULL)
+	{
+		ptr = __AlignPointerAndWritePadding16(ptr);
+	}
+
+	return (void*)ptr;
+}
+
+inline void* __ReAlloc16(void* pMem, size_t bytes)
+{
+	 unsigned char* ptr = (unsigned char*) pMem;
+	 unsigned char* rawPtr = __UnalignPointer16(ptr); 
+
+	 ptr = (unsigned char*)realloc(rawPtr, bytes+16);
+
+	 if (ptr != NULL)
+	 {
+		 ptr = __AlignPointerAndWritePadding16(ptr);
+	 }
+}
+
+inline void __Free16(void* pMem)
+{
+	unsigned char* ptr = (unsigned char*) pMem;
+	ptr = __UnalignPointer16(ptr);
+
+	free(ptr);
+}
+
+
+}
 #endif

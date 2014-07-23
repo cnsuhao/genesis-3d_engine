@@ -24,6 +24,7 @@ THE SOFTWARE.
 ****************************************************************************/
 #ifndef VERTEXLAYOUTD3D9_H_
 #define VERTEXLAYOUTD3D9_H_
+#include "D3d9Heads.h"
 #include "base/VertexLayout.h"
 
 class RenderBase::VertexComponent;

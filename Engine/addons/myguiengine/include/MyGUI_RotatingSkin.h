@@ -39,6 +39,8 @@ namespace MyGUI
 		RotatingSkin();
 		virtual ~RotatingSkin();
 
+		size_t getVertexCount() const;
+
 		/** Set angle of rotation in radians */
 		void setAngle(float _angle);
 		/** Get angle of rotation in radians */
@@ -57,8 +59,10 @@ namespace MyGUI
 
 		virtual void setStateData(IStateInfo* _data);
 
+		virtual void updateDrawItem(ITexture* _texture, ILayerNode* _node);
 		virtual void createDrawItem(ITexture* _texture, ILayerNode* _node);
 		virtual void destroyDrawItem();
+		virtual void onRenderItemChanged(ILayerNode* _sender, RenderItem* _old, RenderItem* _new);
 
 		// метод для отрисовки себя
 		virtual void doRender();
@@ -71,6 +75,7 @@ namespace MyGUI
 
 		virtual void _setUVSet(const FloatRect& _rect);
 		virtual void _setColour(const Colour& _value);
+		virtual void _setGray(bool _gray);
 
 	protected:
 		void _rebuildGeometry();

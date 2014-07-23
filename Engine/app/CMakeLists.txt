@@ -41,6 +41,7 @@ SET ( APPFRAMEWORK_HEADER_FILES
 	appframework/manager.h
 	appframework/serialization.h
 	appframework/scene.h
+	appframework/simplecamera.h
 	appframework/statehandler.h
 	appframework/profiletool.h
 )
@@ -62,6 +63,7 @@ SET ( APPFRAMEWORK_SOURCE_FILES
 	appframework/manager.cc
 	appframework/serialization.cc
 	appframework/scene.cc
+	appframework/simplecamera.cc
 	appframework/sceneserialization.cc
 	appframework/statehandler.cc
 	appframework/profiletool.cc
@@ -247,6 +249,7 @@ SET ( VEGETATION_SOURCE_FILES
 SET ( SCRIPTFEATURE_HEADER_FILES 
 	scriptfeature/mono_script_manager.h
 	scriptfeature/mono_script.h
+	scriptfeature/script_hook.h
 	scriptfeature/mono_icall_registration.h
 	scriptfeature/script_general_manager.h
 	scriptfeature/script_message_regist.h
@@ -267,6 +270,7 @@ SET ( SCRIPTFEATURE_SOURCE_FILES
 	scriptfeature/mono_icall_registration.cc
 	scriptfeature/script_general_manager.cc
 	scriptfeature/script_instance.cc
+	scriptfeature/script_hook.cc
 	scriptfeature/script_message.cc
 	scriptfeature/script_message_regist.cc
 	scriptfeature/script_feature.cc
@@ -395,6 +399,10 @@ SET ( GUIFEATURE_FILES
 	guifeature/guievent.cc
 	guifeature/FontFeature.h
 	guifeature/FontFeature.cc
+	guifeature/guiscene.h
+	guifeature/guiscene.cc
+	guifeature/guirenderobject.h
+	guifeature/guirenderobject.cc
 
 )
 SET ( JNI_FILES 
@@ -713,23 +721,22 @@ INCLUDE_DIRECTORIES(
 	${CMAKE_SOURCE_DIR}/depends
 	${CMAKE_SOURCE_DIR}/depends/boostWraper
 	${CMAKE_SOURCE_DIR}/depends/freetype/include
-	${CMAKE_SOURCE_DIR}/extincludes/physX3/linux
-	${CMAKE_SOURCE_DIR}/extincludes/physX3/linux/cooking
-	${CMAKE_SOURCE_DIR}/extincludes/physX3/linux/foundation
-	${CMAKE_SOURCE_DIR}/extincludes/physX3/linux/common
-	${CMAKE_SOURCE_DIR}/extincludes/physX3/linux/characterkinematic
-	${CMAKE_SOURCE_DIR}/extincludes/physX3/linux/cloth
-	${CMAKE_SOURCE_DIR}/extincludes/physX3/linux/extensions
-	${CMAKE_SOURCE_DIR}/extincludes/physX3/linux/geometry
-	${CMAKE_SOURCE_DIR}/extincludes/physX3/linux/gpu
-	${CMAKE_SOURCE_DIR}/extincludes/physX3/linux/particles
-	${CMAKE_SOURCE_DIR}/extincludes/physX3/linux/physxprofilesdk
-	${CMAKE_SOURCE_DIR}/extincludes/physX3/linux/physxvisualdebuggersdk
-	${CMAKE_SOURCE_DIR}/extincludes/physX3/linux/pvd
-	${CMAKE_SOURCE_DIR}/extincludes/physX3/linux/pxtask
-	${CMAKE_SOURCE_DIR}/extincludes/physX3/linux/RepX
-	${CMAKE_SOURCE_DIR}/extincludes/physX3/linux/RepXUpgrader
-	${CMAKE_SOURCE_DIR}/extincludes/physX3/linux/vehicle
+	${CMAKE_SOURCE_DIR}/extincludes/physX3/android
+	${CMAKE_SOURCE_DIR}/extincludes/physX3/android/cooking
+	${CMAKE_SOURCE_DIR}/extincludes/physX3/android/foundation
+	${CMAKE_SOURCE_DIR}/extincludes/physX3/android/common
+	${CMAKE_SOURCE_DIR}/extincludes/physX3/android/characterkinematic
+	${CMAKE_SOURCE_DIR}/extincludes/physX3/android/cloth
+	${CMAKE_SOURCE_DIR}/extincludes/physX3/android/extensions
+	${CMAKE_SOURCE_DIR}/extincludes/physX3/android/geometry
+	${CMAKE_SOURCE_DIR}/extincludes/physX3/android/particles
+	${CMAKE_SOURCE_DIR}/extincludes/physX3/android/physxprofilesdk
+	${CMAKE_SOURCE_DIR}/extincludes/physX3/android/physxvisualdebuggersdk
+	${CMAKE_SOURCE_DIR}/extincludes/physX3/android/pvd
+	${CMAKE_SOURCE_DIR}/extincludes/physX3/android/pxtask
+	${CMAKE_SOURCE_DIR}/extincludes/physX3/android/RepX
+	${CMAKE_SOURCE_DIR}/extincludes/physX3/android/RepXUpgrader
+	${CMAKE_SOURCE_DIR}/extincludes/physX3/android/vehicle
 
 	# should remove later
 	${CMAKE_SOURCE_DIR}/graphicsystem

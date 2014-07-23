@@ -33,24 +33,39 @@ THE SOFTWARE.
 #include "foundation/io/memorystream.h"
 #include "foundation/io/iointerface.h"
 #include "foundation/io/iointerfaceprotocol.h"
-//#include <Ogre.h>
-
-//#include "MyGUI_LastHeader.h"
-
 
 #include "foundation/io/ioserver.h"
 
 namespace MyGUI
 {
-	GenesisDataManager::GenesisDataManager() :
-mAllGroups(false),
+
+GenesisGuiGlobal::MediaLocations GenesisGuiGlobal::_mediaLocations;
+
+const GenesisGuiGlobal::MediaLocations& GenesisGuiGlobal::getMediaLocations()
+{
+	return _mediaLocations;
+}
+
+void GenesisGuiGlobal::pushMediaLocation(const std::string& path)
+{
+	if (std::find(_mediaLocations.begin(), _mediaLocations.end(), path) == _mediaLocations.end())
+	{
+		_mediaLocations.push_back(path);
+		if (*(_mediaLocations.rbegin()->rbegin()) != '/')
+		{
+			_mediaLocations.rbegin()->push_back('/');
+		}
+	}
+}
+
+
+
+GenesisDataManager::GenesisDataManager() :
+	mAllGroups(false),
 	mIsInitialise(false)
 {
 }
-void GenesisDataManager::SetResourcePath(const Util::String& path)
-{
-	m_srcPath = path;
-}
+
 void GenesisDataManager::initialise(const std::string& _group)
 {
 	MYGUI_PLATFORM_ASSERT(!mIsInitialise, getClassTypeName() << " initialised twice");
@@ -77,54 +92,61 @@ void GenesisDataManager::shutdown()
 
 IDataStream* GenesisDataManager::getData(const std::string& _name)
 {
-	Util::String filename = _name.c_str();
-	Util::String url = m_srcPath + filename;
-	try
+	std::string url;
+	const GenesisGuiGlobal::MediaLocations& paths = GenesisGuiGlobal::getMediaLocations();
+	if (paths.size() == 1)
 	{
-		//Ogre::DataStreamPtr stream = Ogre::ResourceGroupManager::getSingleton().openResource(_name, mGroup, true);
-		//OgreDataStream* data = new OgreDataStream(stream);
-		//return data;
-		GPtr<IO::Stream> pStream = IO::MemoryStream::Create();
-		n_assert( pStream );
-		GPtr<IO::ReadStream> readStreamMsg = IO::ReadStream::Create();
-		n_assert( readStreamMsg );
-		readStreamMsg->SetFileName( url);
-		readStreamMsg->SetStream( pStream );
-		IO::IoInterface::Instance()->SendWait( readStreamMsg.upcast<Messaging::Message>() );
+		url = paths.front() + _name;
+		return getDataStream(url);
+	}
+	else
+	{
+		MediaLocations::const_iterator it = paths.begin();
+		MediaLocations::const_iterator end = paths.end();
 
-		if ( !readStreamMsg->GetResult() )
+		IO::IoServer* ios = IO::IoServer::Instance();
+
+		while(it != end)
 		{
-			n_warning( "GenesisDataManager::getData: can not open %s", _name.c_str() );
-			return nullptr;
+			url = *it + _name;
+			if (ios->FileExists(IO::URI(url.c_str())))
+			{
+				return getDataStream(url);
+			}
+			++it;
 		}
-		pStream->SetAccessMode(IO::Stream::ReadAccess);
-		if (pStream->Open())
+		MYGUI_PLATFORM_LOG(Warning, std::string(std::string("file is not found:") + _name));
+		return nullptr;
+	}
+	return nullptr;
+}
+
+IDataStream* GenesisDataManager::getDataStream(const std::string& _url)
+{
+	//try
+	//{
+		GPtr<IO::Stream> fileStream = IO::IoServer::Instance()->ReadFile(_url.c_str());
+		if (fileStream.isvalid())
 		{
 			GPtr<IO::TextReader> tr = IO::TextReader::Create();
-
-			tr->SetStream(pStream);
+			tr->SetStream(fileStream);
 			GenesisDataStream* data = new GenesisDataStream(tr);
 			return (IDataStream*)data;
 		}
 
-		//GPtr<IO::Stream> stream = IO::IoServer::Instance()->CreateStream(IO::URI(url));
-		//if (stream && stream->Open())
-		//{
-		//	GPtr<IO::TextReader> tr = IO::TextReader::Create();
-		//	tr->SetStream(stream);
-		//	GenesisDataStream* data = new GenesisDataStream(tr);
-		//	return (IDataStream*)data;
-		//}
-
-	}
-	catch(...) //(const Ogre::FileNotFoundException& _e)
-	{
-		//MYGUI_PLATFORM_LOG(Warning, _e.getDescription());
-		MYGUI_PLATFORM_LOG(Warning, std::string(std::string("file error:") + _name));
+		MYGUI_PLATFORM_LOG(Warning, std::string(std::string("file error:") + _url));
 		return nullptr;
-	}
-	MYGUI_PLATFORM_LOG(Warning, std::string(std::string("file error:") + _name));
-	return nullptr;
+
+
+	//}
+	//catch(...) //(const Ogre::FileNotFoundException& _e)
+	//{
+	//	//MYGUI_PLATFORM_LOG(Warning, _e.getDescription());
+	//	MYGUI_PLATFORM_LOG(Warning, std::string(std::string("file error:") + _url));
+	//	return nullptr;
+	//}
+	//MYGUI_PLATFORM_LOG(Warning, std::string(std::string("file error:") + _url));
+	//return nullptr;
 }
 
 bool GenesisDataManager::isDataExist(const std::string& _name)

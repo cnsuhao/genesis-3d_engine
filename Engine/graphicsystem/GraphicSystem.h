@@ -61,7 +61,7 @@ namespace Graphic
 #else
 	class GraphicSystem :  public Core::RefCounted
 #endif
-	{
+	{ 
 #if USE_RENDER_THREAD
 		__DeclareSubClass(GraphicSystem,InterfaceBase);
 #else
@@ -79,7 +79,6 @@ namespace Graphic
 		float GetMaximumDepthInputValue();
 
 		void Open(WindHandle hWnd, int width, int height, RenderBase::PixelFormat::Code format);
-		void _SetupDefaultObjects();
 		void OnUpateFrame();
 		void RenderAll();
 
@@ -100,7 +99,7 @@ namespace Graphic
 		void OnEndFrame();
 
 		/// ================================ Render Functions =================================================
-		void SetViewPort(const Camera::ViewPort& vp);
+		void SetViewport(const Camera::Viewport& vp);
 
 		void SetVertexShaderConstantVectorF(const int& reg, const float4* val, const int& vec4count);
 		void SetPixelShaderConstantVectorF(const int& reg, const float4* val, const int& vec4count);
@@ -140,6 +139,8 @@ namespace Graphic
 		RenderBase::RenderTargetHandle CreateRenderTarget( GPtr<RenderBase::RenderTarget> rt, RenderBase::TextureHandle& texhandle );
 		void SetRenderTarget(RenderBase::RenderTargetHandle handle,SizeT index = 0,uint clearflag = (1<<0));
 		void SetRenderTarget(const GPtr<RenderToTexture>& rt,SizeT index = 0,uint clearflag = (1<<0));
+		RenderBase::RenderTargetHandle GetRenderTarget(SizeT index = 0);
+
 		void SetRenderTargetClearColor(const GPtr<RenderToTexture>& rt,const Math::float4& clearColor);
 		void ReSizeRenderTarget(RenderBase::RenderTargetHandle handle, int width, int height);
 		void ReSizeRenderTarget(GPtr<RenderToTexture> rt, int width, int height);
@@ -158,7 +159,7 @@ namespace Graphic
 		void SetTexture(SizeT index,const GPtr<RenderToTexture>& rtt);
 		void UpdateTexture(RenderBase::TextureHandle texHandle, RenderBase::Texture::UpdateFunction texMapInfo, void* tag);
 		void UpdateTexture(RenderBase::TextureHandle texHandle, GPtr<RenderBase::Texture> texture);
-		void   ChangeTexture(RenderBase::TextureHandle texHandle, GPtr<RenderBase::Texture> texture);
+		void ChangeTexture(RenderBase::TextureHandle texHandle, GPtr<RenderBase::Texture> texture);
 		void RemoveTexture(const RenderBase::TextureHandle &handle);
 
 		//////////////////////////////////////////////////////////////////////////
@@ -174,18 +175,6 @@ namespace Graphic
 		const RenderBase::GraphicCardCapability GetGraphicCardCapability();
 
 		void SetWireFrameMode(bool wireframe = false);
-
-
-		typedef void (*UICallBack)();
-		inline void SetUIBeforeDrawCallBack(UICallBack call_back)
-		{
-			m_uiBeforeDrawCallBack = call_back;
-		}
-
-		inline void SetUIDrawCallBack(UICallBack call_back)
-		{
-			m_uiDrawCallBack = call_back;
-		}
 
 		typedef void (*DebugDrawCallBack)();
 		inline void SetFontCallBack(DebugDrawCallBack call_back)
@@ -203,11 +192,21 @@ namespace Graphic
 
 		void SetDeviceLostCallBack(RenderBase::deviceLostCallBackFunc func);
 		
-		void SetCurrentTargetWindow(ViewPortWindow* target, RenderBase::RenderTarget::ClearFlag flag);
-
-		ViewPortWindow* GetCurrentTargetWindow() const;
+		void PushTargetWindow(ViewPortWindow* target);
 
 		void RenderCamera(Camera* camera);
+
+		void SortRenderScene();
+
+		void AddRenderScene(RenderScene* pScene);
+
+		void RemoveRenderScene(RenderScene* pScene);
+
+		Camera* GetSceneDefaultCamera() const;
+		RenderSceneList& GetRenderSceneList();
+
+		const GPtr<RenderToTexture>& GetDefaultWhiteRTT() const;
+
 		//Internal Call!!!!!!!!!!!!!!!!
 
 		void _ViewPortDirty();
@@ -219,14 +218,29 @@ namespace Graphic
 
 		void _PopRenderCamera();
 
-		void AddRenderScene(RenderScene* pScene);
-		void RemoveRenderScene(RenderScene* pScene);
+		void _SetRenderWindow(ViewPortWindow* target);
 
-		Camera* GetSceneDefaultCamera() const;
-		RenderSceneList& GetRenderSceneList();
+		void _SetBackBuffer(ViewPortWindow* target);
 	private:
-		void _SetCurrentTargetWindow(ViewPortWindow* target);
+
+		struct WinCache
+		{
+			ViewPortWindow* window;
+			bool nocleare;
+			inline WinCache()
+				:window(0)
+				,nocleare(true)
+			{
+			}
+		};
+		void _SetRenderTarget(const RenderBase::RenderTargetHandle& handle, SizeT index);
+
+		WinCache* _FindInCache(ViewPortWindow* target) const;
+		void _SetupDefaultObjects();
+		void _DestroyDefaultObjects();
+		void _PushTargetWindow(ViewPortWindow* target);
 		void _ClearWindowCache();
+		void _ApplyBackBuffer();
 		void _ApplyWindows();
 		void _RenderCamera(Camera* camera);
 
@@ -240,8 +254,6 @@ namespace Graphic
 		void StartRenderSystem(int width, int height);
 		void CloseRenderSystem();
 
-		UICallBack m_uiBeforeDrawCallBack;
-		UICallBack m_uiDrawCallBack;	// [2012.3.27 zhongdaohuan]
 		DebugDrawCallBack m_debugDrawCallBack;
 		GPtr<RenderBase::RenderDisplay> m_graphicDisplay;
 
@@ -278,13 +290,13 @@ namespace Graphic
 		GPtr<StreamBufferPool> m_streamBufferPool;
 
 		typedef Util::Array< GPtr<ViewPortWindow> > ViewPorts;
-		typedef Util::Array<ViewPortWindow*> Windows;
+		typedef Util::Array<WinCache> ViewportWindows;
+		typedef Util::Array<RenderBase::RenderTargetHandle> RenderTargets;
 
 		ViewPorts							m_ViewPortLists;
 	
 		Util::Stack<Camera*>				m_renderingCameraStack;
-		ViewPortWindow*						m_currentViewPortWindow;
-		Windows								m_windowCache;
+		ViewportWindows						m_windowCache;
 		IndexT								m_nViewPort;
 
 		bool								m_ViewPortDirty;
@@ -294,6 +306,10 @@ namespace Graphic
 		Util::Array< QuadRenderable* >		m_AllQuadRenderable;
 
 		RenderSceneList                     m_RenderSceneLists;
+
+		GPtr<RenderToTexture>				m_DefaultWhiteRTT;
+
+		RenderTargets						m_RenderTargetCache;
 	};
 
 
@@ -347,6 +363,11 @@ namespace Graphic
 		mRenderSystem->SetDeviceLostCallBack(func);
 	}
 
+	inline const GPtr<RenderToTexture>& GraphicSystem::GetDefaultWhiteRTT() const
+	{
+		return m_DefaultWhiteRTT;
+	}
+
 	//#if RENDERDEVICE_OPENGLES
 	//	inline void GraphicSystem::SetDeviceLost()
 	//	{
@@ -377,29 +398,6 @@ namespace Graphic
 	inline void GraphicSystem::_PopRenderCamera()
 	{
 		m_renderingCameraStack.Pop();
-	}
-
-	inline ViewPortWindow* GraphicSystem::GetCurrentTargetWindow() const
-	{
-		return m_currentViewPortWindow;
-	}
-
-	inline void GraphicSystem::AddRenderScene(RenderScene* pScene)
-	{
-		RenderSceneList::Iterator it = m_RenderSceneLists.Find(pScene);
-		if (NULL == it)
-		{
-			m_RenderSceneLists.Append(pScene);
-		}
-	}
-
-	inline void GraphicSystem::RemoveRenderScene(RenderScene* pScene)
-	{
-		RenderSceneList::Iterator it = m_RenderSceneLists.Find(pScene);
-		if (NULL != it)
-		{
-			m_RenderSceneLists.Erase(it);
-		}
 	}
 
 	inline Camera* GraphicSystem::GetSceneDefaultCamera() const

@@ -231,7 +231,7 @@ namespace D3D9
 
 		const PrimitiveGroupD3D9*		m_primitiveGroupD9;
 		const GPUProgramD3D9*			m_pGPUProgramD9;
-		Util::Array<RenderTargetD3D9*> m_pRenderTargets;
+		Util::Array< GPtr<RenderTargetD3D9> > m_pRenderTargets;
 
 		
 		//GPUInfo::GraphicCardInfo mGraphicCardObj;

@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-#if __USE_PHYSX__ || __GENESIS_EDITOR__
+#if defined (__USE_PHYSX__) || defined (__GENESIS_EDITOR__)
 #include "stdneb.h"
 #include "PxMaterial.h"
 #include "PxRigidActor.h"
@@ -51,7 +51,7 @@ THE SOFTWARE.
 #define MaxLayers 32
 
 namespace App
-{
+{                                                                                                                                                             
 	__ImplementClass(App::PhysicsShape, 'PPSB', Core::RefCounted);
 
 	using namespace Graphic;
@@ -276,7 +276,13 @@ namespace App
 	{
 		if ( m_pShape )
 		{
-			m_pShape->setLocalPose(PxTransform(RotPosToPxMat(m_Center,m_Rotation)));
+			Math::float3 bbCenter(0.0f, 0.0f, 0.0f);
+			if (m_pEntity && m_pEntity->GetBodyCom() && m_pEntity->GetBodyCom()->GetActor())
+			{
+				const Math::bbox& bb = m_pEntity->GetBodyCom()->GetActor()->GetLocalBoundingBox();
+				bbCenter.set(bb.center().x(), bb.center().y(), bb.center().z());
+			}
+			m_pShape->setLocalPose(PxTransform(RotPosToPxMat(m_Center+bbCenter,m_Rotation)));
 		}
 	}
 
@@ -451,7 +457,7 @@ namespace App
 		n_assert(m_pShape)
 			if ( m_pShape )
 			{
-				m_Name = Util::String::FromInt((int)this);
+				m_Name = Util::String::FromInt((unsigned int)this);
 				m_pShape->userData = this;
 				m_pShape->setContactOffset(0.02f);
 				m_pShape->setRestOffset(-0.01f);

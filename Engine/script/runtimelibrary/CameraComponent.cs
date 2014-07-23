@@ -43,7 +43,7 @@ namespace ScriptRuntime
         /// 摄像机组件构造函数
         /// 默认创建一个透视投影的摄像机
         /// </summary>
-        public CameraComponent()
+        protected CameraComponent()
         {
             ICall_CameraComponent_Bind(this);
             SetupPerspectiveFovRH(MathHelper.PiOver4, 1, 1000);
@@ -254,6 +254,7 @@ namespace ScriptRuntime
         /// 设置光照纹理
         /// </summary>
         /// <param name="rtt">指定光照纹理的目标</param>
+        [System.Obsolete("This function is not used anymore.")]
         public void SetLightLitTexture(RenderToTexture rtt)
         {
             if (null != rtt)

@@ -34,6 +34,7 @@ namespace Graphic
 		,mpWindow(NULL)
 		,mUpdate(true)
 	{
+		mRTSuite = RenderTargetSuite::Create();
 	}
 	//--------------------------------------------------------------------------------
 	ViewPortWindow::~ViewPortWindow()
@@ -46,23 +47,47 @@ namespace Graphic
 		mpWindow = dwnd;
 	}
 
-	void ViewPortWindow::ChangeSize(SizeT width, SizeT height)
+	void ViewPortWindow::ChangeSize(SizeT width, SizeT height, bool force /* = false */)
 	{
 		mDisplayMode.SetWidth(width);
 		mDisplayMode.SetHeight(height);
-		mDirty = true;
-		GraphicSystem::Instance()->_ViewPortDirty();
+		if (force)
+		{
+			_OnChangeSize();
+		}
+		else
+		{
+			mDirty = true;
+			GraphicSystem::Instance()->_ViewPortDirty();
+		}
+	}
+
+	void ViewPortWindow::OnDeviceReset()
+	{
+		if (mRTSuite.isvalid())
+		{
+			mRTSuite->OnDeviceReset();
+		}
 	}
 
 	void ViewPortWindow::Setup()
 	{
-		m_backBuffer = RenderToTexture::Create();
-		setupBackBuffer();
+		if (mpWindow)
+		{
+			m_backBuffer = RenderToTexture::Create();
+			setupBackBuffer();
+		}
+		mRTSuite->Setup(mDisplayMode.GetWidth(), mDisplayMode.GetHeight(), RenderTargetSuite::Target_All);
 	}
 
 	void ViewPortWindow::Destroy()
 	{
 		m_backBuffer = NULL;
+	}
+
+	void ViewPortWindow::ChangeAntiAliasQuality(RenderBase::AntiAliasQuality::Code alias)
+	{
+		mRTSuite->ChangeAntiAliasQuality(alias);
 	}
 
 	void ViewPortWindow::ApplyWindow()
@@ -83,21 +108,23 @@ namespace Graphic
 
 	void ViewPortWindow::_OnChangeSize() 
 	{
-		setupBackBuffer();
+		if (m_backBuffer.isvalid())
+		{
+			setupBackBuffer();
+		}
+		if (mRTSuite.isvalid())
+		{
+			mRTSuite->OnChangeSize(mDisplayMode.GetWidth(), mDisplayMode.GetHeight());
+		}
 		eventViewportChange(this);
 		mDirty = false;
-	}
-
-	void ViewPortWindow::ApplyGlobalShaderParam() const
-	{
-		Material::GetGlobalMaterialParams()->SetVectorParam(eGShaderVecScreenSize,float4(float(mDisplayMode.GetWidth()),float(mDisplayMode.GetHeight()),float(0.5/mDisplayMode.GetWidth()),float(0.5/mDisplayMode.GetHeight())));
 	}
 
 	void ViewPortWindow::setupBackBuffer()
 	{
 		m_backBuffer->Setup(mDisplayMode.GetWidth(), mDisplayMode.GetHeight(),
 			RenderBase::PixelFormat::X8R8G8B8,
-			RenderBase::RenderTarget::ClearAll, Math::float4(0.0f,0.0f,1.0f,1.f), 
+			RenderBase::RenderTarget::ClearAll, Math::float4(0.2f,0.2f,0.2f,1.f), 
 			true,1.f, RenderBase::AntiAliasQuality::None,Math::rectangle<int>(0,0,0,0),true);
 		mpWindow->SetTargetHandle(m_backBuffer->GetTargetHandle());
 	}

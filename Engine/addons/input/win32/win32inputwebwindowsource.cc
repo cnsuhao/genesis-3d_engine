@@ -23,8 +23,8 @@ THE SOFTWARE.
 ****************************************************************************/
 #if WIN32
 
-
 #include "input/input_stdneb.h"
+#include "graphicsystem/GraphicSystem.h"
 #include "input/win32/win32inputwebwindowsource.h"
 #include "input/inputserver.h"
 
@@ -97,6 +97,7 @@ namespace Win32Input
 	//------------------------------------------------------------------------
 	Win32InputWebWindowSource::Win32InputWebWindowSource()
 		:mWnd(0)
+		,mLockWinodwsSize(true)
 	{
 		mMousePostion.set(0.0, 0.0);
 	}
@@ -158,7 +159,23 @@ namespace Win32Input
 					inputEvent.SetType(InputEvent::AppObtainFocus);
 					mInputEventList.Append(inputEvent);
 					//XInputEnable(true);
-					ReleaseCapture();
+					if (mLockWinodwsSize)
+					{
+						ReleaseCapture();
+					}
+					else
+					{
+						int nWidth = LOWORD(lParam); // width of client area
+						int nHeight = HIWORD(lParam); // height of client area
+						if(Graphic::GraphicSystem::HasInstance())
+						{
+							Graphic::ViewPortWindow* window = Graphic::GraphicSystem::Instance()->GetMainViewPortWindow();
+							if (window)
+							{
+								window->ChangeSize(nWidth, nHeight);
+							}
+						}
+					}
 				}
 
 				// manually change window size in child mode

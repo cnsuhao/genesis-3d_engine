@@ -27,13 +27,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 #include "stdneb.h"
-//#include <cstring>
-#include "MyGUI_GenesisTexture.h"
-//#include "MyGUI_DataManager.h"
-//#include "MyGUI_GenesisRenderManager.h"
-//#include "MyGUI_GenesisDiagnostic.h"
-#include "MyGUI_GenesisRTTexture.h"
-
 #include "resource/imageres.h"
 #include "resource/resourceserver.h"
 #include "graphicsystem/GraphicSystem.h"
@@ -41,13 +34,19 @@ THE SOFTWARE.
 #include "foundation/util/queue.h"
 #include "resource/resourcemanager.h"
 
+#include "MyGUI_GenesisDataManager.h"
+#include "MyGUI_GenesisTexture.h"
+
+#include "MyGUI_GenesisRTTexture.h"
+
+
+
 namespace MyGUI
 {
 
 	using namespace Resources;
 	using namespace Graphic;
 
-	Util::String GenesisTexture::s_resourcePath = "";
 	class TexUpdate
 	{	
 	public:
@@ -109,10 +108,6 @@ namespace MyGUI
 		destroy();
 	}
 
-	void GenesisTexture::SetResourcePath(const Util::String& path)
-	{
-		s_resourcePath = path;
-	}
 	const std::string& GenesisTexture::getName() const
 	{
 		return mName;
@@ -142,7 +137,13 @@ namespace MyGUI
 			}
 			GenesisTextureMgr::Instance()->RemoveManualTexture(this);
 		}
-
+		else 
+		{
+			if (m_bManualCreate)
+			{
+				delete mRenderTarget;
+			}
+		}
 		m_texStream = NULL;
 		m_texRes = NULL;
 		mRenderTarget = nullptr;
@@ -222,7 +223,7 @@ namespace MyGUI
 				myFormat = PixelFormat::R8G8B8;
 			}
 			break;
-		case RenderBase::PixelFormat::R8G8B8A8:
+		case RenderBase::PixelFormat::A8R8G8B8:
 			{
 				myFormat = PixelFormat::R8G8B8A8;
 			}
@@ -255,7 +256,7 @@ namespace MyGUI
 
 		else if(format == PixelFormat::R8G8B8A8)
 		{
-			wjFormat = RenderBase::PixelFormat::R8G8B8A8;
+			wjFormat = RenderBase::PixelFormat::A8R8G8B8;
 		}
 		else 
 		{
@@ -317,6 +318,19 @@ namespace MyGUI
 		m_height = _height;
 		mOriginalUsage = _usage;
 		setFormat(_format);
+
+		if (TextureUsage::RenderTarget == _usage)
+		{
+			createManualRenderToTexture(_width, _height, _usage, _format);
+		}
+		else
+		{
+			createManualTexture(_width, _height, _usage, _format);
+		}
+	}
+
+	void GenesisTexture::createManualTexture(int _width, int _height, TextureUsage _usage, PixelFormat _format)
+	{
 		RenderBase::PixelFormat::Code wj_format = FormatMyGuiToWj(_format);
 
 		GPtr<RenderBase::Texture> tex = RenderBase::Texture::Create();
@@ -371,6 +385,18 @@ namespace MyGUI
 			mOriginalFormat = PixelFormat::Unknow;
 		}
 	}
+
+	void GenesisTexture::createManualRenderToTexture(int _width, int _height, TextureUsage _usage, PixelFormat _format)
+	{
+		RenderBase::PixelFormat::Code wj_format = FormatMyGuiToWj(_format);
+		GPtr<Graphic::RenderToTexture> rtt = Graphic::RenderToTexture::Create();
+		rtt->Setup(_width, _height, wj_format, 
+			RenderBase::RenderTarget::ClearAll, Math::float4(0.0f,0.0f,0.0f,0.f), false, 1.f, RenderBase::AntiAliasQuality::None);
+
+		mRenderTarget = new GenesisRTTexture(rtt);
+		m_bManualCreate = true;
+	}
+
 	GPtr<RenderBase::Texture> _BuildTextureData(const GPtr<Resources::ImageRes>& image, GPtr<IO::MemoryStream>& memStream)
 	{
 		n_assert(image.isvalid());
@@ -443,73 +469,45 @@ namespace MyGUI
 
 		return GPtr<RenderBase::Texture>();
 	}
-	void GenesisTexture::loadFromFile(const std::string& _filename)
+	
+	void GenesisTexture::loadTextureFromFile(const std::string& _filename)
 	{
-
-		Util::String filename = _filename.c_str();
-		Util::String url = s_resourcePath + filename;
-
-		/*Resources::ResourceServer* resServer = Resources::ResourceServer::Instance();
-		GPtr<Resource> pRes = resServer->CreateOrGetResource(url, &ImageRes::RTTI );
-		n_assert( pRes.isvalid() );
-
-		if ( pRes->GetState() != Resource::Loaded )
-		{
-		bool bOK = resServer->LoadResource(pRes,false);
-		if (!bOK)
-		{			
-		m_texHandle = RenderBase::PrimitiveHandle();
-		return;
-		}
-
-		}
-
-		GPtr<ImageRes> pImage = pRes.downcast<ImageRes>();
-		n_assert( pImage.isvalid() );
-
-		//pImage->SetManuLoad(true);	//	避免被卸载
-
-		if ( !pRes.isvalid() || !pRes->GetResourceId().IsValid() )
-		{
-		m_texHandle = RenderBase::PrimitiveHandle();
-		return;
-		}
-
-		m_width = pImage->GetWidth();
-		m_height = pImage->GetHeight();
-		mOriginalUsage = TextureUsage::Default;
-		setFormat(FormatWjToMyGui(pImage->GetPixelFormat()));//mOriginalFormat =
-
-		const GPtr<GraphicSystem>& gs = GraphicSystem::Instance();
-		n_assert(gs.isvalid());
-
-		GPtr<RenderBase::Texture> tex = _BuildTextureData(pImage, m_texStream);
-
-		if ( tex.isvalid() )
-		{
-		m_texHandle = gs->CreateTexture( tex );
-		}
-		else
-		{
-		m_texHandle = RenderBase::TextureHandle();		
-		}
-
-		pRes->UnLoad();
-
-		m_texStream = NULL;*/
-
-		m_texRes = Resources::ResourceManager::Instance()->CreateTextureInfo(url, 0);
+		m_texRes = Resources::ResourceManager::Instance()->CreateTextureInfo(Resources::ResourceId(_filename.c_str()), 0);
 		RenderBase::TEXTURE_DESC texDesc;
 		GraphicSystem::Instance()->GetTextureDesc(m_texRes->GetHandle(), texDesc);
 
 		m_width = texDesc.width;
 		m_height = texDesc.height;
 		mOriginalUsage = TextureUsage::Default;
-		setFormat(FormatWjToMyGui(texDesc.pixelFormat));//mOriginalFormat =
-
-
+		setFormat(FormatWjToMyGui(texDesc.pixelFormat));//mOriginalFormat
 	}
+	
+	void GenesisTexture::loadFromFile(const std::string& _filename)
+	{
+		const GenesisGuiGlobal::MediaLocations& paths = GenesisGuiGlobal::getMediaLocations();
+		if (paths.size() == 1)
+		{
+			loadTextureFromFile(paths.front() + _filename);
+		}
+		else
+		{
+			IO::IoServer* ios = IO::IoServer::Instance();
+			std::string url;
+			GenesisDataManager::MediaLocations::const_iterator it = paths.begin();
+			GenesisDataManager::MediaLocations::const_iterator end = paths.end();
 
+			while(it != end)
+			{
+				url = *it + _filename;
+				if (ios->FileExists(IO::URI(url.c_str())))
+				{
+					loadTextureFromFile(url);
+					return;
+				}
+				++it;
+			}
+		}
+	}
 	void GenesisTexture::createFromRenderTarget(IRenderTarget* rt)
 	{
 		mRenderTarget = rt;
@@ -560,7 +558,7 @@ namespace MyGUI
 	IRenderTarget* GenesisTexture::getRenderTarget()
 	{
 		//if (mRenderTarget == nullptr)
-		//	mRenderTarget = new OgreRTTexture(mTexture);
+		//	mRenderTarget = new GenesisRTTexture(mTexture);
 
 		return mRenderTarget;	
 	}

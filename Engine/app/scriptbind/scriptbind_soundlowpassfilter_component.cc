@@ -48,7 +48,8 @@ namespace App
 	static void ICall_SoundLowPassFilterComponent_SetGain(MonoObject* pMonoObj, float pvalue)
 	{
 		ScriptObjWrapper<SoundLowPassFilterComponent> self( pMonoObj );
-		return self->SetLowPassParam(SoundLowPassFilterComponent::Gain, pvalue);
+		self->SetLowPassParam(SoundLowPassFilterComponent::Gain, pvalue);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//------------------------------------------------------------------------
 	static float ICall_SoundLowPassFilterComponent_GetGainHF(MonoObject* pMonoObj)
@@ -60,7 +61,8 @@ namespace App
 	static void ICall_SoundLowPassFilterComponent_SetGainHF(MonoObject* pMonoObj, float pvalue)
 	{
 		ScriptObjWrapper<SoundLowPassFilterComponent> self( pMonoObj );
-		return self->SetLowPassParam(SoundLowPassFilterComponent::GainHF, pvalue);
+		self->SetLowPassParam(SoundLowPassFilterComponent::GainHF, pvalue);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//------------------------------------------------------------------------
 }

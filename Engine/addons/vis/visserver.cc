@@ -209,7 +209,7 @@ VisServer::PerformVisQuery(const GPtr<ObserverContext>& observer ,
 {
 	GPtr<VisQuery> pQuery = CreateVisQuery( observer, systemIndex );
 	pQuery->Run();
-#ifdef __WIN32__ 
+#if __THREAD_JOB__ 
 	pQuery->WaitForFinished();
 #endif
 	pQuery->EndQuery();

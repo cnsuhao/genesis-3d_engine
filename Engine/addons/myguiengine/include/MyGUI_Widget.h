@@ -185,6 +185,8 @@ namespace MyGUI
 
 		void setColour(const Colour& _value);
 
+		void setGray(bool _gray);
+
 		// являемся ли мы рутовым виджетом
 		/** Is this widget is root widget (root == without parents) */
 		bool isRootWidget() const;
@@ -409,6 +411,8 @@ namespace MyGUI
 
 		Align mAlign;
 		bool mVisible;
+
+		FloatCoord mFloatCoord;
 	};
 
 } // namespace MyGUI

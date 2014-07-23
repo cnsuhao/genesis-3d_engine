@@ -54,6 +54,7 @@ namespace Graphic
 
 	protected:
 		void setGlobalShaderParam(PipelineParamters& params);
+		void setTargetWindow(PipelineParamters& context);
 		void setCommonLights(PipelineParamters& params);//e.g. sun light, direction light.
 
 		void setLight(const GPtr<Light>& light, SizeT lightindex);
@@ -74,7 +75,6 @@ namespace Graphic
 		void renderMain(PipelineParamters& params);
 		void renderScreenObjs(PipelineParamters& params);
 
-		GPtr<RenderToTexture> m_currentRT;
 	public:
 		static const int s_lightSupport;
 	};

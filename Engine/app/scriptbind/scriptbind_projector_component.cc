@@ -42,6 +42,7 @@ namespace App
 	{
 		ScriptObjWrapper<ProjectorRenderComponent> self( pMonoObj );
 		self->SetFov(angle);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//--------------------------------------------------------------------------------
 	static int ICall_ProjectorRenderComponent_GetViewType( MonoObject* pMonoObj )
@@ -55,6 +56,7 @@ namespace App
 	{
 		ScriptObjWrapper<ProjectorRenderComponent> self( pMonoObj );
 		self->SetViewType(Graphic::Projector::ViewType(viewType));
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//--------------------------------------------------------------------------------
 	static float ICall_ProjectorRenderComponent_GetAspect( MonoObject* pMonoObj )
@@ -68,6 +70,7 @@ namespace App
 	{
 		ScriptObjWrapper<ProjectorRenderComponent> self( pMonoObj );
 		self->SetAspectRatio(angle);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//--------------------------------------------------------------------------------
 	static float ICall_ProjectorRenderComponent_GetZNear( MonoObject* pMonoObj )
@@ -81,6 +84,7 @@ namespace App
 	{
 		ScriptObjWrapper<ProjectorRenderComponent> self( pMonoObj );
 		self->SetNearClipPlane(nearPlane);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//--------------------------------------------------------------------------------
 	static float ICall_ProjectorRenderComponent_GetZFar( MonoObject* pMonoObj )
@@ -94,6 +98,7 @@ namespace App
 	{
 		ScriptObjWrapper<ProjectorRenderComponent> self( pMonoObj );
 		self->SetFarClipPlane(farPlane);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//--------------------------------------------------------------------------------
 	static float ICall_ProjectorRenderComponent_GetNearHeight( MonoObject* pMonoObj )
@@ -107,6 +112,7 @@ namespace App
 	{
 		ScriptObjWrapper<ProjectorRenderComponent> self( pMonoObj );
 		self->SetFov(nearheight);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//--------------------------------------------------------------------------------
 	static uint32 ICall_ProjectorRenderComponent_GetIgnoreLayers( MonoObject* pMonoObj )
@@ -120,6 +126,7 @@ namespace App
 	{
 		ScriptObjWrapper<ProjectorRenderComponent> self( pMonoObj );
 		self->SetIgnoreLayers(ignoreLayers);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	//--------------------------------------------------------------------------------
 	static void ICall_ProjectorRenderComponent_EnableProjector( MonoObject* pMonoObj, mono_bool b)

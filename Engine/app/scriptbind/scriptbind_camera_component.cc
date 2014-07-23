@@ -98,19 +98,23 @@ namespace App
 	static mono_bool ICall_CameraComponent_SetProj(MonoObject* pMonoObj, float fovOrHeight, float zNear, float zFar, int viewType)
 	{
 		ScriptObjWrapper<CameraComponent> self(pMonoObj);
-		return Utility_MonoBool( self->SetProj(fovOrHeight, zNear, zFar, ViewTypeConvert::Conver(viewType)) );
+		mono_bool mb = Utility_MonoBool( self->SetProj(fovOrHeight, zNear, zFar, ViewTypeConvert::Conver(viewType)) );
+		__Component_Property_Changed(self.GetCppObjPtr());
+		return mb;
 	}
 
 	static void ICall_CameraComponent_SetZNear(MonoObject* pMonoObj, float zNear)
 	{
 		ScriptObjWrapper<CameraComponent> self(pMonoObj);
 		self->SetZNear(zNear);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
 	static void ICall_CameraComponent_SetZFar(MonoObject* pMonoObj, float zFar)
 	{
 		ScriptObjWrapper<CameraComponent> self(pMonoObj);
 		self->SetZFar(zFar);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
 	static void ICall_CameraComponent_GetView(MonoObject* pMonoObj, Math::matrix44& view)
@@ -135,12 +139,14 @@ namespace App
 	{
 		ScriptObjWrapper<CameraComponent> self( pMonoObj );
 		self->SetPerspectiveFovRH(fov, aspect, zNear, zFar);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
 	static void ICall_CameraComponent_SetupPerspectiveFovRHEx( MonoObject* pMonoObj ,float fov, float aspect, float zNear, float zFar,const Math::float4& clipPlane_, mono_bool reflection)
 	{
 		ScriptObjWrapper<CameraComponent> self( pMonoObj );
 		self->SetPerspectiveFovRHEx(fov, aspect, zNear, zFar,clipPlane_,Utility_MonoBool(reflection));
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
 	static void ICall_CameraComponent_SetRenderToTexture(MonoObject* pMonoObj ,MonoObject* pRenderToTexture)
@@ -196,6 +202,7 @@ namespace App
 	{
 		ScriptObjWrapper<CameraComponent> self( pMonoObj );
 		self->SetCullMarkID((CameraComponent::CullMarkID)mask);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
 	static uint32 ICall_CameraComponent_GetCullMask( MonoObject* pMonoObj )
@@ -220,6 +227,7 @@ namespace App
 	{
 		ScriptObjWrapper<CameraComponent> self( pMonoObj );
 		self->SetRenderShadowMap(enable);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
 	static bool ICall_CameraComponent_GetRenderShadowMap(MonoObject* pMonoObj)

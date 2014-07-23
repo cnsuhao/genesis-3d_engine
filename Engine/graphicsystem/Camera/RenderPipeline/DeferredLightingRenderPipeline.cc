@@ -60,7 +60,7 @@ namespace Graphic
 
 	void DeferredLightingRenderPipeline::_RenderGBuffer(PipelineParamters& params)
 	{
-		GraphicRenderer::ResetCache();
+		/*	GraphicRenderer::ResetCache();
 		const GPtr<Camera>& camera = params.m_camera;
 		const GPtr<RenderToTexture>& depthRT = camera->GetDepthMap();
 		const GPtr<RenderToTexture>& normalRT = camera->GetDeferredNormalMap();
@@ -75,50 +75,49 @@ namespace Graphic
 		GraphicSystem* gs = GraphicSystem::Instance();
 		if (gs)
 		{
-			gs->SetRenderTarget(normalRT, 0, RenderBase::RenderTarget::ClearAll);
-			gs->SetRenderTarget(depthRT, 1, RenderBase::RenderTarget::ClearAll);
-			gs->SetRenderTarget(paramRT, 2, RenderBase::RenderTarget::ClearAll);
-			m_currentRT = normalRT;
+		gs->SetRenderTarget(normalRT, 0, RenderBase::RenderTarget::ClearAll);
+		gs->SetRenderTarget(depthRT, 1, RenderBase::RenderTarget::ClearAll);
+		gs->SetRenderTarget(paramRT, 2, RenderBase::RenderTarget::ClearAll);
+		m_currentRT = normalRT;
 		}
 
 		renderRenderableList(params,RenderData::Opaque, eGBuffer, NULL);
 
 		if (gs)
 		{
-			gs->SetRenderTarget(dummyhandle, 1, RenderBase::RenderTarget::ClearAll);
-			gs->SetRenderTarget(dummyhandle, 2, RenderBase::RenderTarget::ClearAll);
+		gs->SetRenderTarget(dummyhandle, 1, RenderBase::RenderTarget::ClearAll);
+		gs->SetRenderTarget(dummyhandle, 2, RenderBase::RenderTarget::ClearAll);
 		}
-
+		*/
 	}
 
 	void DeferredLightingRenderPipeline::_RenderLightMap(PipelineParamters& params)
 	{
 		GraphicRenderer::ResetCache();
 		mLightPass->RenderActiveLights(params);
-		m_currentRT = params.m_camera->GetDeferredLightMap();
 	}
 
 	void DeferredLightingRenderPipeline::_RenderFinalScene(PipelineParamters& params)
 	{
-		const GPtr<Camera>& camera = params.m_camera;
-		if(!camera->IsRenderNormal())
-			return;
-		GraphicRenderer::ResetCache();
-		const GPtr<RenderToTexture>& rtt= camera->GetRenderToTexture();
-		if (rtt.isvalid())
-		{
-			GraphicSystem::Instance()->SetRenderTarget(rtt->GetTargetHandle(),0,RenderBase::RenderTarget::ClearAll);
-			m_currentRT = rtt;
-		}
-		else
-		{
-			GraphicSystem::Instance()->SetRenderTarget(dummyhandle,0,RenderBase::RenderTarget::ClearAll);
-			m_currentRT = NULL;
-		}
-		renderRenderableList(params, RenderData::Background, eForward, NULL);//没有灯光的东西。在这里渲染。
-		renderRenderableList(params, RenderData::Opaque, eDeferredLightPass, NULL);
+		//const GPtr<Camera>& camera = params.m_camera;
+		//if(!camera->IsRenderNormal())
+		//	return;
+		//GraphicRenderer::ResetCache();
+		//const GPtr<RenderToTexture>& rtt= camera->GetRenderToTexture();
+		//if (rtt.isvalid())
+		//{
+		//	GraphicSystem::Instance()->SetRenderTarget(rtt->GetTargetHandle(),0,RenderBase::RenderTarget::ClearAll);
+		//	m_currentRT = rtt;
+		//}
+		//else
+		//{
+		//	GraphicSystem::Instance()->SetRenderTarget(dummyhandle,0,RenderBase::RenderTarget::ClearAll);
+		//	m_currentRT = NULL;
+		//}
+		//renderRenderableList(params, RenderData::Background, eForward, NULL);//没有灯光的东西。在这里渲染。
+		//renderRenderableList(params, RenderData::Opaque, eDeferredLightPass, NULL);
 
-		_RenderOtherObjs(params);
+		//_RenderOtherObjs(params);
 	}
 
 	void DeferredLightingRenderPipeline::_RenderOtherObjs(PipelineParamters& params)

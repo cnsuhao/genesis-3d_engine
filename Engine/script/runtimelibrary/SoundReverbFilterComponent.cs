@@ -44,7 +44,7 @@ namespace ScriptRuntime
         /// <summary>
         /// 混音过滤器组件构造函数
         /// </summary>
-        public SoundReverbFilterComponent()
+        protected SoundReverbFilterComponent()
         {
             ICall_SoundReverbFilterComponent_Bind(this);
         }

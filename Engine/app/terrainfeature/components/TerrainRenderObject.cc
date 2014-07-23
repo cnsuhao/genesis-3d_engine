@@ -111,8 +111,7 @@ namespace App
 					if ( pMatIns )
 					{
 						MaterialInstance* pMatInsColor = res[sColorMapMaterialIdx].GetRenderable()->GetMaterial();
-						pMatInsColor->SetShaderInstanceID(0xEFFFFFFF - 1);
-						pMatInsColor->SetSort(0xEFFFFFFF - 1);
+						pMatInsColor->SetSort(Graphic::MatSort_TerrainEnd);
 
 					}
 

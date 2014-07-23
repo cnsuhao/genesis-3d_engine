@@ -266,19 +266,21 @@ void RenderDeviceGLES::SetBlendState(const DeviceBlendState& state)
 
 	int i = 0;
 
+
 	m_glesImpl->SetColorMask( state.m_colorWriteMask[i] );
 
 	const GraphicCardCapability& caps = GetGraphicCardCapability();
 
 #if RENDERDEVICE_OPENGLES
-	if (caps.mSeparateAplhaBlend)
+	//if (caps.mSeparateAplhaBlend)
 	{
 		if( state.m_alphaBlendEnable[i] )
 		{
 			m_glesImpl->ActiveAlphaBlend(true);
 
 			m_glesImpl->SetBlendFuncSeparate( GLESTypes::AsGLESBlendFactor( state.m_srcBlend[i] ), GLESTypes::AsGLESBlendFactor( state.m_destBlend[i] ),
-				GLESTypes::AsGLESBlendFactor( state.m_srcBlendAlpha[i] ), GLESTypes::AsGLESBlendFactor( state.m_destBlendAlpha[i] ) );
+				GLESTypes::AsGLESBlendFactor( state.m_srcBlend[i] ), GLESTypes::AsGLESBlendFactor( state.m_destBlend[i] ) );
+				//GLESTypes::AsGLESBlendFactor( state.m_srcBlendAlpha[i] ), GLESTypes::AsGLESBlendFactor( state.m_destBlendAlpha[i] ) );
 
 			m_glesImpl->SetBlendEquationSeparate( GLESTypes::AsGLESBlendOperation( state.m_blendOP[i] ) ,
 				GLESTypes::AsGLESBlendOperation( state.m_blendOPAlpha[i] ) );
@@ -288,19 +290,19 @@ void RenderDeviceGLES::SetBlendState(const DeviceBlendState& state)
 			m_glesImpl->ActiveAlphaBlend(false);
 		}
 	} 
-	else
-	{
-		if(true == state.m_alphaBlendEnable[i])
-		{
-			m_glesImpl->ActiveAlphaBlend(true);
-			m_glesImpl->SetBlendFunc(GLESTypes::AsGLESBlendFactor( state.m_srcBlend[i] ), GLESTypes::AsGLESBlendFactor( state.m_destBlend[i] ));
-			m_glesImpl->SetBlendEquation( GLESTypes::AsGLESBlendOperation( state.m_blendOP[i] ) );
-		}
-		else
-		{
-			m_glesImpl->ActiveAlphaBlend(false);
-		}
-	}
+	//else
+	//{
+	//	if(true == state.m_alphaBlendEnable[i])
+	//	{
+	//		m_glesImpl->ActiveAlphaBlend(true);
+	//		m_glesImpl->SetBlendFunc(GLESTypes::AsGLESBlendFactor( state.m_srcBlend[i] ), GLESTypes::AsGLESBlendFactor( state.m_destBlend[i] ));
+	//		m_glesImpl->SetBlendEquation( GLESTypes::AsGLESBlendOperation( state.m_blendOP[i] ) );
+	//	}
+	//	else
+	//	{
+	//		m_glesImpl->ActiveAlphaBlend(false);
+	//	}
+	//}
 #endif
 
 }
@@ -749,9 +751,6 @@ void RenderDeviceGLES::SetRenderTarget(RenderTarget* rt)
 	else
 	{
 		m_glesImpl->ActiveFrameBuffer(m_mainFBOnum);
-
-		mask |= GL_DEPTH_BUFFER_BIT;
-		mask |= GL_STENCIL_BUFFER_BIT;
 	}
 
 	uint clearFlags = pRTGLES->GetClearFlags();

@@ -55,6 +55,7 @@ namespace App
 		ScriptObjWrapper<SpriteRenderComponent> self( pMonoObj );
 		Util::String packId = Utility_MonoStringToCppString( pMonoStr );
 		self->SetBlock( packId );
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
 	static void ICall_SpriteRenderComponent_SetAnimation( MonoObject* pMonoObj, MonoString* pMonoStr, int loops, mono_bool play, float speed)
@@ -62,23 +63,27 @@ namespace App
 		ScriptObjWrapper<SpriteRenderComponent> self( pMonoObj );
 		Util::String packId = Utility_MonoStringToCppString( pMonoStr );
 		self->SetAnimation(packId, loops, c_iMonoBool_True == play, speed);
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 	static void ICall_SpriteRenderComponent_RemoveBlock( MonoObject* pMonoObj)
 	{
 		ScriptObjWrapper<SpriteRenderComponent> self( pMonoObj );
 		self->RemoveBlock();
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
 	static void ICall_SpriteRenderComponent_RemoveAnimation( MonoObject* pMonoObj)
 	{
 		ScriptObjWrapper<SpriteRenderComponent> self( pMonoObj );
 		self->RemoveAnimation();
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
 	static void ICall_SpriteRenderComponent_SetAnimationSpeed( MonoObject* pMonoObj, float speed)
 	{
 		ScriptObjWrapper<SpriteRenderComponent> self( pMonoObj );
 		self->SetAnimationSpeed( speed );
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
 	static void ICall_SpriteRenderComponent_Play( MonoObject* pMonoObj)
@@ -109,6 +114,7 @@ namespace App
 	{
 		ScriptObjWrapper<SpriteRenderComponent> self( pMonoObj );
 		self->SetPlayOnWake( c_iMonoBool_True == value );
+		__Component_Property_Changed(self.GetCppObjPtr());
 	}
 
 	static MonoString* ICall_SpriteRenderComponent_GetBlockName( MonoObject* pMonoObj )

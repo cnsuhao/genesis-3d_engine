@@ -54,6 +54,7 @@ namespace Graphic
 		ActiveLightManager();
 		~ActiveLightManager();
 		void CameraCull(Camera* camera);
+		void Reset();
 		const ActiveLightInfo* FindSunLight() const;
 		const TempLightBlock& FindActiveAttLights(const RenderObject* obj, int max_count, bool& bUsedForLightmap) const;
 		ActiveLightCollection& GetActiveLights();
@@ -61,8 +62,8 @@ namespace Graphic
 		int GetAttLightBeginIndex() const;
 		int GetAttLightCount() const;
 		int GetNotAttLightCount() const;
+
 	private:
-		void _reset();
 		void _setActiveDirectionallight(Light* light, ActiveLightInfo& alight);
 		static bool _inLight( const RenderObject* renderObj, const Math::bbox& worldBox, const ActiveLightInfo& actLight);
 		static void _buildPyramid(const Light& light, Pyramid& outPyramid);

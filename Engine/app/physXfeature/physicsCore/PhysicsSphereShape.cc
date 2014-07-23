@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-#if __USE_PHYSX__ || __GENESIS_EDITOR__
+#if defined (__USE_PHYSX__) || defined (__GENESIS_EDITOR__)
 #include "stdneb.h"
 #include "appframework/actor.h"
 #include "PhysicsSphereShape.h"
@@ -66,11 +66,7 @@ namespace App
 
 	void PhysicsSphere::OnResize(const Math::bbox& bb)
 	{
-		const Math::bbox& _box = bb;
-		Math::vector _center(_box.center().x(), _box.center().y(), _box.center().z());
-		Math::vector _value = _center*m_ActorScale;
-		m_Center.set(_value.x(), _value.y(), _value.z());
-		_value = _box.size();
+		Math::vector _value = bb.size();
 		if (!Math::n_nearequal(_value.length(),0.0f,0.001f))
 		{
 			m_Radius = Math::n_max(_value.x(), Math::n_max(_value.y(), _value.z())) * 0.5f;

@@ -284,6 +284,11 @@ namespace ScriptGUI
             }
         }
 
+        public void SetGray(bool bGray)
+        {
+            ICall_setGray(mInstance.Ptr, bGray);
+        }
+
         protected static String GetName(IntPtr ptr)
         {
             return ICall_getName(ptr);
@@ -455,8 +460,8 @@ namespace ScriptGUI
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         extern private static bool ICall_getEnabled(IntPtr widget_ptr);
 
-
-
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        extern private static void ICall_setGray(IntPtr widget_ptr, bool value);
 
 #endregion
     }

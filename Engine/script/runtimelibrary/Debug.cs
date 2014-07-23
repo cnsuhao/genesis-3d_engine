@@ -32,6 +32,24 @@ namespace ScriptRuntime
     /// </summary>
     public class Debug : Base
     {
+        private static bool m_isMute = false;
+
+
+        /// <summary>
+        /// 设置是否输出日志文件
+        /// </summary>
+        /// <param name="ismute">是否输出</param>
+        /// <return>返回值为空类型</return>
+        /**@brief<b>示例</b>
+        *@code{.cpp}
+        ScriptRuntime.Debug.Printf("ScriptRuntime.Debug.Printf");
+        @endcode
+        */
+        public static void SetMute(bool ismute)
+        {
+            m_isMute = ismute;
+        }
+
         /// <summary>
         /// 输出参数内容至控制台窗口或日志文件
         /// </summary>
@@ -44,7 +62,7 @@ namespace ScriptRuntime
         */
         public static void Printf(String str)
         {
-            ICall_Debug_Printf(str);
+            if (!m_isMute) ICall_Debug_Printf(str);
         }
 
        /// <summary>
@@ -59,7 +77,7 @@ namespace ScriptRuntime
         */
         public static void Dbgout(String str)
         {
-            ICall_Debug_Dbgout(str);
+            if (!m_isMute) ICall_Debug_Dbgout(str);
         }
         /// <summary>
         /// 输出警告（warning）信息至控制台窗口
@@ -73,7 +91,7 @@ namespace ScriptRuntime
         */
         public static void Warning(String str)
         {
-            ICall_Debug_Warning(str);
+            if (!m_isMute) ICall_Debug_Warning(str);
         }
 
         

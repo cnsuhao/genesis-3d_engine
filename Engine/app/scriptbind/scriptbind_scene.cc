@@ -95,6 +95,7 @@ namespace App
 		ScriptObjWrapper<Scene> self( pMonoObj );
 		GPtr<Actor> actorPtr(ScriptObjToCppPointer<Actor>(pActor));
 		self->AddActor( actorPtr );
+		SCRIPT_API_HOOK_MESSEGE(Scene, AddActor, (self.GetCppObjPtr(), actorPtr.get_unsafe()));
 		return c_iMonoBool_True;
 	}
 
@@ -103,6 +104,7 @@ namespace App
 		ScriptObjWrapper<Scene> self( pMonoObj );
 		GPtr<Actor> actorPtr(ScriptObjToCppPointer<Actor>(pActor));
 		self->RemoveActor( actorPtr );
+		SCRIPT_API_HOOK_MESSEGE(Scene, RemoveActor, (self.GetCppObjPtr(), actorPtr.get_unsafe()));
 		return c_iMonoBool_True;
 	}
 

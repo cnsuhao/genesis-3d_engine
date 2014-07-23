@@ -479,6 +479,15 @@ namespace ScriptRuntime
             return ICall_Actor_FindChild(this, fastId);
         }
         /// <summary>
+        /// 使用子Actor的name来获取当前Actor的子Actor
+        /// </summary>
+        /// <param name="name">子Actor的名称</param>
+        /// <returns>子Actor</returns>
+        public Actor FindChild(String name)
+        {
+            return ICall_Actor_FindChildByName(this, name);
+        }
+        /// <summary>
         /// 通过子Actor的FastID来获取这个子Actor的索引
         /// </summary>
         /// <param name="fastId">子Actor的FastID</param>
@@ -487,6 +496,17 @@ namespace ScriptRuntime
         {
             return ICall_Actor_FindChildIndex(this, fastId);
         }
+
+        /// <summary>
+        /// 通过子Actor的name来获取这个子Actor的索引
+        /// </summary>
+        /// <param name="name">子Actor的名称</param>
+        /// <returns>子Actor</returns>
+        public int FindChildIndex(String name)
+        {
+            return ICall_Actor_FindChildIndexByName(this, name);
+        }
+
         /// <summary>
         /// 添加一个子Actor
         /// </summary>

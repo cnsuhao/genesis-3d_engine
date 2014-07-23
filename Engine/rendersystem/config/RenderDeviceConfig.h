@@ -25,8 +25,6 @@ THE SOFTWARE.
 #define RENDERDEVICECONFIG_H
 
 #if __WIN32__
-#	include <d3d9.h>
-#	include <d3dx9.h>
 ////#include <dxerr9.h>
 #	ifndef DXTRACE_ERR
 #		define DXTRACE_ERR(x,y)

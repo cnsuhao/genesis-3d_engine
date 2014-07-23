@@ -80,6 +80,19 @@ namespace App
 		}
 	}
 
+	static int ICall_Application_GetCurrentSceneState()
+	{
+		return GameApplication::Instance()->GetCurrentSceneState();
+	}
+
+	static int ICall_Application_GetSceneState(MonoString* sceneResID)
+	{
+		String scence_name;
+		Utility_MonoStringToCppString(sceneResID, scence_name);
+
+		return GameApplication::Instance()->GetSceneState(scence_name);
+	}
+
 	static MonoString* ICall_Application_GetAssetPath( void )
 	{
 		Util::String path = GameApplication::Instance()->GetResourceBaseDir();

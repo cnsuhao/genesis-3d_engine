@@ -42,7 +42,7 @@ namespace Graphic
 		virtual void Render(PipelineParamters& context);
 
 	protected:
-		void _RenderNormal(PipelineParamters& context);
+		virtual void _RenderNormal(PipelineParamters& context);
 
 	};
 }

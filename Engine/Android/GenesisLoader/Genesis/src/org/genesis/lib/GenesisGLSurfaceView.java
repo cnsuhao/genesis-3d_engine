@@ -45,6 +45,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.StatFs;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -66,14 +67,16 @@ public class GenesisGLSurfaceView extends GLSurfaceView {
 	private String apklocation;
 	private float resourceSize;
 	private int storageType;
-	private float density;
+	private float xdpi;
+	private float ydpi;
 	private boolean usePrecompilerShader;
 	
 	private GenesisRenderer mGenesisRenderer;
 	private GenesisEditText mGenesisEditText;
 
 	private ContextFactory mContextFactory;
-	
+	static DisplayMetrics dm = new DisplayMetrics();  
+
 	private AssetManager mMgr;
 	//get set methods=====================================================================================
 	public GenesisEditText getGenesisEditText() {
@@ -141,14 +144,14 @@ public class GenesisGLSurfaceView extends GLSurfaceView {
 	{
 		 StatFs sf = new StatFs(data.getPath());
 		 int availableBlocks = sf.getAvailableBlocks();
-		
+		 Log.d(TAG, "" + data.getAbsolutePath());  
+		 Log.d(TAG, "" + availableBlocks);  
 		 int size = sf.getBlockSize();
-		
+		 Log.d(TAG, "" + size + "");  
 		 int availableSize = availableBlocks * size;
-		
+		 Log.d(TAG, "" + availableSize + "");
 		 return availableSize/(1024*1024);
 	}
-	
 	
 	private  void copyAllResFiles(final Context context,String Data,String Dest)
 	{
@@ -364,6 +367,9 @@ public class GenesisGLSurfaceView extends GLSurfaceView {
 	public GenesisGLSurfaceView(Context context) {
 		super(context);
 		
+		((GenesisActivity) context).getWindowManager().getDefaultDisplay().getMetrics(dm);  
+		xdpi = dm.xdpi;
+		ydpi = dm.ydpi;		
 		mMgr = context.getAssets();
 		this.setEGLContextClientVersion(2);
 		
@@ -401,7 +407,7 @@ public class GenesisGLSurfaceView extends GLSurfaceView {
 			gamedir = apklocation+"/assets/Data";
 			
 			String path =  "data/data/"+packagename;
-			String spath = path+"Data/Script";
+			String spath = path+"/Script";
 			File cdesDir = new File(spath);
 			File desDir = new File(path);
 			if(!cdesDir.exists())
@@ -589,11 +595,8 @@ public class GenesisGLSurfaceView extends GLSurfaceView {
 	@Override
 	protected void onSizeChanged(final int pNewSurfaceWidth, final int pNewSurfaceHeight, final int pOldSurfaceWidth, final int pOldSurfaceHeight) {
 		if(!this.isInEditMode()) {
-			
-			float screenWidth = (int)(pNewSurfaceWidth * density + 0.5f);      
-			float screenHeight = (int)(pNewSurfaceHeight * density + 0.5f);     
-			
-			this.mGenesisRenderer.setScreenWidthAndHeight(pNewSurfaceWidth, pNewSurfaceHeight,screenWidth,screenHeight,mMgr);
+			 
+			this.mGenesisRenderer.setScreenWidthAndHeight(pNewSurfaceWidth, pNewSurfaceHeight,xdpi,ydpi,mMgr);
 		               
 			this.mGenesisRenderer.setConfig(gamedir,scenename,usePrecompilerShader);
 			this.mGenesisRenderer.setStorage(storageType, packagename,apklocation );
@@ -602,20 +605,25 @@ public class GenesisGLSurfaceView extends GLSurfaceView {
 
 	@Override
 	public boolean onKeyDown(final int pKeyCode, final KeyEvent pKeyEvent) {
-		switch (pKeyCode) {
-			case KeyEvent.KEYCODE_BACK:
-				this.queueEvent(new Runnable() {
-					@Override
-					public void run() {
-						GenesisGLSurfaceView.this.mGenesisRenderer.handleKeyDown(pKeyCode);
-					}
-				});
-				return true;
-			default:
-				return super.onKeyDown(pKeyCode, pKeyEvent);
-		}
+		this.queueEvent(new Runnable() {
+			@Override
+			public void run() {
+				GenesisGLSurfaceView.this.mGenesisRenderer.handleKeyDown(pKeyCode);
+			}
+		});
+		return true;
 	}
 	
+	@Override
+	public boolean onKeyUp(final int pKeyCode, final KeyEvent pKeyEvent) {
+		this.queueEvent(new Runnable() {
+			@Override
+			public void run() {
+				GenesisGLSurfaceView.this.mGenesisRenderer.handleKeyUp(pKeyCode);
+			}
+		});
+		return true;
+	}
 	   private static class ContextFactory implements GLSurfaceView.EGLContextFactory {
 	        private static int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
 	        public EGLContext createContext(EGL10 egl, EGLDisplay display, EGLConfig eglConfig) {

@@ -23,35 +23,31 @@ THE SOFTWARE.
 ****************************************************************************/
 #include "stdneb.h"
 #include "scriptfeature/inc/script_utility.h"
-#include "graphicsystem/Camera/Camera.h"
 #include "graphicsystem/base/RenderToTexture.h"
 #include "foundation/math/newMath/new_matrix44.h"
 #include "basegamefeature/managers/sceneschedulemanager.h"
+#include "appframework/simplecamera.h"
 namespace App
 {
 	 void ICallReg_ScriptRuntime_Camera( void );
 
 	 static void ICall_Camera_Bind( MonoObject* pMonoObj )
 	 {
-		Graphic::Camera* pCamera = Graphic::Camera::Create();
-		n_assert( NULL!=pCamera );
-
-		pCamera->SetRenderScene( SceneScheduleManager::Instance()->_GetMainRenderScene());
-		pCamera->SetCameraOrder(Graphic::eCO_Main);
-		pCamera->SetUseCallBack(false);
-		BindCppObjWithMonoObj<Graphic::Camera>(pCamera,pMonoObj);
+		SimpleCamera* pCamera = SimpleCamera::Create();
+		BindCppObjWithMonoObj<SimpleCamera>(pCamera,pMonoObj);
 	 }
 
 	 static void ICall_Camera_Release( MonoObject* pMonoObj )
 	 {
-		 ScriptObjWrapper<Graphic::Camera> self( pMonoObj );
+		 ScriptObjWrapper<SimpleCamera> self( pMonoObj );
 
-		 ReleaseCppObjWithMonoObj<Graphic::Camera>( self.GetCppObjPtr(), pMonoObj );
+		 //ReleaseCppObjWithMonoObj<SimpleCamera>( self.GetCppObjPtr(), pMonoObj );
+		 DelayReleaseCppObjWithMonoObj<SimpleCamera>( self.GetCppObjPtr(), pMonoObj );
 	 }
 
 	 static void ICall_Camera_SetupPerspectiveFovRH( MonoObject* pMonoObj ,float fov, float aspect, float zNear, float zFar)
 	 {
-		  ScriptObjWrapper<Graphic::Camera> self( pMonoObj );
+		  ScriptObjWrapper<SimpleCamera> self( pMonoObj );
 
 		  Graphic::CameraSetting cs = self->GetCameraSetting();
 		  cs.SetupPerspectiveFovRH(fov, aspect, zNear, zFar);
@@ -60,7 +56,7 @@ namespace App
 
 	 static void ICall_Camera_SetupPerspectiveFovRHEx( MonoObject* pMonoObj ,float fov, float aspect, float zNear, float zFar,const Math::float4& clipPlane_, mono_bool reflection)
 	 {
-		 ScriptObjWrapper<Graphic::Camera> self( pMonoObj );
+		 ScriptObjWrapper<SimpleCamera> self( pMonoObj );
 
 		 Graphic::CameraSetting cs = self->GetCameraSetting();
 		 cs.SetupPerspectiveFovRH(fov, aspect, zNear, zFar,clipPlane_,Utility_MonoBool(reflection));
@@ -69,7 +65,7 @@ namespace App
 
 	 static void ICall_Camera_SetRenderToTexture(MonoObject* pMonoObj ,MonoObject* pRenderToTexture)
 	 {
-		  ScriptObjWrapper<Graphic::Camera> self( pMonoObj );
+		  ScriptObjWrapper<SimpleCamera> self( pMonoObj );
 		 
 		  Graphic::RenderToTexture* renderToTexture = ScriptObjToCppPointer<Graphic::RenderToTexture>(pRenderToTexture);
 		  self->SetRenderToTexture( renderToTexture );
@@ -77,118 +73,118 @@ namespace App
 
 	 static void ICall_Camera_SetRenderDepth( MonoObject* pMonoObj,mono_bool bRenderDepth)
 	 {
-		  ScriptObjWrapper<Graphic::Camera> self( pMonoObj );
+		  ScriptObjWrapper<SimpleCamera> self( pMonoObj );
 
 		  self->SetRenderDepth(Utility_MonoBool(bRenderDepth));
 	 }
 
 	 static mono_bool ICall_Camera_GetRenderDepth( MonoObject* pMonoObj )
 	 {
-		  ScriptObjWrapper<Graphic::Camera> self( pMonoObj );
+		  ScriptObjWrapper<SimpleCamera> self( pMonoObj );
 
-		  return Utility_MonoBool( self->HasDepthMap() );
+		  return Utility_MonoBool( self->IsRenderDepthMap() );
 	 }
 
 	 static void ICall_Camera_SetRenderNormal( MonoObject* pMonoObj,mono_bool bRenderNormal)
 	 {
-		 ScriptObjWrapper<Graphic::Camera> self( pMonoObj );
+		 ScriptObjWrapper<SimpleCamera> self( pMonoObj );
 
 		 self->SetRenderNormal(Utility_MonoBool(bRenderNormal));
 	 }
 
 	 static mono_bool ICall_Camera_GetRenderNormal( MonoObject* pMonoObj )
 	 {
-		 ScriptObjWrapper<Graphic::Camera> self( pMonoObj );
+		 ScriptObjWrapper<SimpleCamera> self( pMonoObj );
 
 		 return Utility_MonoBool( self->IsRenderNormal() );
 	 }
 
 	 static void ICall_Camera_SetViewTransForm( MonoObject* pMonoObj,const Math::matrix44& view )
 	 {
-		 ScriptObjWrapper<Graphic::Camera> self( pMonoObj );
+		 ScriptObjWrapper<SimpleCamera> self( pMonoObj );
 		 self->SetTransform(Math::matrix44::inverse(view));
 		 self->OnTransformChanged();
 	 }
 
 	 static void ICall_Camera_GetViewTransForm( MonoObject* pMonoObj,Math::matrix44& out )
 	 {
-		 ScriptObjWrapper<Graphic::Camera> self( pMonoObj );
+		 ScriptObjWrapper<SimpleCamera> self( pMonoObj );
 		 out = self->GetViewTransform();
 	 }
 
 	 static void ICall_Camera_GetProjTransForm( MonoObject* pMonoObj,Math::matrix44& out )
 	 {
-		 ScriptObjWrapper<Graphic::Camera> self( pMonoObj );
+		 ScriptObjWrapper<SimpleCamera> self( pMonoObj );
 		 out = self->GetProjTransform();
 	 }
 
 	 static float ICall_Camera_GetAspect( MonoObject* pMonoObj )
 	 {
-		 ScriptObjWrapper<Graphic::Camera> self( pMonoObj );
+		 ScriptObjWrapper<SimpleCamera> self( pMonoObj );
 		 Graphic::CameraSetting cs = self->GetCameraSetting();
 		 return cs.GetAspect();
 	 }
 
 	 static float ICall_Camera_GetFov( MonoObject* pMonoObj )
 	 {
-		 ScriptObjWrapper<Graphic::Camera> self( pMonoObj );
+		 ScriptObjWrapper<SimpleCamera> self( pMonoObj );
 		 Graphic::CameraSetting cs = self->GetCameraSetting();
 		 return cs.GetFov();
 	 }
 
 	 static float ICall_Camera_GetNear( MonoObject* pMonoObj )
 	 {
-		 ScriptObjWrapper<Graphic::Camera> self( pMonoObj );
+		 ScriptObjWrapper<SimpleCamera> self( pMonoObj );
 		 Graphic::CameraSetting cs = self->GetCameraSetting();
 		 return cs.GetZNear();
 	 }
 
 	 static float ICall_Camera_GetFar( MonoObject* pMonoObj )
 	 {
-		 ScriptObjWrapper<Graphic::Camera> self( pMonoObj );
+		 ScriptObjWrapper<SimpleCamera> self( pMonoObj );
 		 Graphic::CameraSetting cs = self->GetCameraSetting();
 		 return cs.GetZFar();
 	 }
 
 	 static void ICall_Camera_SetCullMask(MonoObject* pMonoObj ,uint32 mask)
 	 {
-		 ScriptObjWrapper<Graphic::Camera> self( pMonoObj );
+		 ScriptObjWrapper<SimpleCamera> self( pMonoObj );
 		 self->SetCullMask( (Graphic::RenderLayer)mask );
 	 }
 
 	 static uint32 ICall_Camera_GetCullMask( MonoObject* pMonoObj )
 	 {
-		 ScriptObjWrapper<Graphic::Camera> self( pMonoObj );
+		 ScriptObjWrapper<SimpleCamera> self( pMonoObj );
 		 return self->GetCullMask();
 	 }
 
 	 static void ICall_Camera_SetCustomise( MonoObject* pMonoObj ,mono_bool customise )
 	 {
-		 ScriptObjWrapper<Graphic::Camera> self( pMonoObj );
+		 ScriptObjWrapper<SimpleCamera> self( pMonoObj );
 		 self->SetUseCustomMaterial(Utility_MonoBool(customise));
 	 }
 
 	 static mono_bool ICall_Camera_IsCustomise( MonoObject* pMonoObj )
 	 {
-		 ScriptObjWrapper<Graphic::Camera> self( pMonoObj );
+		 ScriptObjWrapper<SimpleCamera> self( pMonoObj );
 		 return  Utility_MonoBool( self->IsRenderCustom());
 	 }
 
 	 static void ICall_Camera_SetUseBeforeDrawEvent(MonoObject* pMonoObj, bool enable)
 	 {
-		 ScriptObjWrapper<Graphic::Camera> self( pMonoObj );
+		 ScriptObjWrapper<SimpleCamera> self( pMonoObj );
 		 self->SetBeforeDrawEvent(enable);
 	 }
 
 	 static void ICall_Camera_SetRenderShadowMap(MonoObject* pMonoObj, bool enable)
 	 {
-		 ScriptObjWrapper<Graphic::Camera> self( pMonoObj );
+		 ScriptObjWrapper<SimpleCamera> self( pMonoObj );
 		 self->SetRenderLightLitMap(enable);
 	 }
 
 	 static void ICall_Camera_SetLightLitTexture(MonoObject* pMonoObj ,MonoObject* pRenderToTexture)
 	 {
-		 ScriptObjWrapper<Graphic::Camera> self( pMonoObj );
+		 ScriptObjWrapper<SimpleCamera> self( pMonoObj );
 		
 		 Graphic::RenderToTexture* renderToTexture = ScriptObjToCppPointer<Graphic::RenderToTexture>(pRenderToTexture);
 		 self->SetLightLitMap( renderToTexture );

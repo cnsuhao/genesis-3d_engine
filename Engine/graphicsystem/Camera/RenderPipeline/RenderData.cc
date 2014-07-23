@@ -57,6 +57,10 @@ namespace Graphic
 			return lmat->GetRenderQueue().GetQueueIndex() < rmat->GetRenderQueue().GetQueueIndex();
 		}
 
+		if (lmat->GetSort() != rmat->GetSort())
+		{
+			return lmat->GetSort() < rmat->GetSort();
+		}
 
 		if (!opaque)
 		{
@@ -69,10 +73,6 @@ namespace Graphic
 			}
 		}
 
-		if (lmat->GetSort() != rmat->GetSort())
-		{
-			return lmat->GetSort() < rmat->GetSort();
-		}
 		if (lmat->GetShaderInstanceID() != rmat->GetShaderInstanceID())
 		{
 			return lmat->GetShaderInstanceID() < rmat->GetShaderInstanceID();

@@ -156,6 +156,7 @@ public class GenesisRenderer implements GLSurfaceView.Renderer {
 	private static native void nativeTouchesMove(final int[] pIDs, final float[] pXs, final float[] pYs);
 	private static native void nativeTouchesCancel(final int[] pIDs, final float[] pXs, final float[] pYs);
 	private static native boolean nativeKeyDown(final int pKeyCode);
+	private static native boolean nativeKeyUp(final int pKeyCode);
 	private static native void nativeRender();
 	private static native void nativeInit(final int pWidth, final int pHeight,final float dpiW,final float dpiH , AssetManager assetManager);
 	private static native void nativeConfig(final String gamedir, final String scenename,final boolean bShader);
@@ -185,6 +186,10 @@ public class GenesisRenderer implements GLSurfaceView.Renderer {
 		GenesisRenderer.nativeKeyDown(pKeyCode);
 	}
 
+	public void handleKeyUp(final int pKeyCode) {
+		GenesisRenderer.nativeKeyUp(pKeyCode);
+	}
+	
 	public void handleOnPause() {
 		GenesisRenderer.nativeOnPause();
 	}
